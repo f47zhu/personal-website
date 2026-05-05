@@ -18,7 +18,7 @@ export default function Home() {
     );
   }
 
-  function ProjectCard({ title, link = "", tools, description, funFact = "" }:
+  function InnerCard({ title, link = "", tools, description, funFact = "" }:
       { title: string, link: string, tools: string, description: string, funFact?: string | React.ReactNode }) {
     return (
       <div className="border-2 p-4 border-gray-900 dark:border-gray-100">
@@ -76,7 +76,7 @@ export default function Home() {
           title={"Projects"}
         >
           <>
-            <ProjectCard
+            <InnerCard
               title={"EverCare"}
               link={"https://github.com/ShreyShingala/EverCare"}
               tools={"Python, MongoDB, Gemini"}
@@ -91,7 +91,7 @@ export default function Home() {
                 </>
               }
             />
-            <ProjectCard
+            <InnerCard
               title={"NEXUS"}
               link={"https://github.com/r05200/ctrlhackdel"}
               tools={"JavaScript, Node.js, React, CSS"}
@@ -101,7 +101,7 @@ export default function Home() {
                 Implemented backend logic, ensuring robust and functional output.
               `}
             />
-            <ProjectCard
+            <InnerCard
               title={"Chess AI"}
               link={"https://github.com/sphealmeon/my-chesshacks-bot"}
               tools={"Python, NumPy, PyTorch"}
