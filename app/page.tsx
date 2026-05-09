@@ -1,7 +1,5 @@
 import Image from "next/image";
 
-// to-do: change jumps to headers, maybe outsource some sections to separate react files (next commit)
-
 export default function Home() {
 
   function PageCard({ id = "", className = "", color, title, children }:
@@ -12,7 +10,9 @@ export default function Home() {
       borderred: "border-red-700 dark:border-red-300",
       textred: "text-red-800 dark:text-red-200",
       borderyellow: "border-yellow-700 dark:border-yellow-300",
-      textyellow: "text-yellow-800 dark:text-yellow-200"
+      textyellow: "text-yellow-800 dark:text-yellow-200",
+      borderorange: "border-orange-700 dark:border-orange-300",
+      textorange: "text-orange-800 dark:text-orange-200"
     };
     return (
       <div id={id} className={`border-4 p-6 ${colorVariants["border" + color]} ${className}`}>
@@ -33,7 +33,7 @@ export default function Home() {
           <span className="ml-4 text-lg text-gray-500 dark:text-gray-400">{tools}</span>
         )}
         {date !== "" && (
-          <span className="float-right text-2xl"><i>{date}</i></span>
+          <span className="float-right text-xl text-gray-600 dark:text-gray-300"><i>{date}</i></span>
         )}
         <p className="mb-2" />
         <p className="text-lg text-gray-800 dark:text-gray-200">
@@ -59,6 +59,8 @@ export default function Home() {
           <a href="./resume" target="_blank"><span className="text-indigo-700 dark:text-indigo-300">Resume</span></a>
           <span className="ml-6" />
           <a href="#projects"><span className="text-red-700 dark:text-red-300">Projects</span></a>
+          <span className="ml-6" />
+          <a href="#experience"><span className="text-orange-700 dark:text-orange-300">Experience</span></a>
           <span className="ml-6" />
           <a href="#contact"><span className="text-yellow-700 dark:text-yellow-300">Contact</span></a>
         </p>
@@ -117,6 +119,20 @@ export default function Home() {
               &nbsp;<b>Trained the PyTorch neural network</b> by creating an algorithm to calculate weights, refining bot performance.
             </InnerCard>
           </>
+        </PageCard>
+        <PageCard
+          id={"experience"}
+          className={"flex flex-col gap-6"}
+          color={"orange"}
+          title={"Experience"}
+        >
+          <InnerCard
+            title={"Infosys"}
+            tools={"Software Engineering Internship"}
+            date={"Incoming Summer 2026"}
+          >
+            Excited to be integrating AI with the EdgeVerve team!
+          </InnerCard>
         </PageCard>
         <PageCard
           id={"contact"}
