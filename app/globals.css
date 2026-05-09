@@ -15,7 +15,7 @@
 
 @layer base {
   a {
-    @apply text-blue-600 dark:text-blue-300 hover:underline;
+    @apply text-blue-600 dark:text-blue-300 hover:underline hover:contrast-200;
   }
   html {
     @apply scroll-smooth;
