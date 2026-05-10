@@ -26,10 +26,10 @@ export function InnerCard({ title, link = "", tools = "", date = "", funFact = "
         {link !== "" ? (<a href={link} target="_blank">{title}</a>) : (title)}
       </span>
       {tools !== "" && (
-        <span className="ml-4 text-lg text-gray-500 dark:text-gray-400">{tools}</span>
+        <span className="ml-4 text-lg text-gray-600 dark:text-gray-400">{tools}</span>
       )}
       {date !== "" && (
-        <span className="float-right text-xl text-gray-600 dark:text-gray-300"><i>{date}</i></span>
+        <span className="float-right text-xl text-gray-700 dark:text-gray-300"><i>{date}</i></span>
       )}
       <p className="mb-2" />
       <p className="text-lg text-gray-800 dark:text-gray-200">
