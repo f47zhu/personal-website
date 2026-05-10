@@ -10,11 +10,11 @@ export default function Home() {
       <div className="text-xl m-4 text-medium font-medium">
         <p className="tracking-[2]">
           <a href="./resume" target="_blank"><span className="text-indigo-700 dark:text-indigo-300">Resume</span></a>
-          <span className="ml-6" />
+          &nbsp;&nbsp;&nbsp;
           <a href="#projects"><span className="text-red-700 dark:text-red-300">Projects</span></a>
-          <span className="ml-6" />
+          &nbsp;&nbsp;&nbsp;
           <a href="#experience"><span className="text-orange-700 dark:text-orange-300">Experience</span></a>
-          <span className="ml-6" />
+          &nbsp;&nbsp;&nbsp;
           <a href="#contact"><span className="text-yellow-700 dark:text-yellow-300">Contact</span></a>
         </p>
       </div>
