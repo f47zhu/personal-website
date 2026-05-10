@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { PageCard, InnerCard } from "./cards"
+import { RandomFunFact } from "./randomFunFact"
 
 export default function Home() {
   return (
@@ -123,6 +124,7 @@ export default function Home() {
             </a>
           </div>
         </PageCard>
+        <RandomFunFact />
       </div>
     </div>
   );
