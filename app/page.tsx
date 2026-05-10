@@ -3,20 +3,15 @@ import { PageCard, InnerCard } from "./cards"
 
 export default function Home() {
   return (
-    <div className="m-16 text-center font-medium text-black dark:text-white">
+    <div className="m-16 text-center text-pretty font-medium text-black dark:text-white">
       <p className="text-7xl">Franklin Zhu</p>
       <p className="my-4" />
       <p className="text-3xl animate-pulse">Software Engineering Student at the University of Waterloo</p>
-      <div className="text-xl m-4 text-medium font-medium">
-        <p className="tracking-[2]">
-          <a href="./resume" target="_blank"><span className="text-indigo-700 dark:text-indigo-300">Resume</span></a>
-          &nbsp;&nbsp;&nbsp;
-          <a href="#projects"><span className="text-red-700 dark:text-red-300">Projects</span></a>
-          &nbsp;&nbsp;&nbsp;
-          <a href="#experience"><span className="text-orange-700 dark:text-orange-300">Experience</span></a>
-          &nbsp;&nbsp;&nbsp;
-          <a href="#contact"><span className="text-yellow-700 dark:text-yellow-300">Contact</span></a>
-        </p>
+      <div className="flex flex-row place-content-center gap-6 text-xl tracking-[2] m-4 text-medium font-medium">
+        <a href="./resume" target="_blank"><span className="text-indigo-700 dark:text-indigo-300">Resume</span></a>
+        <a href="#projects"><span className="text-red-700 dark:text-red-300">Projects</span></a>
+        <a href="#experience"><span className="text-orange-700 dark:text-orange-300">Experience</span></a>
+        <a href="#contact"><span className="text-yellow-700 dark:text-yellow-300">Contact</span></a>
       </div>
       <p className="my-12" />
       <hr />
@@ -30,7 +25,7 @@ export default function Home() {
           <p className="text-xl text-gray-800 dark:text-gray-200">
             Hello!
             My name is Franklin and I'm a first-year undergraduate student studying Software Engineering at the University of Waterloo.
-            I'm extremely passionate about math, coding, and problem solving as a whole, and in my free time I love playing and conducting music.
+            I'm extremely passionate about <b>math, coding, and problem solving as a whole,</b> and in my free time I love <b>playing and conducting music.</b>
           </p>
         </PageCard>
         <PageCard
