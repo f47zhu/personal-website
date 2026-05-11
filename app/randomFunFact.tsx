@@ -1,3 +1,7 @@
+"use client"
+
+import { useState, useEffect } from 'react';
+
 const funFacts = [
   <>I used to <a href="https://osu.ppy.sh/users/10975777" target="_blank">play osu! tournaments.</a></>,
   <>My favourite colour has always been yellow.</>,
@@ -16,9 +20,15 @@ function randint(max: number) {
 }
 
 export function RandomFunFact() {
+  const [randIndex, setRandIndex] = useState(0);
+
+  useEffect(() => {
+    setRandIndex(randint(funFacts.length));
+  }, []);
+
   return (
     <div className="text-base text-center text-gray-600 dark:text-gray-400">
-      {funFacts[randint(funFacts.length)]}
+      {funFacts[randIndex]}
     </div>
   );
 }
