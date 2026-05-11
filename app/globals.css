@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: "/public/email-icon.png";
   --foreground: #171717;
   --scroll-behavior: smooth;
 }

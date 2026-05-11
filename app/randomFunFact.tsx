@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const funFacts = [
   <>I used to <a href="https://osu.ppy.sh/users/10975777" target="_blank">play osu! tournaments.</a></>,
@@ -21,13 +21,35 @@ function randint(max: number) {
 
 export function RandomFunFact() {
   const [randIndex, setRandIndex] = useState(0);
+  let timeDisplayed = useRef(0);
+
+  function setRandIndexFancy(now: number) {
+    let newIndex = randint(funFacts.length);
+    while (newIndex === randIndex) {
+      newIndex = randint(funFacts.length);
+    }
+    setRandIndex(newIndex);
+    timeDisplayed.current = now;
+  }
 
   useEffect(() => {
-    setRandIndex(randint(funFacts.length));
+    const cycleInterval = setInterval(() => {
+      let now = Date.now();
+      if (now - timeDisplayed.current > 5000) {
+        setRandIndexFancy(now);
+      }
+    }, 100);
+    return () => {
+      clearInterval(cycleInterval);
+    }
   }, []);
 
+  function handleClick() {
+    setRandIndexFancy(Date.now());
+  }
+
   return (
-    <div className="text-base text-center text-gray-600 dark:text-gray-400">
+    <div className="text-base text-center text-gray-600 dark:text-gray-400" onClick={handleClick}>
       {funFacts[randIndex]}
     </div>
   );
