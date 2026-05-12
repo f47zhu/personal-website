@@ -21,6 +21,7 @@ function randint(max: number) {
 
 export function RandomFunFact() {
   const [randIndex, setRandIndex] = useState(0);
+  const [factsSeen, setFactsSeen] = useState(new Set);
   let timeDisplayed = useRef(0);
 
   function setRandIndexFancy(now: number) {
@@ -29,20 +30,26 @@ export function RandomFunFact() {
       newIndex = randint(funFacts.length);
     }
     setRandIndex(newIndex);
+    
     timeDisplayed.current = now;
+
+    const newFactsSeen = new Set(factsSeen);
+    newFactsSeen.add(newIndex);
+    setFactsSeen(newFactsSeen);
   }
 
   useEffect(() => {
     const cycleInterval = setInterval(() => {
-      let now = Date.now();
+      const now = Date.now();
       if (now - timeDisplayed.current > 5000) {
         setRandIndexFancy(now);
       }
     }, 100);
+
     return () => {
       clearInterval(cycleInterval);
     }
-  }, []);
+  }, [factsSeen]);
 
   function handleClick() {
     setRandIndexFancy(Date.now());
@@ -51,6 +58,11 @@ export function RandomFunFact() {
   return (
     <div className="text-base text-center text-gray-600 dark:text-gray-400" onClick={handleClick}>
       {funFacts[randIndex]}
+      {(factsSeen.size === funFacts.length) && (
+        <div className="mt-4 text-gray-700 dark:text-gray-300">
+          Wow! You've seen all my fun facts! Have a cookie 🍪 :)
+        </div>
+      )}
     </div>
   );
 }
