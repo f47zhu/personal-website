@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
 const funFacts = [
   <>I used to <a href="https://osu.ppy.sh/users/10975777" target="_blank">play osu! tournaments.</a></>,
@@ -21,8 +21,9 @@ function randint(max: number) {
 
 export function RandomFunFact() {
   const [randIndex, setRandIndex] = useState(0);
-  let timeDisplayed = useRef(0);
   const [factsSeen, setFactsSeen] = useState(new Set);
+  const [currentScrollY, setCurrentScrollY] = useState(0);
+  let timeDisplayed = useRef(0);
 
   function setRandIndexFancy(now: number) {
     let newIndex = randint(funFacts.length);
@@ -40,8 +41,10 @@ export function RandomFunFact() {
 
   useEffect(() => {
     const cycleInterval = setInterval(() => {
+      setCurrentScrollY(window.scrollY);
+
       const now = Date.now();
-      if (now - timeDisplayed.current > 5000) {
+      if ((currentScrollY >= 1100) && (now - timeDisplayed.current > 5000)) {
         setRandIndexFancy(now);
       }
     }, 100);
@@ -49,7 +52,7 @@ export function RandomFunFact() {
     return () => {
       clearInterval(cycleInterval);
     }
-  }, [factsSeen]);
+  }, [factsSeen, currentScrollY]);
 
   function handleClick() {
     setRandIndexFancy(Date.now());

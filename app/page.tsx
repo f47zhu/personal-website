@@ -5,8 +5,7 @@ import { PageHeader } from "./header"
 export default function Home() {
   return <>
     <div className="m-16 mb-8 text-center text-pretty font-normal text-black dark:text-white">
-      <p className="text-7xl">Franklin Zhu</p>
-      <p className="my-4" />
+      <p className="text-7xl mb-4">Franklin Zhu</p>
       <p className="text-3xl animate-pulse">Software Engineering Student at the University of Waterloo</p>
     </div>
     <PageHeader />
