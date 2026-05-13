@@ -1,24 +1,19 @@
-import Image from "next/image";
 import { PageCard, InnerCard } from "./cards"
 import { RandomFunFact } from "./randomFunFact"
+import { PageHeader } from "./header"
 
 export default function Home() {
-  return (
-    <div className="m-16 text-center text-pretty font-medium text-black dark:text-white">
+  return <>
+    <div className="m-16 mb-8 text-center text-pretty font-normal text-black dark:text-white">
       <p className="text-7xl">Franklin Zhu</p>
       <p className="my-4" />
       <p className="text-3xl animate-pulse">Software Engineering Student at the University of Waterloo</p>
-      <div className="flex flex-row place-content-center gap-6 text-xl tracking-[2] m-4 text-medium font-medium">
-        <a href="./resume" target="_blank"><span className="text-indigo-700 dark:text-indigo-300">Resume</span></a>
-        <a href="#projects"><span className="text-red-700 dark:text-red-300">Projects</span></a>
-        <a href="#experience"><span className="text-orange-700 dark:text-orange-300">Experience</span></a>
-        <a href="#contact"><span className="text-yellow-700 dark:text-yellow-300">Contact</span></a>
-      </div>
-      <p className="my-12" />
-      <hr />
-      <p className="my-12" />
+    </div>
+    <PageHeader />
+    <div className="m-16 mt-8">
       <div className="flex flex-col gap-8 place-content-center text-left">
         <PageCard
+          nextId={"projects"}
           color={"green"}
           title={"About Me"}
         >
@@ -30,7 +25,7 @@ export default function Home() {
           </p>
         </PageCard>
         <PageCard
-          id={"projects"}
+          nextId={"experience"}
           className={"flex flex-col gap-6"}
           color={"red"}
           title={"Projects"}
@@ -70,7 +65,7 @@ export default function Home() {
           </>
         </PageCard>
         <PageCard
-          id={"experience"}
+          nextId={"contact"}
           className={"flex flex-col gap-6"}
           color={"orange"}
           title={"Experience"}
@@ -84,14 +79,13 @@ export default function Home() {
           </InnerCard>
         </PageCard>
         <PageCard
-          id={"contact"}
           className={"flex flex-col gap-6"}
           color={"yellow"}
           title={"Contact"}
         >
           <div className="grid grid-cols-4 gap-4 place-items-center">
             <a href="sms:4168228844" target="_blank">
-              <div className="p-2 hover:bg-yellow-200 hover:dark:bg-gray-800">
+              <div className="p-2 hover:bg-gray-400 hover:dark:bg-gray-600">
                 <img src="./telephone-icon.webp" className="my-7 mx-10 size-20 dark:invert" />
                 <div className="m-4 text-xl text-center">
                   (416) 822-8844
@@ -99,7 +93,7 @@ export default function Home() {
               </div>
             </a>
             <a href="mailto:franklinzhu0905@gmail.com" target="_blank">
-              <div className="p-2 hover:bg-yellow-200 hover:dark:bg-gray-800">
+              <div className="p-2 hover:bg-gray-400 hover:dark:bg-gray-600">
                 <img src="./email-icon.png" className="my-7 mx-10 size-20 dark:invert" />
                 <div className="m-4 text-xl text-center">
                   franklinzhu0905@gmail.com
@@ -107,7 +101,7 @@ export default function Home() {
               </div>
             </a>
             <a href="https://github.com/f47zhu" target="_blank">
-              <div className="p-2 hover:bg-yellow-200 hover:dark:bg-gray-800">
+              <div className="p-2 hover:bg-gray-400 hover:dark:bg-gray-600">
                 <img src="./github-logo.svg" className="my-7 mx-10 size-20 dark:invert" />
                 <div className="m-4 text-xl text-center">
                   GitHub
@@ -115,7 +109,7 @@ export default function Home() {
               </div>
             </a>
             <a href="https://www.linkedin.com/in/f47zhu" target="_blank">
-              <div className="p-2 hover:bg-yellow-200 hover:dark:bg-gray-800">
+              <div className="p-2 hover:bg-gray-400 hover:dark:bg-gray-600">
                 <img src="./linkedin-logo.webp" className="my-7 mx-10 size-20" />
                 <div className="m-4 text-xl text-center">
                   LinkedIn
@@ -127,5 +121,5 @@ export default function Home() {
         <RandomFunFact />
       </div>
     </div>
-  );
+  </>;
 }

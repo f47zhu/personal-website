@@ -1,5 +1,5 @@
-export function PageCard({ id = "", className = "", color, title, children }:
-    { id?: string, className?: string, color: string, title: string, children: React.ReactNode }) {
+export function PageCard({ nextId = "", className = "", color, title, children }:
+    { nextId?: string, className?: string, color: string, title: string, children: React.ReactNode }) {
   const colorVariants: Record<string, string> = {
     bordergreen: "border-green-700 dark:border-green-300",
     textgreen: "text-green-800 dark:text-green-200",
@@ -11,9 +11,10 @@ export function PageCard({ id = "", className = "", color, title, children }:
     textorange: "text-orange-800 dark:text-orange-200"
   };
   return (
-    <div id={id} className={`border-4 p-6 ${colorVariants["border" + color]} ${className}`}>
-      <p className={`text-4xl ${colorVariants["text" + color]}`}>{title}</p>
+    <div className={`border-4 p-6 ${colorVariants["border" + color]} ${className}`}>
+      <p className={`text-4xl font-[575] ${colorVariants["text" + color]}`}>{title}</p>
       {children}
+      {(nextId !== "") && <span id={nextId} />}
     </div>
   );
 }
@@ -22,7 +23,7 @@ export function InnerCard({ title, link = "", tools = "", date = "", funFact = "
     { title: string, link?: string, tools?: string, date?: string, funFact?: string | React.ReactNode, children: React.ReactNode }) {
   return (
     <div className="border-2 p-4 border-gray-900 dark:border-gray-100">
-      <span className="text-2xl">
+      <span className="text-2xl font-medium">
         {link !== "" ? (<a href={link} target="_blank">{title}</a>) : (title)}
       </span>
       {tools !== "" && (

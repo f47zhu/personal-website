@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: "/public/email-icon.png";
+  --background: #ffffff;
   --foreground: #171717;
   --scroll-behavior: smooth;
 }
@@ -15,7 +15,7 @@
 
 @layer base {
   a {
-    @apply text-blue-600 dark:text-blue-300 hover:underline hover:contrast-200;
+    @apply text-blue-600 dark:text-blue-300 hover:contrast-200;
   }
   html {
     @apply scroll-smooth;

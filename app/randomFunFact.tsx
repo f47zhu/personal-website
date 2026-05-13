@@ -21,8 +21,8 @@ function randint(max: number) {
 
 export function RandomFunFact() {
   const [randIndex, setRandIndex] = useState(0);
-  const [factsSeen, setFactsSeen] = useState(new Set);
   let timeDisplayed = useRef(0);
+  const [factsSeen, setFactsSeen] = useState(new Set);
 
   function setRandIndexFancy(now: number) {
     let newIndex = randint(funFacts.length);
@@ -59,7 +59,7 @@ export function RandomFunFact() {
     <div className="text-base text-center text-gray-600 dark:text-gray-400" onClick={handleClick}>
       {funFacts[randIndex]}
       {(factsSeen.size === funFacts.length) && (
-        <div className="mt-4 text-gray-700 dark:text-gray-300">
+        <div className="mt-3 text-gray-700 dark:text-gray-300">
           Wow! You've seen all my fun facts! Have a cookie 🍪 :)
         </div>
       )}
