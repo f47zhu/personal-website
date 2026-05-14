@@ -16,14 +16,16 @@ function HeaderElement( {link, title, color}: {link: string, title: string, colo
 }
 
 export function PageHeader() {
-  return <>
-    <span id={"about"} />
-    <header className="z-50 h-15 sticky top-0 border-b-2 grid grid-cols-5 overflow-hidden place-items-center text-xl tracking-[2] font-extrabold bg-white dark:bg-black">
-        <HeaderElement link="./resume" title="Resume" color="indigo" />
-        <HeaderElement link="#about" title="About Me" color="green" />
-        <HeaderElement link="#projects" title="Projects" color="red" />
-        <HeaderElement link="#experience" title="Experience" color="orange" />
-        <HeaderElement link="#contact" title="Contact" color="yellow" />
-    </header>
-  </>;
+  return (
+    <>
+      <span id={"about"} />
+      <header className="z-50 h-15 sticky top-0 border-b-2 grid grid-cols-5 overflow-hidden place-items-center text-xl tracking-[2] font-extrabold bg-white dark:bg-black animate-fade-in-delay0.75s">
+          <HeaderElement link="./resume" title="Resume" color="indigo" />
+          <HeaderElement link="#about" title="About Me" color="green" />
+          <HeaderElement link="#projects" title="Projects" color="red" />
+          <HeaderElement link="#experience" title="Experience" color="orange" />
+          <HeaderElement link="#contact" title="Contact" color="yellow" />
+      </header>
+    </>
+  );
 }
