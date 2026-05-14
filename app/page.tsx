@@ -12,7 +12,6 @@ export default function Home() {
     <div className="m-16 mt-8">
       <div className="flex flex-col gap-8 place-content-center text-left">
         <PageCard
-          nextId={"projects"}
           color={"green"}
           title={"About Me"}
         >
@@ -21,10 +20,10 @@ export default function Home() {
             Hello!
             My name is Franklin and I'm a first-year undergraduate student studying Software Engineering at the University of Waterloo.
             I'm extremely passionate about <b>math, coding, and problem solving as a whole,</b> and in my free time I love <b>playing and conducting music.</b>
+            <span id="projects" />
           </p>
         </PageCard>
         <PageCard
-          nextId={"experience"}
           className={"flex flex-col gap-6"}
           color={"red"}
           title={"Projects"}
@@ -60,11 +59,11 @@ export default function Home() {
             >
               An AI chess bot powered by adaptive moment estimation and mean squared error loss, built for <i>ChessHacks.</i>
               &nbsp;<b>Trained the PyTorch neural network</b> by creating an algorithm to calculate weights, refining bot performance.
+              <span id="experience" />
             </InnerCard>
           </>
         </PageCard>
         <PageCard
-          nextId={"contact"}
           className={"flex flex-col gap-6"}
           color={"orange"}
           title={"Experience"}
@@ -75,6 +74,7 @@ export default function Home() {
             date={"Incoming Summer 2026"}
           >
             Excited to be integrating AI with the EdgeVerve team!
+            <span id="contact" />
           </InnerCard>
         </PageCard>
         <PageCard

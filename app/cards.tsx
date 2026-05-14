@@ -1,5 +1,5 @@
-export function PageCard({ nextId = "", className = "", color, title, children }:
-    { nextId?: string, className?: string, color: string, title: string, children: React.ReactNode }) {
+export function PageCard({ className = "", color, title, children }:
+    { className?: string, color: string, title: string, children: React.ReactNode }) {
   const colorVariants: Record<string, string> = {
     bordergreen: "border-green-700 dark:border-green-300",
     textgreen: "text-green-800 dark:text-green-200",
@@ -14,7 +14,6 @@ export function PageCard({ nextId = "", className = "", color, title, children }
     <div className={`border-4 p-6 ${colorVariants["border" + color]} ${className}`}>
       <p className={`text-4xl font-[575] ${colorVariants["text" + color]}`}>{title}</p>
       {children}
-      {(nextId !== "") && <span id={nextId} />}
     </div>
   );
 }
