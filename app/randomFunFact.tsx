@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react";
+import { FunHighlight } from "./waveEffect";
 
 const funFacts = [
   <>I used to <a href="https://osu.ppy.sh/users/10975777" target="_blank">play osu! tournaments.</a></>,
@@ -63,7 +64,7 @@ export function RandomFunFact() {
       {funFacts[randIndex]}
       {(factsSeen.size === funFacts.length) && (
         <div className="mt-3 text-gray-700 dark:text-gray-300">
-          Wow! You've seen all my fun facts! Have a cookie 🍪 :)
+          <FunHighlight text="Wow!" /> You've seen all my fun facts! Have a cookie 🍪 :)
         </div>
       )}
     </div>

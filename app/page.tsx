@@ -1,13 +1,18 @@
 import { PageCard, InnerCard } from "./cards"
 import { RandomFunFact } from "./randomFunFact"
 import { PageHeader } from "./header"
+import { WaveEffect, FunHighlight } from "./waveEffect";
 
 export default function Home() {
   return (
     <>
       <div className="m-16 mb-8 text-center text-pretty font-normal text-black dark:text-white animate-fade-in-length0.75s">
-        <p className="text-7xl mb-4">Franklin Zhu</p>
-        <p className="text-3xl animate-pulse">Software Engineering Student at the University of Waterloo</p>
+        <div className="text-7xl mb-4 text-red-700 dark:text-red-300">
+          <WaveEffect text="Franklin Zhu" />
+        </div>
+        <div className="text-3xl text-red-900 dark:text-red-100">
+          <WaveEffect text="Software Engineering Student at the University of Waterloo" />
+        </div>
       </div>
       <PageHeader />
       <div className="animate-fade-in-from-bottom-length0.75s-delay0.75s">
@@ -18,12 +23,13 @@ export default function Home() {
               title={"About Me"}
             >
               <p className="mt-3" />
-              <p className="text-xl text-gray-800 dark:text-gray-200">
+              <div className="text-xl text-gray-800 dark:text-gray-200">
                 Hello!
-                My name is Franklin and I'm a first-year undergraduate student studying Software Engineering at the University of Waterloo.
-                I'm extremely passionate about <b>math, coding, and problem solving as a whole,</b> and in my free time I love <b>playing and conducting music.</b>
+                My name is Franklin (he/him) and I'm a first-year undergraduate student studying Software Engineering at the University of Waterloo.
+                I'm extremely passionate about <FunHighlight text="math, coding, and problem solving as a whole," /> and in my free time
+                I love <FunHighlight text="playing and conducting music." />
                 <span id="projects" />
-              </p>
+              </div>
             </PageCard>
             <PageCard
               className={"flex flex-col gap-6"}

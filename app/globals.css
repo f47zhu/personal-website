@@ -17,7 +17,37 @@
   --animate-fade-in-length0.75s: fade-in 0.75s ease-out both;
   --animate-fade-in-length0.75s-delay0.75s: fade-in 0.75s ease-out 0.75s both;
   --animate-fade-in-from-bottom-length0.75s-delay0.75s: fade-in-from-bottom 0.75s ease-out 0.75s both;
-  
+  --animate-wave-length3s: wave 3s ease-in-out infinite;
+  --animate-wave-length3s-delay0.1s: wave 3s ease-in-out -2.9s infinite; /* have not found an */
+  --animate-wave-length3s-delay0.2s: wave 3s ease-in-out -2.8s infinite; /* easier way to do  */
+  --animate-wave-length3s-delay0.3s: wave 3s ease-in-out -2.7s infinite; /* this so far       */
+  --animate-wave-length3s-delay0.4s: wave 3s ease-in-out -2.6s infinite;
+  --animate-wave-length3s-delay0.5s: wave 3s ease-in-out -2.5s infinite;
+  --animate-wave-length3s-delay0.6s: wave 3s ease-in-out -2.4s infinite;
+  --animate-wave-length3s-delay0.7s: wave 3s ease-in-out -2.3s infinite;
+  --animate-wave-length3s-delay0.8s: wave 3s ease-in-out -2.2s infinite;
+  --animate-wave-length3s-delay0.9s: wave 3s ease-in-out -2.1s infinite;
+  --animate-wave-length3s-delay1.0s: wave 3s ease-in-out -2.0s infinite;
+  --animate-wave-length3s-delay1.1s: wave 3s ease-in-out -1.9s infinite;
+  --animate-wave-length3s-delay1.2s: wave 3s ease-in-out -1.8s infinite;
+  --animate-wave-length3s-delay1.3s: wave 3s ease-in-out -1.7s infinite;
+  --animate-wave-length3s-delay1.4s: wave 3s ease-in-out -1.6s infinite;
+  --animate-wave-length3s-delay1.5s: wave 3s ease-in-out -1.5s infinite;
+  --animate-wave-length3s-delay1.6s: wave 3s ease-in-out -1.4s infinite;
+  --animate-wave-length3s-delay1.7s: wave 3s ease-in-out -1.3s infinite;
+  --animate-wave-length3s-delay1.8s: wave 3s ease-in-out -1.2s infinite;
+  --animate-wave-length3s-delay1.9s: wave 3s ease-in-out -1.1s infinite;
+  --animate-wave-length3s-delay2.0s: wave 3s ease-in-out -1.0s infinite;
+  --animate-wave-length3s-delay2.1s: wave 3s ease-in-out -0.9s infinite;
+  --animate-wave-length3s-delay2.2s: wave 3s ease-in-out -0.8s infinite;
+  --animate-wave-length3s-delay2.3s: wave 3s ease-in-out -0.7s infinite;
+  --animate-wave-length3s-delay2.4s: wave 3s ease-in-out -0.6s infinite;
+  --animate-wave-length3s-delay2.5s: wave 3s ease-in-out -0.5s infinite;
+  --animate-wave-length3s-delay2.6s: wave 3s ease-in-out -0.4s infinite;
+  --animate-wave-length3s-delay2.7s: wave 3s ease-in-out -0.3s infinite;
+  --animate-wave-length3s-delay2.8s: wave 3s ease-in-out -0.2s infinite;
+  --animate-wave-length3s-delay2.9s: wave 3s ease-in-out -0.1s infinite;
+
   @keyframes fade-in {
     from {
       opacity: 0;
@@ -33,6 +63,14 @@
     } to {
       opacity: 100;
       transform: translate(0, 0);
+    }
+  }
+  @keyframes wave {
+    from {
+      filter: hue-rotate(0deg);
+    }
+    to {
+      filter: hue-rotate(360deg);
     }
   }
 }

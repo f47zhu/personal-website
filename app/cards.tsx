@@ -36,7 +36,7 @@ export function InnerCard({ title, link = "", tools = "", date = "", funFact = "
         <span className="float-right text-xl text-gray-700 dark:text-gray-300"><i>{date}</i></span>
       )}
       <p className="mb-2" />
-      <p className="text-lg text-gray-800 dark:text-gray-200">
+      <div className="text-lg text-gray-800 dark:text-gray-200">
         {children}
         {funFact !== "" && (
           <>
@@ -44,7 +44,7 @@ export function InnerCard({ title, link = "", tools = "", date = "", funFact = "
             <span className="text-xs">{funFact}</span>
           </>
         )}
-      </p>
+      </div>
     </div>
   );
 }
