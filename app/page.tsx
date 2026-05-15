@@ -6,16 +6,16 @@ import { WaveEffect, FunHighlight } from "./waveEffect";
 export default function Home() {
   return (
     <>
-      <div className="m-16 mb-8 text-center text-pretty font-normal text-black dark:text-white animate-fade-in-length0.75s">
-        <div className="text-7xl mb-4 text-red-700 dark:text-red-300">
+      <div className="m-16 mb-8 text-center text-pretty font-normal text-black dark:text-white">
+        <div className="text-7xl mb-4 text-red-800 dark:text-red-200 animate-fade-in-length0.75s">
           <WaveEffect text="Franklin Zhu" />
         </div>
-        <div className="text-3xl text-red-900 dark:text-red-100">
+        <div className="text-3xl text-red-800 dark:text-red-200 brightness-85 animate-fade-in-length0.75s-delay0.375s">
           <WaveEffect text="Software Engineering Student at the University of Waterloo" />
         </div>
       </div>
       <PageHeader />
-      <div className="animate-fade-in-from-bottom-length0.75s-delay0.75s">
+      <div className="animate-fade-in-from-bottom-length0.375s-delay0.75s">
         <div className="m-16 mt-8">
           <div className="flex flex-col gap-8 place-content-center text-left">
             <PageCard

@@ -19,7 +19,7 @@ export function PageHeader() {
   return (
     <>
       <span id={"about"} />
-      <header className="z-50 h-15 sticky top-0 border-b-2 grid grid-cols-5 overflow-hidden place-items-center text-xl tracking-[2] font-extrabold bg-white dark:bg-black animate-fade-in-length0.75s-delay0.75s">
+      <header className="z-50 h-15 sticky top-0 border-b-2 grid grid-cols-5 overflow-hidden place-items-center text-xl tracking-[2] font-extrabold bg-white dark:bg-black animate-fade-in-length0.375s-delay0.75s">
           <HeaderElement link="./resume" title="Resume" color="indigo" />
           <HeaderElement link="#about" title="About Me" color="green" />
           <HeaderElement link="#projects" title="Projects" color="red" />
