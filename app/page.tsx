@@ -5,12 +5,12 @@ import { PageHeader } from "./header"
 export default function Home() {
   return (
     <>
-      <div className="m-16 mb-8 text-center text-pretty font-normal text-black dark:text-white animate-fade-in">
+      <div className="m-16 mb-8 text-center text-pretty font-normal text-black dark:text-white animate-fade-in-length0.75s">
         <p className="text-7xl mb-4">Franklin Zhu</p>
         <p className="text-3xl animate-pulse">Software Engineering Student at the University of Waterloo</p>
       </div>
       <PageHeader />
-      <div className="animate-fade-in-from-bottom-delay0.75s">
+      <div className="animate-fade-in-from-bottom-length0.75s-delay0.75s">
         <div className="m-16 mt-8">
           <div className="flex flex-col gap-8 place-content-center text-left">
             <PageCard
@@ -86,7 +86,7 @@ export default function Home() {
             >
               <div className="grid grid-cols-4 gap-4 place-items-center">
                 <a href="sms:4168228844" target="_blank">
-                  <div className="p-2 hover:bg-gray-400 hover:dark:bg-gray-600">
+                  <div className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
                     <img src="./telephone-icon.webp" className="my-7 mx-10 size-20 dark:invert" />
                     <div className="m-4 text-xl text-center">
                       (416) 822-8844
@@ -94,7 +94,7 @@ export default function Home() {
                   </div>
                 </a>
                 <a href="mailto:franklinzhu0905@gmail.com" target="_blank">
-                  <div className="p-2 hover:bg-gray-400 hover:dark:bg-gray-600">
+                  <div className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
                     <img src="./email-icon.png" className="my-7 mx-10 size-20 dark:invert" />
                     <div className="m-4 text-xl text-center">
                       franklinzhu0905@gmail.com
@@ -102,7 +102,7 @@ export default function Home() {
                   </div>
                 </a>
                 <a href="https://github.com/f47zhu" target="_blank">
-                  <div className="p-2 hover:bg-gray-400 hover:dark:bg-gray-600">
+                  <div className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
                     <img src="./github-logo.svg" className="my-7 mx-10 size-20 dark:invert" />
                     <div className="m-4 text-xl text-center">
                       GitHub
@@ -110,7 +110,7 @@ export default function Home() {
                   </div>
                 </a>
                 <a href="https://www.linkedin.com/in/f47zhu" target="_blank">
-                  <div className="p-2 hover:bg-gray-400 hover:dark:bg-gray-600">
+                  <div className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
                     <img src="./linkedin-logo.webp" className="my-7 mx-10 size-20" />
                     <div className="m-4 text-xl text-center">
                       LinkedIn

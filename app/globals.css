@@ -14,10 +14,10 @@
 }
 
 @theme {
-  --animate-fade-in: fade-in 1.5s ease-out both;
-  --animate-fade-in-delay0.75s: fade-in 1.5s ease-out 0.75s both;
-  --animate-fade-in-from-bottom-delay0.75s: fade-in-from-bottom 1s ease-out 0.75s both;
-
+  --animate-fade-in-length0.75s: fade-in 0.75s ease-out both;
+  --animate-fade-in-length0.75s-delay0.75s: fade-in 0.75s ease-out 0.75s both;
+  --animate-fade-in-from-bottom-length0.75s-delay0.75s: fade-in-from-bottom 0.75s ease-out 0.75s both;
+  
   @keyframes fade-in {
     from {
       opacity: 0;
@@ -29,7 +29,7 @@
   @keyframes fade-in-from-bottom {
     from {
       opacity: 0;
-      transform: translate(0, 10%);
+      transform: translate(0, 5%);
     } to {
       opacity: 100;
       transform: translate(0, 0);
@@ -39,7 +39,7 @@
 
 @layer base {
   a {
-    @apply text-blue-600 dark:text-blue-300 hover:contrast-200;
+    @apply text-blue-600 dark:text-blue-300 hover:brightness-150 hover:scale-105 transition-transform ease-in-out;
   }
   html {
     @apply scroll-smooth;
