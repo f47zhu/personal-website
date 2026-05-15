@@ -15,7 +15,7 @@ export function PageCard({ className = "", color, title, children }:
     bgorange: "bg-[#DFEFFF] dark:bg-[#201000]"
   };
   return (
-    <div className={`p-8 border-2 ${colorVariants["border" + color]} ${colorVariants["bg" + color]} ${className}`}>
+    <div className={`p-8 border-2 rounded-2xl ${colorVariants["border" + color]} ${colorVariants["bg" + color]} ${className}`}>
       <p className={`text-4xl font-[575] ${colorVariants["text" + color]}`}>{title}</p>
       {children}
     </div>
@@ -25,7 +25,7 @@ export function PageCard({ className = "", color, title, children }:
 export function InnerCard({ title, link = "", tools = "", date = "", funFact = "", children }:
     { title: string, link?: string, tools?: string, date?: string, funFact?: string | React.ReactNode, children: React.ReactNode }) {
   return (
-    <div className="border-2 p-6 bg-white dark:bg-black border-gray-400 dark:border-gray-600">
+    <div className="border-2 rounded-2xl p-6 bg-white dark:bg-black border-gray-400 dark:border-gray-600">
       <span className="text-2xl font-medium">
         {link !== "" ? (<a href={link} target="_blank">{title}</a>) : (title)}
       </span>
