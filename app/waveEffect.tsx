@@ -34,15 +34,13 @@ const animations = [
 export function WaveEffect({ text }: { text: string }) {
   const words = text.split(" ");
   let idx2 = 0;
-  return words.map((word, idx1) =>
-    <span key={idx1}>
-      {(idx1 !== 0 && ++idx2) && <div className="inline-flex flex-wrap">&nbsp;</div>}
-      <div className="inline-flex flex-wrap">
-        {word.split("").map(c =>
-          <div key={idx2} className={`inline-block whitespace-pre-wrap ${animations[idx2++ % animations.length]}`}>{c}</div>
-        )}
-      </div>
-    </span>
+  return words.map((word, idx1) => 
+    <div key={idx1} className="inline-flex flex-wrap">
+      {word.split("").map(c =>
+        <div key={idx2} className={`inline-block whitespace-pre-wrap ${animations[idx2++ % animations.length]}`}>{c}</div>
+      )}
+      {((idx1 !== words.length - 1) && (++idx2)) && <>&nbsp;</>}
+    </div>
   );
 }
 
