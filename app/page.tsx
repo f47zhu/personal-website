@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { PageCard, InnerCard } from "./cards"
 import { RandomFunFact } from "./randomFunFact"
 import { PageHeader } from "./header"
@@ -21,13 +23,18 @@ export default function Home() {
             color={"green"}
             title={"About Me"}
           >
-            <p className="mt-3" />
-            <div className="text-xl text-gray-800 dark:text-gray-200">
-              Hello!
-              My name is Franklin (he/him) and I'm a first-year undergraduate student studying Software Engineering at the University of Waterloo.
-              I'm extremely passionate about <FunHighlight text="math, coding, and problem solving as a whole," /> and in my free time
-              I love <FunHighlight text="playing and conducting music." />
-              <span id="projects" />
+            <div className="flex mt-3 text-xl text-gray-800 dark:text-gray-200">
+              <div>
+                Hello!
+                My name is Franklin (he/him) and I'm a first-year undergraduate student studying Software Engineering at the University of Waterloo.
+                I'm extremely passionate about <FunHighlight text="math, coding, and problem solving as a whole," /> and in my free time
+                I love <FunHighlight text="playing and conducting music." />
+                <span id="projects" />
+              </div>
+              <Image
+                className="z-10 relative float-right object-cover size-75 object-[70%] rounded-full top-5 left-10 -m-20 -ml-4 border-2 border-green-700 dark:border-green-300"
+                src={"/selfies/me-conducting.jpg"} alt="test" width="200" height="200"
+              />
             </div>
           </PageCard>
           <PageCard

@@ -8,7 +8,7 @@ function HeaderElement( {link, title, color}: {link: string, title: string, colo
   };
   return (
     <a href={link} target={(link[0] !== '#') ? "_blank" : ""}>
-      <div className={`px-[2vw] py-[2vh] text-center hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
+      <div className={`px-[2vw] py-[2vh] text-center truncate hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
         {title}
       </div>
     </a>
