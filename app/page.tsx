@@ -1,9 +1,8 @@
-import Image from "next/image";
-
 import { PageCard, InnerCard } from "./cards"
 import { RandomFunFact } from "./randomFunFact"
 import { PageHeader } from "./header"
 import { WaveEffect, FunHighlight } from "./waveEffect";
+import { CircleCarousel } from "./circleCarousel";
 
 export default function Home() {
   return (
@@ -31,10 +30,24 @@ export default function Home() {
                 I love <FunHighlight text="playing and conducting music." />
                 <span id="projects" />
               </div>
-              <Image
-                className="z-10 relative float-right object-cover size-75 object-[70%] rounded-full top-5 left-10 -m-20 -ml-4 border-2 border-green-700 dark:border-green-300"
-                src={"/selfies/me-conducting.jpg"} alt="test" width="200" height="200"
-              />
+              <div className="z-10 relative float-right top-5 left-10 -m-20 -ml-4 flex-none size-75">
+                <CircleCarousel
+                  images={[
+                    <img
+                      className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
+                      src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
+                    />,
+                    <img
+                      className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
+                      src={"/selfies/me-ziplining.jpg"} alt="Me ziplining over a river"
+                    />,
+                    <img
+                      className="rounded-full size-75 object-cover object-[60%_0%] border-2 border-green-700 dark:border-green-300"
+                      src={"/selfies/me-with-a-bear.png"} alt="Me posing with a bear statue"
+                    />
+                  ]}
+                />
+              </div>
             </div>
           </PageCard>
           <PageCard
