@@ -26,14 +26,14 @@ export function RandomFunFact() {
   const [currentScrollY, setCurrentScrollY] = useState(0);
   let timeDisplayed = useRef(0);
 
-  function setRandIndexFancy(now: number) {
+  function setRandIndexFancy() {
     let newIndex = randint(funFacts.length);
     while (newIndex === randIndex) {
       newIndex = randint(funFacts.length);
     }
     setRandIndex(newIndex);
     
-    timeDisplayed.current = now;
+    timeDisplayed.current = Date.now();
 
     const newFactsSeen = new Set(factsSeen);
     newFactsSeen.add(newIndex);
@@ -44,9 +44,8 @@ export function RandomFunFact() {
     const cycleInterval = setInterval(() => {
       setCurrentScrollY(window.scrollY);
 
-      const now = Date.now();
-      if ((currentScrollY >= 1100) && (now - timeDisplayed.current > 5000)) {
-        setRandIndexFancy(now);
+      if ((currentScrollY >= 1400) && (Date.now() - timeDisplayed.current > 5000)) {
+        setRandIndexFancy();
       }
     }, 100);
 
@@ -55,18 +54,16 @@ export function RandomFunFact() {
     }
   }, [factsSeen, currentScrollY]);
 
-  function handleClick() {
-    setRandIndexFancy(Date.now());
-  }
-
   return (
-    <div className="text-base text-center text-gray-600 dark:text-gray-400" onClick={handleClick}>
-      {funFacts[randIndex]}
+    <>
+      <div className="text-base text-center text-gray-600 dark:text-gray-400 hover:cursor-pointer" onClick={setRandIndexFancy}>
+        {funFacts[randIndex]}
+      </div>
       {(factsSeen.size === funFacts.length) && (
-        <div className="mt-3 text-gray-700 dark:text-gray-300">
+        <div className="-mt-6 text-base text-center text-gray-700 dark:text-gray-300">
           <FunHighlight text="Wow!" /> You've seen all my fun facts! Have a cookie 🍪 :)
         </div>
       )}
-    </div>
+    </>
   );
 }
