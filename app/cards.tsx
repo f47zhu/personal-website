@@ -1,5 +1,13 @@
+"use client"
+
+import { useInView } from "react-intersection-observer";
+
 export function PageCard({ className = "", color, title, children }:
     { className?: string, color: string, title: string, children: React.ReactNode }) {
+  const [ref, inView] = useInView({
+    threshold: 0
+  })
+  
   const colorVariants: Record<string, string> = {
     bordergreen: "border-green-700 dark:border-green-300",
     textgreen: "text-green-800 dark:text-green-200",
@@ -14,8 +22,9 @@ export function PageCard({ className = "", color, title, children }:
     textorange: "text-orange-800 dark:text-orange-200",
     bgorange: "bg-[#DFEFFF] dark:bg-[#201000]"
   };
+
   return (
-    <div className={`p-8 border-2 rounded-2xl ${colorVariants["border" + color]} ${colorVariants["bg" + color]} ${className}`}>
+    <div ref={ref} className={`${inView ? "animate-fade-in-from-left-length0.75s" : "invisible"} p-8 border-2 rounded-2xl ${colorVariants["border" + color]} ${colorVariants["bg" + color]} ${className}`}>
       <p className={`text-4xl font-[575] ${colorVariants["text" + color]}`}>{title}</p>
       {children}
     </div>
