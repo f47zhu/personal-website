@@ -30,12 +30,16 @@ export default function Home() {
                 I love <FunHighlight text="playing and conducting music." />
                 <span id="projects" />
               </div>
-              <div className="z-10 relative float-right top-5 left-10 -m-20 -ml-4 flex-none size-75">
+              <div className="hidden md:block z-10 relative float-right top-5 left-10 -m-20 -ml-4 flex-none size-75">
                 <CircleCarousel
                   images={[
                     <img
                       className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
                       src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
+                    />,
+                    <img
+                      className="rounded-full size-75 object-cover object-left border-2 border-green-700 dark:border-green-300"
+                      src={"/selfies/me-playing-the-flute.jpg"} alt="Me playing the flute"
                     />,
                     <img
                       className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
@@ -47,6 +51,7 @@ export default function Home() {
                     />
                   ]}
                 />
+                
               </div>
             </div>
           </PageCard>
@@ -105,39 +110,38 @@ export default function Home() {
             </InnerCard>
           </PageCard>
           <PageCard
-            className={"flex flex-col gap-6"}
             color={"yellow"}
             title={"Contact"}
           >
-            <div className="grid grid-cols-4 gap-4 place-items-center">
+            <div className="grid grid-rows-2 grid-cols-2 md:grid-rows-none md:grid-cols-4 mt-3 -mb-4 gap-8 place-items-center">
               <a href="sms:4168228844" target="_blank">
-                <div className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
-                  <img src="./telephone-icon.webp" className="my-7 mx-10 size-20 dark:invert" />
-                  <div className="m-4 text-xl text-center">
+                <div className="flex flex-col place-items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
+                  <img src="./telephone-icon.webp" className="m-4 size-[50%] dark:invert" />
+                  <div className="m-4 text-lg text-center">
                     (416) 822-8844
                   </div>
                 </div>
               </a>
               <a href="mailto:franklinzhu0905@gmail.com" target="_blank">
-                <div className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
-                  <img src="./email-icon.png" className="my-7 mx-10 size-20 dark:invert" />
-                  <div className="m-4 text-xl text-center">
+                <div className="flex flex-col place-items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
+                  <img src="./email-icon.png" className="m-4 size-[30%] place-self-center dark:invert" />
+                  <div className="m-4 text-lg text-center">
                     franklinzhu0905@gmail.com
                   </div>
                 </div>
               </a>
               <a href="https://github.com/f47zhu" target="_blank">
-                <div className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
-                  <img src="./github-logo.svg" className="my-7 mx-10 size-20 dark:invert" />
-                  <div className="m-4 text-xl text-center">
+                <div className="flex flex-col place-items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
+                  <img src="./github-logo.svg" className="m-4 size-[50%] dark:invert" />
+                  <div className="m-4 text-lg text-center">
                     GitHub
                   </div>
                 </div>
               </a>
               <a href="https://www.linkedin.com/in/f47zhu" target="_blank">
-                <div className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
-                  <img src="./linkedin-logo.webp" className="my-7 mx-10 size-20" />
-                  <div className="m-4 text-xl text-center">
+                <div className="flex flex-col place-items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
+                  <img src="./linkedin-logo.webp" className="m-4 size-[50%]" />
+                  <div className="m-4 text-lg text-center">
                     LinkedIn
                   </div>
                 </div>
