@@ -2,11 +2,11 @@
 
 import { useInView } from "react-intersection-observer";
 
-export function PageCard({ className = "", color, title, children }:
-    { className?: string, color: string, title: string, children: React.ReactNode }) {
+export function PageCard({ className = "", color, title, children, animation = "fromLeft" }:
+    { className?: string, color: string, title: string, children: React.ReactNode, animation?: string }) {
   const [ref, inView] = useInView({
     threshold: 0
-  })
+  });
   
   const colorVariants: Record<string, string> = {
     bordergreen: "border-green-700 dark:border-green-300",
@@ -22,9 +22,13 @@ export function PageCard({ className = "", color, title, children }:
     textorange: "text-orange-800 dark:text-orange-200",
     bgorange: "bg-[#DFEFFF] dark:bg-[#201000]"
   };
+  const animationVariants: Record<string, string> = {
+    fromLeft: "animate-fade-in-from-left-length0.5s",
+    fromRight: "animate-fade-in-from-right-length0.5s",
+  };
 
   return (
-    <div ref={ref} className={`${inView ? "animate-fade-in-from-left-length0.75s" : "invisible"} p-8 border-2 rounded-2xl ${colorVariants["border" + color]} ${colorVariants["bg" + color]} ${className}`}>
+    <div ref={ref} className={`${inView ? animationVariants[animation] : "invisible"} p-8 border-2 rounded-2xl ${colorVariants["border" + color]} ${colorVariants["bg" + color]} ${className}`}>
       <p className={`text-4xl font-[575] ${colorVariants["text" + color]}`}>{title}</p>
       {children}
     </div>

@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react";
+import { useInView } from "react-intersection-observer";
+
 import { FunHighlight } from "./waveEffect";
 
 const funFacts = [
@@ -21,10 +23,13 @@ function randint(max: number) {
 }
 
 export function RandomFunFact() {
-  const [randIndex, setRandIndex] = useState(0);
-  const [factsSeen, setFactsSeen] = useState(new Set);
-  const [currentScrollY, setCurrentScrollY] = useState(0);
-  let timeDisplayed = useRef(0);
+  let timeDisplayed = useRef<number>(0);
+  const [randIndex, setRandIndex] = useState<number>(0);
+  const [factsSeen, setFactsSeen] = useState<Set<number>>(new Set);
+
+  const [ref, inView, entry] = useInView({
+    threshold: 1
+  });
 
   function setRandIndexFancy() {
     let newIndex = randint(funFacts.length);
@@ -42,21 +47,19 @@ export function RandomFunFact() {
 
   useEffect(() => {
     const cycleInterval = setInterval(() => {
-      setCurrentScrollY(window.scrollY);
-
-      if ((currentScrollY >= 1400) && (Date.now() - timeDisplayed.current > 5000)) {
+      if ((inView) && (Date.now() - timeDisplayed.current > 5000)) {
         setRandIndexFancy();
       }
-    }, 100);
+    });
 
     return () => {
       clearInterval(cycleInterval);
     }
-  }, [factsSeen, currentScrollY]);
+  }, [factsSeen, entry]);
 
   return (
     <>
-      <div className="text-base text-center text-gray-600 dark:text-gray-400 hover:cursor-pointer" onClick={setRandIndexFancy}>
+      <div ref={ref} className="text-base text-center text-gray-600 dark:text-gray-400 hover:cursor-pointer" onClick={setRandIndexFancy}>
         {funFacts[randIndex]}
       </div>
       {(factsSeen.size === funFacts.length) && (
@@ -67,6 +70,3 @@ export function RandomFunFact() {
     </>
   );
 }
-
-// to-do: typedef states
-// to-do: use useIsVisible instead of hardcoded scrollY check

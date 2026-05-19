@@ -49,5 +49,3 @@ export function FunHighlight({ text }: { text: string }) {
     <b><span className="text-red-800 dark:text-red-200"><WaveEffect text={text} /></span></b>
   );
 }
-
-// to-do: try passing children into funhighlight instead of text for style

@@ -17,11 +17,12 @@ export default function Home() {
         </div>
       </div>
       <PageHeader />
-      <div className="mx-[15%] my-10 animate-fade-in-from-bottom-length0.375s-delay0.75s">
+      <div className="mx-[15%] max-w-250 my-10 place-self-center animate-fade-in-from-bottom-length0.375s-delay0.75s">
         <div className="flex flex-col gap-10 place-content-center text-left">
           <PageCard
             color={"green"}
             title={"About Me"}
+            animation={"fromLeft"}
           >
             <div className="flex flex-row mt-3 text-xl text-gray-800 dark:text-gray-200">
               <div>
@@ -31,13 +32,13 @@ export default function Home() {
                 I love <FunHighlight text="playing and conducting music." />
                 <span id="projects" />
               </div>
-              <div className="hidden md:block z-10 relative float-right top-5 left-10 -m-20 -ml-4 flex-none size-75">
+              <div className="hidden md:block z-10 relative float-right top-5 left-10 -m-20 -ml-4 -mb-50 flex-none size-75">
                 <CircleCarousel
                   images={[
                     <PopUp
                       content={
                         <img
-                          className="h-[75vh]"
+                          className="h-[75vh] rounded-t-2xl"
                           src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
                         />
                       }
@@ -56,7 +57,7 @@ export default function Home() {
                     <PopUp
                       content={
                         <img
-                          className="h-[75vh]"
+                          className="h-[75vh] rounded-t-2xl"
                           src={"/selfies/me-playing-the-flute.jpg"} alt="Me playing the flute"
                         />
                       }
@@ -75,7 +76,7 @@ export default function Home() {
                     <PopUp
                       content={
                         <img
-                          className="h-[75vh]"
+                          className="h-[75vh] rounded-t-2xl"
                           src={"/selfies/me-ziplining.jpg"} alt="Me ziplining over a river"
                         />
                       }
@@ -93,7 +94,7 @@ export default function Home() {
                     <PopUp
                       content={
                         <img
-                          className="h-[75vh]"
+                          className="h-[75vh] rounded-t-2xl"
                           src={"/selfies/me-with-a-bear.png"} alt="Me posing with a bear statue"
                         />
                       }
@@ -118,6 +119,7 @@ export default function Home() {
             className={"flex flex-col gap-6"}
             color={"red"}
             title={"Projects"}
+            animation={"fromRight"}
           >
             <>
               <InnerCard
@@ -131,16 +133,16 @@ export default function Home() {
                   </>
                 }
               >
-                An AI app that verbally supports dementia patients through confusions by recognizing facial distress and generating appropriate responses, built for <i>DeltaHacks 12.</i>
-                &nbsp;Implemented AI chat by <b>integrating Gemini with MongoDB,</b> creating personalized responses.
+                An AI app that verbally supports dementia patients through confusions by recognizing facial distress and generating appropriate responses,
+                built for <i>DeltaHacks 12.</i> Implemented AI chat by <b>integrating Gemini with MongoDB,</b> creating personalized responses.
               </InnerCard>
               <InnerCard
                 title={"NEXUS"}
                 link={"https://github.com/r05200/ctrlhackdel"}
-                tools={"JavaScript, Node.js, React, CSS"}
+                tools={"Node.js, React, CSS"}
               >
-                An educational AI web app that generates, visualizes, and organizes skill trees, built for <i>CTRL+HACK+DEL 2.0.</i>
-                &nbsp;Developed user interface <b>using React,</b> making it responsive, aesthetic, and easy-to-use.
+                An educational AI web app that generates, visualizes, and organizes skill trees, built for <i>CTRL+HACK+DEL 2.0.</i> Developed
+                user interface <b>using React,</b> making it responsive, aesthetic, and easy-to-use.
                 Implemented backend logic, ensuring robust and functional output.
               </InnerCard>
               <InnerCard
@@ -148,8 +150,8 @@ export default function Home() {
                 link={"https://github.com/sphealmeon/my-chesshacks-bot"}
                 tools={"Python, NumPy, PyTorch"}
               >
-                An AI chess bot powered by adaptive moment estimation and mean squared error loss, built for <i>ChessHacks.</i>
-                &nbsp;<b>Trained the PyTorch neural network</b> by creating an algorithm to calculate weights, refining bot performance.
+                An AI chess bot powered by adaptive moment estimation and mean squared error loss, built
+                for <i>ChessHacks.</i> <b>Trained the PyTorch neural network</b> by creating an algorithm to calculate weights, refining bot performance.
                 <span id="experience" />
               </InnerCard>
             </>
@@ -158,6 +160,7 @@ export default function Home() {
             className={"flex flex-col gap-6"}
             color={"orange"}
             title={"Experience"}
+            animation={"fromLeft"}
           >
             <InnerCard
               title={"Infosys"}
@@ -171,6 +174,7 @@ export default function Home() {
           <PageCard
             color={"yellow"}
             title={"Contact"}
+            animation={"fromRight"}
           >
             <div className="grid grid-rows-2 grid-cols-2 md:grid-rows-none md:grid-cols-4 mt-3 -mb-4 gap-8 place-items-center">
               <a href="sms:4168228844" target="_blank">
@@ -214,5 +218,4 @@ export default function Home() {
   );
 }
 
-// to-do: fix widths at a certain # of pixels instead of variable margins
 // to-do: get rid of &nbsp; and just don't end lines in tags instead

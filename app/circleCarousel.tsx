@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useRef } from "react";
 
-export function CircleCarousel({ images }: { images: React.ReactElement[] }) {
-  let timeDisplayed = useRef(0);
-  const [curIndex, setCurIndex] = useState(0);
+export function CircleCarousel({ images }: { images: React.ReactNode[] }) {
+  let timeDisplayed = useRef<number>(0);
+  const [curIndex, setCurIndex] = useState<number>(0);
 
   function changeCurIndex(indexChange: number) {
     indexChange = (indexChange % images.length) + images.length;
@@ -17,7 +17,7 @@ export function CircleCarousel({ images }: { images: React.ReactElement[] }) {
       if (Date.now() - timeDisplayed.current > 5000) {
         changeCurIndex(1);
       }
-    }, 100);
+    });
 
     return () => {
       clearInterval(cycleInterval);
@@ -39,5 +39,3 @@ export function CircleCarousel({ images }: { images: React.ReactElement[] }) {
 }
 
 // to-do: add fun transitions between cycles?!
-// to-do: change interval cycles to default
-// to-do: change type to React.ReactNode[]

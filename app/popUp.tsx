@@ -11,10 +11,10 @@ export function PopUp({ children, content, caption = undefined }: { children: Re
       <div className="hover:cursor-pointer" onClick={() => setIsActive(true)}>{children}</div>
       {(isActive) && createPortal(
         <div className="z-50 flex flex-col fixed w-screen h-screen place-items-center justify-center gap-8 bg-[#00000080]">
-          <div className="flex flex-col divide-y-2 divide-gray-400 dark:divide-gray-600 border-2 border-gray-400 dark:border-gray-600">
+          <div className="flex flex-col rounded-2xl divide-y-2 divide-gray-400 dark:divide-gray-600 border-2 border-gray-400 dark:border-gray-600">
             <>{content}</>
             {(caption !== undefined) && (
-              <div className="p-4 text-base text-center bg-white dark:bg-black">
+              <div className="p-4 rounded-b-2xl text-base text-center bg-white dark:bg-black">
                 {caption}
               </div>
             )}
