@@ -3,6 +3,7 @@ import { RandomFunFact } from "./randomFunFact"
 import { PageHeader } from "./header"
 import { WaveEffect, FunHighlight } from "./waveEffect";
 import { CircleCarousel } from "./circleCarousel";
+import { PopUp } from "./popUp";
 
 export default function Home() {
   return (
@@ -22,7 +23,7 @@ export default function Home() {
             color={"green"}
             title={"About Me"}
           >
-            <div className="flex mt-3 text-xl text-gray-800 dark:text-gray-200">
+            <div className="flex flex-row mt-3 text-xl text-gray-800 dark:text-gray-200">
               <div>
                 Hello!
                 My name is Franklin (he/him) and I'm a first-year undergraduate student studying Software Engineering at the University of Waterloo.
@@ -33,22 +34,80 @@ export default function Home() {
               <div className="hidden md:block z-10 relative float-right top-5 left-10 -m-20 -ml-4 flex-none size-75">
                 <CircleCarousel
                   images={[
-                    <img
-                      className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
-                      src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
-                    />,
-                    <img
-                      className="rounded-full size-75 object-cover object-left border-2 border-green-700 dark:border-green-300"
-                      src={"/selfies/me-playing-the-flute.jpg"} alt="Me playing the flute"
-                    />,
-                    <img
-                      className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
-                      src={"/selfies/me-ziplining.jpg"} alt="Me ziplining over a river"
-                    />,
-                    <img
-                      className="rounded-full size-75 object-cover object-[60%_0%] border-2 border-green-700 dark:border-green-300"
-                      src={"/selfies/me-with-a-bear.png"} alt="Me posing with a bear statue"
-                    />
+                    <PopUp
+                      content={
+                        <img
+                          className="h-[75vh]"
+                          src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
+                        />
+                      }
+                      caption={
+                        <>
+                          Me conducting the <a href="https://uwcbc.uwaterloo.ca/index.html" target="_blank">UW Concert Band</a> at
+                          their <a href="https://www.youtube.com/watch?v=6mtwLXmYHcU&t=2162s" target="_blank">Winter 2026 concert.</a>
+                        </>
+                      }
+                    >
+                      <img
+                        className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
+                        src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
+                      />
+                    </PopUp>,
+                    <PopUp
+                      content={
+                        <img
+                          className="h-[75vh]"
+                          src={"/selfies/me-playing-the-flute.jpg"} alt="Me playing the flute"
+                        />
+                      }
+                      caption={
+                        <>
+                          Me playing the flute in the <a href="https://uwcbc.uwaterloo.ca/index.html" target="_blank">UW Concert Band</a> Flute Quartet
+                          during their <a href="https://www.youtube.com/watch?v=6mtwLXmYHcU&t=1714s" target="_blank">Winter 2026 concert.</a>
+                        </>
+                      }
+                    >
+                      <img
+                        className="rounded-full size-75 object-cover object-left border-2 border-green-700 dark:border-green-300"
+                        src={"/selfies/me-playing-the-flute.jpg"} alt="Me playing the flute"
+                      />
+                    </PopUp>,
+                    <PopUp
+                      content={
+                        <img
+                          className="h-[75vh]"
+                          src={"/selfies/me-ziplining.jpg"} alt="Me ziplining over a river"
+                        />
+                      }
+                      caption={
+                        <>
+                          Me ziplining upside-down over a river in Whistler, BC.
+                        </>
+                      }
+                    >
+                      <img
+                        className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
+                        src={"/selfies/me-ziplining.jpg"} alt="Me ziplining over a river"
+                      />
+                    </PopUp>,
+                    <PopUp
+                      content={
+                        <img
+                          className="h-[75vh]"
+                          src={"/selfies/me-with-a-bear.png"} alt="Me posing with a bear statue"
+                        />
+                      }
+                      caption={
+                        <>
+                          Me posing with a bear statue in Whistler, BC.
+                        </>
+                      }
+                    >
+                      <img
+                        className="rounded-full size-75 object-cover object-[60%_0%] border-2 border-green-700 dark:border-green-300"
+                        src={"/selfies/me-with-a-bear.png"} alt="Me posing with a bear statue"
+                      />
+                    </PopUp>
                   ]}
                 />
                 
@@ -154,3 +213,6 @@ export default function Home() {
     </>
   );
 }
+
+// to-do: fix widths at a certain # of pixels instead of variable margins
+// to-do: get rid of &nbsp; and just don't end lines in tags instead

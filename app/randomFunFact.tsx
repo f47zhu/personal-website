@@ -67,3 +67,6 @@ export function RandomFunFact() {
     </>
   );
 }
+
+// to-do: typedef states
+// to-do: use useIsVisible instead of hardcoded scrollY check

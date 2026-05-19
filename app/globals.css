@@ -18,7 +18,7 @@
   --animate-fade-in-length0.75s-delay0.375s: fade-in 0.75s ease-out 0.375s both;
   --animate-fade-in-length0.375s-delay0.75s: fade-in 0.375s ease-out 0.75s both;
   --animate-fade-in-from-bottom-length0.375s-delay0.75s: fade-in-from-bottom 0.375s ease-out 0.75s both;
-  --animate-fade-in-from-left-length0.75s: fade-in-from-left 0.75s ease-out none;
+  --animate-fade-in-from-left-length0.75s: fade-in-from-left 0.75s ease-out none; /* to-do: change to 0.5s */
 
   --animate-wave-length3s: wave 3s ease-in-out infinite;
   --animate-wave-length3s-delay0.1s: wave 3s ease-in-out -2.9s infinite; /* have not found an */

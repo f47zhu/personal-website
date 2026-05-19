@@ -1,4 +1,6 @@
-function HeaderElement( {link, title, color}: {link: string, title: string, color: string} ) {
+import { PopUp } from "./popUp";
+
+function HeaderElement( {link, title, color}: {link?: string, title: string, color: string} ) {
   const colorVariants: Record<string, string> = {
     textindigo: "text-indigo-700 dark:text-indigo-300",
     textgreen: "text-green-700 dark:text-green-300",
@@ -7,11 +9,17 @@ function HeaderElement( {link, title, color}: {link: string, title: string, colo
     textyellow: "text-yellow-700 dark:text-yellow-300"
   };
   return (
-    <a href={link} target={(link[0] !== '#') ? "_blank" : ""}>
-      <div className={`px-[2vw] py-[2vh] text-center truncate hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
+    (link) ? (
+      <a href={link} target={(link[0] !== '#') ? "_blank" : ""}>
+        <div className={`px-[2vw] py-[2vh] text-center truncate hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
+          {title}
+        </div>
+      </a>
+    ) : (
+      <div className={`px-[2vw] py-[2vh] text-center truncate hover:bg-gray-100 dark:hover:bg-gray-900 hover:brightness-150 hover:scale-105 transition-transform ease-in-out ${colorVariants["text" + color]}`}>
         {title}
       </div>
-    </a>
+    )
   );
 }
 
@@ -19,9 +27,18 @@ export function PageHeader() {
   return (
     <>
       <span id={"about"} />
-      <header className="z-50 h-15 sticky top-0 border-b-2 grid grid-cols-5 md:grid-cols-7 overflow-hidden place-items-center text-xl tracking-[2] font-extrabold bg-white dark:bg-black border-gray-400 dark:border-gray-600 animate-fade-in-length0.375s-delay0.75s">
+      <header className="z-20 h-15 sticky top-0 border-b-2 grid grid-cols-5 md:grid-cols-7 overflow-hidden place-items-center text-xl tracking-[2] font-extrabold bg-white dark:bg-black border-gray-400 dark:border-gray-600 animate-fade-in-length0.375s-delay0.75s">
           <div className="hidden md:block" />
-          <HeaderElement link="./resume" title="Resume" color="indigo" />
+          <PopUp
+            content={
+              <iframe src="./Franklin_Zhu_Resume.pdf" className="h-[75vh] w-[50vw]" title="Franklin Zhu's resume" />
+            }
+            caption={
+              <a href="./resume" target="_blank">Open in new tab</a>
+            }
+          >
+            <HeaderElement title="Resume" color="indigo" />
+          </PopUp>
           <HeaderElement link="#about" title="About Me" color="green" />
           <HeaderElement link="#projects" title="Projects" color="red" />
           <HeaderElement link="#experience" title="Experience" color="orange" />

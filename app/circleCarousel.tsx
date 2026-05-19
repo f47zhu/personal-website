@@ -39,3 +39,5 @@ export function CircleCarousel({ images }: { images: React.ReactElement[] }) {
 }
 
 // to-do: add fun transitions between cycles?!
+// to-do: change interval cycles to default
+// to-do: change type to React.ReactNode[]
