@@ -2,8 +2,8 @@
 
 import { useInView } from "react-intersection-observer";
 
-export function PageCard({ className = "", color, title, children, animation = "fromLeft" }:
-    { className?: string, color: string, title: string, children: React.ReactNode, animation?: string }) {
+export function PageCard({ className = "", color, title, link = "", linkTitle = "", children, animation = "fromLeft" }:
+    { className?: string, color: string, title: string, link?: string, linkTitle?: string, children: React.ReactNode, animation?: string }) {
   const [ref, inView] = useInView({
     threshold: 0
   });
@@ -11,16 +11,16 @@ export function PageCard({ className = "", color, title, children, animation = "
   const colorVariants: Record<string, string> = {
     bordergreen: "border-green-700 dark:border-green-300",
     textgreen: "text-green-800 dark:text-green-200",
-    bggreen: "bg-[#FFDFFF] dark:bg-[#002000]",
+    bggreen: "bg-[#DFFFDF] dark:bg-[#002000]",
     borderred: "border-red-700 dark:border-red-300",
     textred: "text-red-800 dark:text-red-200",
-    bgred: "bg-[#DFFFFF] dark:bg-[#200000]",
+    bgred: "bg-[#FFDFDF] dark:bg-[#200000]",
     borderyellow: "border-yellow-700 dark:border-yellow-300",
     textyellow: "text-yellow-800 dark:text-yellow-200",
-    bgyellow: "bg-[#DFDFFF] dark:bg-[#202000]",
+    bgyellow: "bg-[#FFFFDF] dark:bg-[#202000]",
     borderorange: "border-orange-700 dark:border-orange-300",
     textorange: "text-orange-800 dark:text-orange-200",
-    bgorange: "bg-[#DFEFFF] dark:bg-[#201000]"
+    bgorange: "bg-[#FFEFDF] dark:bg-[#201000]"
   };
   const animationVariants: Record<string, string> = {
     fromLeft: "animate-fade-in-from-left-length0.5s",
@@ -29,7 +29,14 @@ export function PageCard({ className = "", color, title, children, animation = "
 
   return (
     <div ref={ref} className={`${inView ? animationVariants[animation] : "invisible"} p-8 border-2 rounded-2xl ${colorVariants["border" + color]} ${colorVariants["bg" + color]} ${className}`}>
-      <p className={`text-4xl font-[575] ${colorVariants["text" + color]}`}>{title}</p>
+      <div className={`text-4xl font-[575] ${colorVariants["text" + color]}`}>
+        {title}
+        {(link !== "") && (
+          <div className="inline ml-5.5 text-2xl">
+            <a href={link}>{linkTitle}</a>
+          </div>
+        )}
+      </div>
       {children}
     </div>
   );

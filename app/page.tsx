@@ -22,6 +22,8 @@ export default function Home() {
           <PageCard
             color={"green"}
             title={"About Me"}
+            link={"./about"}
+            linkTitle={"view more »"}
             animation={"fromLeft"}
           >
             <div className="flex flex-row mt-3 text-xl text-gray-800 dark:text-gray-200">
@@ -119,6 +121,8 @@ export default function Home() {
             className={"flex flex-col gap-6"}
             color={"red"}
             title={"Projects"}
+            link={"./projects"}
+            linkTitle={"see all »"}
             animation={"fromRight"}
           >
             <>
@@ -217,5 +221,3 @@ export default function Home() {
     </>
   );
 }
-
-// to-do: get rid of &nbsp; and just don't end lines in tags instead

@@ -99,7 +99,7 @@
 
 @layer base {
   a {
-    @apply text-blue-600 dark:text-blue-300 hover:brightness-150 hover:scale-105 transition-transform ease-in-out;
+    @apply text-blue-600 dark:text-blue-300 hover:brightness-90 hover:dark:brightness-150 hover:scale-105 transition-transform ease-in-out;
   }
   html {
     @apply scroll-smooth;
