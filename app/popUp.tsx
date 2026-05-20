@@ -19,7 +19,7 @@ export function PopUp({ children, content, caption = undefined }: { children: Re
               </div>
             )}
           </div>
-          <button className="py-2 px-4 text-base rounded-full border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black hover:cursor-pointer hover:brightness-90 hover:dark:brightness-150 hover:scale-105 transition-transform ease-in-out" onClick={() => setIsActive(false)}>
+          <button className="py-2 px-4 text-base rounded-full border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black" onClick={() => setIsActive(false)}>
             Back
           </button>
         </div>, document.body

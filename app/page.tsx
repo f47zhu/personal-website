@@ -182,36 +182,36 @@ export default function Home() {
           >
             <div className="grid grid-rows-2 grid-cols-2 md:grid-rows-none md:grid-cols-4 mt-3 -mb-4 gap-8 place-items-center">
               <a href="sms:4168228844" target="_blank">
-                <div className="flex flex-col place-items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
+                <button className="flex flex-col place-items-center p-2 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-900">
                   <img src="./telephone-icon.webp" className="m-4 size-[50%] dark:invert" />
                   <div className="m-4 text-lg text-center">
                     (416) 822-8844
                   </div>
-                </div>
+                </button>
               </a>
               <a href="mailto:franklinzhu0905@gmail.com" target="_blank">
-                <div className="flex flex-col place-items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
+                <button className="flex flex-col place-items-center p-2 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-900">
                   <img src="./email-icon.png" className="m-4 size-[30%] place-self-center dark:invert" />
                   <div className="m-4 text-lg text-center">
                     franklinzhu0905@gmail.com
                   </div>
-                </div>
+                </button>
               </a>
               <a href="https://github.com/f47zhu" target="_blank">
-                <div className="flex flex-col place-items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
+                <button className="flex flex-col place-items-center p-2 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-900">
                   <img src="./github-logo.svg" className="m-4 size-[50%] dark:invert" />
                   <div className="m-4 text-lg text-center">
                     GitHub
                   </div>
-                </div>
+                </button>
               </a>
               <a href="https://www.linkedin.com/in/f47zhu" target="_blank">
-                <div className="flex flex-col place-items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-900">
+                <button className="flex flex-col place-items-center p-2 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-900">
                   <img src="./linkedin-logo.webp" className="m-4 size-[50%]" />
                   <div className="m-4 text-lg text-center">
                     LinkedIn
                   </div>
-                </div>
+                </button>
               </a>
             </div>
           </PageCard>
@@ -221,3 +221,5 @@ export default function Home() {
     </>
   );
 }
+
+// to-do: use popUp components instead of redirecting to new pages

@@ -11,14 +11,14 @@ function HeaderElement( {link, title, color}: {link?: string, title: string, col
   return (
     (link) ? (
       <a href={link} target={(link[0] !== '#') ? "_blank" : ""}>
-        <div className={`px-[2vw] py-[2vh] text-center truncate hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
+        <button className={`px-[2vw] py-[2vh] text-center truncate hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
           {title}
-        </div>
+        </button>
       </a>
     ) : (
-      <div className={`px-[2vw] py-[2vh] text-center truncate hover:bg-gray-100 dark:hover:bg-gray-900 hover:brightness-90 hover:dark:brightness-150 hover:scale-105 transition-transform ease-in-out ${colorVariants["text" + color]}`}>
+      <button className={`px-[2vw] py-[2vh] text-center truncate hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
         {title}
-      </div>
+      </button>
     )
   );
 }
