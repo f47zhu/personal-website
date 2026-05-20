@@ -5,7 +5,9 @@ import { useInView } from "react-intersection-observer";
 export function PageCard({ className = "", color, title, link = "", linkTitle = "", children, animation = "fromLeft" }:
     { className?: string, color: string, title: string, link?: string, linkTitle?: string, children: React.ReactNode, animation?: string }) {
   const [ref, inView] = useInView({
-    threshold: 0
+    threshold: 0,
+    initialInView: true // This is to make cards visible when bfcache is used.
+    // bfcache still breaks animations, but it's the best I'll do for now
   });
   
   const colorVariants: Record<string, string> = {
