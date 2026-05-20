@@ -36,6 +36,7 @@ export default function Home() {
               </div>
               <div className="hidden md:block z-10 relative float-right top-5 left-10 -m-20 -ml-4 -mb-50 flex-none size-75">
                 <CircleCarousel
+                  isPopUps={true}
                   images={[
                     <PopUp
                       content={
