@@ -40,7 +40,7 @@ export default function Home() {
                     <PopUp
                       content={
                         <img
-                          className="h-[75vh] rounded-t-2xl"
+                          className="object-cover h-[75vh] rounded-t-2xl"
                           src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
                         />
                       }
@@ -59,7 +59,7 @@ export default function Home() {
                     <PopUp
                       content={
                         <img
-                          className="h-[75vh] rounded-t-2xl"
+                          className="object-cover h-[75vh] rounded-t-2xl"
                           src={"/selfies/me-playing-the-flute.jpg"} alt="Me playing the flute"
                         />
                       }
@@ -78,7 +78,7 @@ export default function Home() {
                     <PopUp
                       content={
                         <img
-                          className="h-[75vh] rounded-t-2xl"
+                          className="object-cover h-[75vh] rounded-t-2xl"
                           src={"/selfies/me-ziplining.jpg"} alt="Me ziplining over a river"
                         />
                       }
@@ -96,7 +96,7 @@ export default function Home() {
                     <PopUp
                       content={
                         <img
-                          className="h-[75vh] rounded-t-2xl"
+                          className="object-cover h-[75vh] rounded-t-2xl"
                           src={"/selfies/me-with-a-bear.png"} alt="Me posing with a bear statue"
                         />
                       }

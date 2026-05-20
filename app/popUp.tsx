@@ -10,7 +10,7 @@ export function PopUp({ children, content, caption = undefined }: { children: Re
     <>
       <div className="hover:cursor-pointer" onClick={() => setIsActive(true)}>{children}</div>
       {(isActive) && createPortal(
-        <div className="z-50 flex flex-col fixed w-screen h-screen place-items-center justify-center gap-8 bg-[#00000080]">
+        <div className="z-50 flex flex-col fixed w-screen h-screen place-items-center justify-center gap-4 bg-[#00000080]">
           <div className="flex flex-col rounded-2xl divide-y-2 divide-gray-400 dark:divide-gray-600 border-2 border-gray-400 dark:border-gray-600">
             <>{content}</>
             {(caption !== undefined) && (
@@ -19,7 +19,7 @@ export function PopUp({ children, content, caption = undefined }: { children: Re
               </div>
             )}
           </div>
-          <button className="py-4 px-8 text-xl rounded-full border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black hover:cursor-pointer hover:brightness-90 hover:dark:brightness-150 hover:scale-105 transition-transform ease-in-out" onClick={() => setIsActive(false)}>
+          <button className="py-2 px-4 text-base rounded-full border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black hover:cursor-pointer hover:brightness-90 hover:dark:brightness-150 hover:scale-105 transition-transform ease-in-out" onClick={() => setIsActive(false)}>
             Back
           </button>
         </div>, document.body
