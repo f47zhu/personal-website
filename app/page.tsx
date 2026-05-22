@@ -114,7 +114,6 @@ export default function Home() {
                     </PopUp>
                   ]}
                 />
-                
               </div>
             </div>
           </PageCard>
