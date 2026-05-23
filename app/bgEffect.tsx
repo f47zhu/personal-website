@@ -46,7 +46,7 @@ export function BgEffect({}) {
         Turn {show ? "off" : "on"} background effect
       </button>
       {effects.map((effect, idx) =>
-        <div key={idx} className={`${effect} ${show ? "visible" : "invisible"} -z-50 fixed left-0 right-0 top-0 bottom-0 m-auto w-screen h-screen border-2 border-black dark:border-white bg-radial from-[#00000000] via-[#00000000] via-25% to-[#FF0000]`} />
+        <div key={idx} className={`${effect} ${show ? "visible" : "invisible"} -z-50 fixed left-0 right-0 top-0 bottom-0 m-auto w-screen h-screen border-2 border-black dark:border-white bg-radial from-[#00000000] to-[#FF0000]`} />
       )}
     </>
   );
