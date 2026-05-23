@@ -52,12 +52,43 @@
   --animate-wave-length3s-delay2.8s: wave 3s ease-in-out -0.2s infinite;
   --animate-wave-length3s-delay2.9s: wave 3s ease-in-out -0.1s infinite;
 
+  --animate-bg-pulse: bg-pulse 30s ease-out infinite backwards;
+  --animate-bg-pulse-delay1s: bg-pulse 30s ease-out 1s infinite backwards;
+  --animate-bg-pulse-delay2s: bg-pulse 30s ease-out 2s infinite backwards;
+  --animate-bg-pulse-delay3s: bg-pulse 30s ease-out 3s infinite backwards;
+  --animate-bg-pulse-delay4s: bg-pulse 30s ease-out 4s infinite backwards;
+  --animate-bg-pulse-delay5s: bg-pulse 30s ease-out 5s infinite backwards;
+  --animate-bg-pulse-delay6s: bg-pulse 30s ease-out 6s infinite backwards;
+  --animate-bg-pulse-delay7s: bg-pulse 30s ease-out 7s infinite backwards;
+  --animate-bg-pulse-delay8s: bg-pulse 30s ease-out 8s infinite backwards;
+  --animate-bg-pulse-delay9s: bg-pulse 30s ease-out 9s infinite backwards;
+  --animate-bg-pulse-delay10s: bg-pulse 30s ease-out 10s infinite backwards;
+  --animate-bg-pulse-delay11s: bg-pulse 30s ease-out 11s infinite backwards;
+  --animate-bg-pulse-delay12s: bg-pulse 30s ease-out 12s infinite backwards;
+  --animate-bg-pulse-delay13s: bg-pulse 30s ease-out 13s infinite backwards;
+  --animate-bg-pulse-delay14s: bg-pulse 30s ease-out 14s infinite backwards;
+  --animate-bg-pulse-delay15s: bg-pulse 30s ease-out 15s infinite backwards;
+  --animate-bg-pulse-delay16s: bg-pulse 30s ease-out 16s infinite backwards;
+  --animate-bg-pulse-delay17s: bg-pulse 30s ease-out 17s infinite backwards;
+  --animate-bg-pulse-delay18s: bg-pulse 30s ease-out 18s infinite backwards;
+  --animate-bg-pulse-delay19s: bg-pulse 30s ease-out 19s infinite backwards;
+  --animate-bg-pulse-delay20s: bg-pulse 30s ease-out 20s infinite backwards;
+  --animate-bg-pulse-delay21s: bg-pulse 30s ease-out 21s infinite backwards;
+  --animate-bg-pulse-delay22s: bg-pulse 30s ease-out 22s infinite backwards;
+  --animate-bg-pulse-delay23s: bg-pulse 30s ease-out 23s infinite backwards;
+  --animate-bg-pulse-delay24s: bg-pulse 30s ease-out 24s infinite backwards;
+  --animate-bg-pulse-delay25s: bg-pulse 30s ease-out 25s infinite backwards;
+  --animate-bg-pulse-delay26s: bg-pulse 30s ease-out 26s infinite backwards;
+  --animate-bg-pulse-delay27s: bg-pulse 30s ease-out 27s infinite backwards;
+  --animate-bg-pulse-delay28s: bg-pulse 30s ease-out 28s infinite backwards;
+  --animate-bg-pulse-delay29s: bg-pulse 30s ease-out 29s infinite backwards;
+
   @keyframes fade-in {
     from {
       opacity: 0;
     }
     to {
-      opacity: 100;
+      opacity: 1;
     }
   }
   @keyframes fade-in-from-bottom {
@@ -65,7 +96,7 @@
       opacity: 0;
       transform: translate(0, 2.5%);
     } to {
-      opacity: 100;
+      opacity: 1;
       transform: translate(0, 0);
     }
   }
@@ -74,7 +105,7 @@
       opacity: 0;
       transform: translate(-2.5%, 0);
     } to {
-      opacity: 100;
+      opacity: 1;
       transform: translate(0, 0);
     }
   }
@@ -83,7 +114,7 @@
       opacity: 0;
       transform: translate(2.5%, 0);
     } to {
-      opacity: 100;
+      opacity: 1;
       transform: translate(0, 0);
     }
   }
@@ -93,6 +124,19 @@
     }
     to {
       filter: hue-rotate(360deg);
+    }
+  }
+  @keyframes bg-pulse {
+    from {
+      opacity: 0;
+    }
+    5% {
+      transform: scale(1);
+      opacity: 0.25;
+    }
+    to {
+      transform: scale(0);
+      opacity: 0;
     }
   }
 }

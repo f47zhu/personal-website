@@ -4,10 +4,12 @@ import { PageHeader } from "./header"
 import { WaveEffect, FunHighlight } from "./waveEffect";
 import { CircleCarousel } from "./circleCarousel";
 import { PopUp } from "./popUp";
+import { BgEffect } from "./bgEffect";
 
 export default function Home() {
   return (
     <>
+      <span className="animate-fade-in-length0.375s-delay0.75s"><BgEffect /></span>
       <div className="mx-[15%] mt-20 mb-12 text-center text-pretty font-normal text-black dark:text-white">
         <div className="text-7xl mb-4 text-red-800 dark:text-red-200 animate-fade-in-length0.75s">
           <WaveEffect text="Franklin Zhu" />
