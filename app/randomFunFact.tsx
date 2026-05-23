@@ -5,7 +5,7 @@ import { useInView } from "react-intersection-observer";
 
 import { FunHighlight } from "./waveEffect";
 
-const funFacts = [
+const funFacts: React.ReactNode[] = [
   <>I used to <a href="https://osu.ppy.sh/users/10975777" target="_blank">play osu! tournaments.</a></>,
   <>My favourite colour has always been yellow.</>,
   <>I love <a href="https://www.puptheband.com/" target="_blank">PUP!</a></>,

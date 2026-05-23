@@ -11,12 +11,12 @@ function HeaderElement( {link, title, color}: {link?: string, title: string, col
   return (
     (link) ? (
       <a href={link} target={(link[0] !== '#') ? "_blank" : ""}>
-        <button className={`px-[2vw] py-[2vh] text-center truncate hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
+        <button className={`px-[2vw] py-[2vh] text-center truncate bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
           {title}
         </button>
       </a>
     ) : (
-      <button className={`px-[2vw] py-[2vh] text-center truncate hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
+      <button className={`px-[2vw] py-[2vh] text-center truncate bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-gray-900 ${colorVariants["text" + color]}`}>
         {title}
       </button>
     )
@@ -28,7 +28,8 @@ export function PageHeader() {
     <>
       <span id={"about"} />
       <div className="z-20 sticky top-0 animate-fade-in-length0.375s-delay0.75s">
-        <div className="max-w-350 h-15 grid grid-cols-5 md:grid-cols-7 place-self-center place-items-center overflow-hidden text-xl tracking-[2] font-extrabold bg-linear-to-r from-[#FFFFFFBF] via-white to-[#FFFFFFBF] dark:from-[#000000BF] dark:via-black dark:to-[#000000BF]">
+        <div className="max-w-350 h-[2] left-0 right-0 mx-auto bg-linear-to-r from-[#CBD5E000] via-gray-600 to-[#CBD5E000] dark:from-[#71809600] dark:via-gray-400 dark:to-[#71809600]" />
+        <div className="max-w-350 h-15 grid grid-cols-5 md:grid-cols-7 place-self-center place-items-center overflow-hidden text-xl tracking-[2] font-extrabold bg-linear-to-r from-[#00000000] via-white dark:via-black to-[#00000000]">
           <div className="hidden md:block" />
           <PopUp
             content={
