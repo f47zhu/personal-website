@@ -2,8 +2,8 @@
 
 import { useInView } from "react-intersection-observer";
 
-export function PageCard({ className = "", color, title, link = "", linkTitle = "", children, animation = "fromLeft" }:
-    { className?: string, color: string, title: string, link?: string, linkTitle?: string, children: React.ReactNode, animation?: string }) {
+export function PageCard({ className = "", color, title, subtitle = undefined, children, animation = "fromLeft" }:
+    { className?: string, color: string, title: string, subtitle?: React.ReactNode, children: React.ReactNode, animation?: string }) {
   const [ref, inView] = useInView({
     threshold: 0,
     initialInView: true // This is to make cards visible when bfcache is used.
@@ -33,9 +33,9 @@ export function PageCard({ className = "", color, title, link = "", linkTitle = 
     <div ref={ref} className={`${inView ? animationVariants[animation] : "invisible"} p-8 border-2 rounded-2xl ${colorVariants["border" + color]} ${colorVariants["bg" + color]} ${className}`}>
       <div className={`text-4xl font-[575] ${colorVariants["text" + color]}`}>
         {title}
-        {(link !== "") && (
-          <div className="inline ml-5.5 text-2xl">
-            <a href={link}>{linkTitle}</a>
+        {(subtitle !== undefined) && (
+          <div className="inline-block ml-5.5 text-xl">
+            {subtitle}
           </div>
         )}
       </div>

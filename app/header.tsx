@@ -32,14 +32,14 @@ export function PageHeader() {
         <div className="max-w-350 h-15 grid grid-cols-5 md:grid-cols-7 place-self-center place-items-center overflow-hidden text-xl tracking-[2] font-extrabold bg-linear-to-r from-[#00000000] via-white dark:via-black to-[#00000000]">
           <div className="hidden md:block" />
           <PopUp
-            content={
-              <iframe src="./Franklin_Zhu_Resume.pdf" className="h-[75vh] w-[50vw]" title="My resume" />
+            clickable={
+              <HeaderElement title="Resume" color="indigo" />
             }
             caption={
               <a href="./resume" target="_blank">Open in new tab</a>
             }
           >
-            <HeaderElement title="Resume" color="indigo" />
+            <iframe src="./Franklin_Zhu_Resume.pdf" className="h-[75vh] w-[50vw]" title="My resume" />
           </PopUp>
           <HeaderElement link="#about" title="About Me" color="green" />
           <HeaderElement link="#projects" title="Projects" color="red" />
