@@ -20,6 +20,7 @@
   --animate-fade-in-from-bottom-length0.375s-delay0.75s: fade-in-from-bottom 0.375s ease-out 0.75s both;
   --animate-fade-in-from-left-length0.5s: fade-in-from-left 0.5s ease-out none;
   --animate-fade-in-from-right-length0.5s: fade-in-from-right 0.5s ease-out none;
+  --animate-pop-in-length0.125s: pop-in 0.125s ease-out both;
 
   --animate-wave-length3s: wave 3s ease-in-out infinite;
   --animate-wave-length3s-delay0.1s: wave 3s ease-in-out -2.9s infinite; /* have not found an */
@@ -89,6 +90,16 @@
     }
     to {
       opacity: 1;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
     }
   }
   @keyframes fade-in-from-bottom {

@@ -19,8 +19,8 @@ export function PopUp({ children, clickable, caption = undefined, color = "gray"
     <>
       <div className="hover:cursor-pointer" onClick={() => setIsActive(true)}>{clickable}</div>
       {(isActive) && createPortal(
-        <div className="z-50 fixed w-screen h-screen place-self-center place-content-center bg-[#00000080]" onClick={() => setIsActive(false)}>
-          <div className="flex flex-col place-self-center place-items-center gap-4 w-fit max-w-187.5 max-h-[75%] mx-[15%]">
+        <div className={`${isActive && "animate-fade-in-length0.125s"} z-50 fixed w-screen h-screen place-self-center place-content-center bg-[#00000080]`} onClick={() => setIsActive(false)}>
+          <div className={`${isActive && "animate-pop-in-length0.125s"} flex flex-col place-self-center place-items-center gap-4 w-fit max-w-187.5 max-h-[75%] mx-[15%]`}>
             <div className={`flex flex-col rounded-2xl divide-y-2 min-w-0 min-h-0 border-2 ${themeVariants[color]}`} onClick={e => e.stopPropagation()}>
               <>{children}</>
               {(caption !== undefined) && (
