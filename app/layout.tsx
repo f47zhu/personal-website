@@ -18,7 +18,7 @@ const oxygenMono = Oxygen_Mono({
 
 export const metadata: Metadata = {
   title: "Franklin Zhu",
-  description: "Franklin Zhu's personal website",
+  description: "Software Engineering Student at the University of Waterloo",
 };
 
 export default function RootLayout({

@@ -125,7 +125,7 @@ export function Game() {
           <>
             {createPortal(
               <div
-                className="animate-pop-in-length0.125s z-50 fixed w-screen h-screen bg-[#00000080]"
+                className="animate-fade-in-length0.125s z-50 fixed w-screen h-screen bg-[#00000080]"
                 onClick={() => setExitConfirm(false)}
               >
                 <div

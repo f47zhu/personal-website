@@ -156,7 +156,7 @@
 
 @layer base {
   a {
-    @apply text-blue-600 dark:text-blue-300 hover:underline;
+    @apply text-blue-700 dark:text-blue-300 hover:underline;
   }
   button {
     @apply hover:cursor-pointer hover:brightness-90 hover:dark:brightness-110 hover:scale-105 transition-transform ease-in-out;

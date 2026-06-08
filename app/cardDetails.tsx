@@ -134,7 +134,7 @@ export function ProjectDetails() {
           tools={"Flask, MongoDB, Gemini"}
           funFact={
             <>
-              This was my first solo hackathon build!
+              This was my first solo hackathon build.
             </>
           }
         >
@@ -147,13 +147,12 @@ export function ProjectDetails() {
           tools={"Autodesk Inventor 2026, Canva"}
           funFact={
             <>
-              This was my first time using CAD software!
+              This was my first time using CAD software.
             </>
           }
         >
           A board game designed for <i>MDL CAD Designathon 2026.</i> Designed board game parts with <b>Autodesk Inventor 2026</b> and ideated the game concept.
         </InnerCard>
-        
       </div>
     </PopUp>
   );

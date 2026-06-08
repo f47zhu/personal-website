@@ -49,10 +49,15 @@ export function InnerCard({ title, link = "", tools = "", date = "", funFact = "
   return (
     <div className="border-2 rounded-2xl p-6 bg-white dark:bg-black border-gray-400 dark:border-gray-600">
       <span className="text-2xl font-medium">
-        {link !== "" ? (<a href={link} target="_blank">{title}</a>) : (title)}
+        {link !== "" ? (
+          <>
+            <a href={link} target="_blank">{title}</a>
+            <img className="inline size-4 align-top ml-1" src="/link-icon.png" />
+          </>
+        ) : (title)}
       </span>
       {tools !== "" && (
-        <span className="ml-4 text-lg text-gray-600 dark:text-gray-400">{tools}</span>
+        <span className="ml-3 text-lg text-gray-600 dark:text-gray-400">{tools}</span>
       )}
       {date !== "" && (
         <span className="float-right text-base text-gray-700 dark:text-gray-300"><i>{date}</i></span>

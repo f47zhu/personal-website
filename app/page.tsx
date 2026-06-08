@@ -186,7 +186,8 @@ export default function Home() {
         >
           <InnerCard
             title={"Infosys"}
-            tools={"Software Engineering Internship"}
+            link={"https://en.wikipedia.org/wiki/Infosys"}
+            tools={"AI Integration Intern"}
             date={"Bangalore, Karnataka ⋅ Incoming Summer 2026"}
           >
             Excited to be integrating AI with the EdgeVerve team!
@@ -238,5 +239,3 @@ export default function Home() {
     </>
   );
 }
-
-// to-do: use popUp components instead of redirecting to new pages
