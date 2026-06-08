@@ -19,6 +19,18 @@ export default function Home() {
           <WaveEffect text="Software Engineering Student at the University of Waterloo" />
         </div>
       </div>
+      <div className="absolute top-4 right-4 flex flex-row gap-4">
+        <a href="./gauntle">
+          <button className="py-2 px-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
+            <FunHighlight text="Games" />
+          </button>
+        </a>
+        <a href="./blog">
+          <button className="py-2 px-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black text-black dark:text-white">
+            Blog
+          </button>
+        </a>
+      </div>
       <PageHeader />
       <div className="mx-[15%] max-w-250 my-10 place-self-center flex flex-col gap-10 place-content-center text-left animate-fade-in-from-bottom-length0.375s-delay0.75s">
         <PageCard
@@ -40,6 +52,7 @@ export default function Home() {
                 isPopUps={true}
                 images={[
                   <PopUp
+                    key={0}
                     clickable={
                       <img
                         className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
@@ -59,6 +72,7 @@ export default function Home() {
                     />
                   </PopUp>,
                   <PopUp
+                    key={1}
                     clickable={
                       <img
                         className="rounded-full size-75 object-cover object-left border-2 border-green-700 dark:border-green-300"
@@ -78,6 +92,7 @@ export default function Home() {
                     />
                   </PopUp>,
                   <PopUp
+                    key={2}
                     clickable={
                       <img
                         className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
@@ -96,6 +111,7 @@ export default function Home() {
                     />
                   </PopUp>,
                   <PopUp
+                    key={3}
                     clickable={
                       <img
                         className="rounded-full size-75 object-cover object-[60%_0%] border-2 border-green-700 dark:border-green-300"
