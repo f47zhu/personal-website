@@ -23,6 +23,7 @@
   --animate-fade-in-from-left-length0.5s: fade-in-from-left 0.5s ease-out none;
   --animate-fade-in-from-right-length0.5s: fade-in-from-right 0.5s ease-out none;
   --animate-pop-in-length0.125s: pop-in 0.125s ease-out both;
+  --animate-stretch-r: stretch-r 2.5s ease-in-out both;
 
   --animate-wave-length3s: wave 3s ease-in-out infinite;
   --animate-wave-length3s-delay0.1s: wave 3s ease-in-out -2.9s infinite; /* have not found an */
@@ -150,6 +151,11 @@
     to {
       transform: scale(0);
       opacity: 0;
+    }
+  }
+  @keyframes stretch-r {
+    to {
+      transform: scaleX(1.25) translateX(9%);
     }
   }
 }
