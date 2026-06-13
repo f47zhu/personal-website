@@ -11,7 +11,7 @@ export default function Home() {
             Home
           </button>
         </a>
-        <a href="../blog">
+        <a href="/blog">
           <button className="py-2 px-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black text-black dark:text-white">
             Blog
           </button>

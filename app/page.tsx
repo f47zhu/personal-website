@@ -20,12 +20,12 @@ export default function Home() {
         </div>
       </div>
       <div className="absolute top-4 right-4 flex flex-row gap-4">
-        <a href="./gauntle">
+        <a href="/gauntle">
           <button className="py-2 px-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
             <FunHighlight text="Games" />
           </button>
         </a>
-        <a href="./blog">
+        <a href="/blog">
           <button className="py-2 px-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black text-black dark:text-white">
             Blog
           </button>
@@ -54,7 +54,7 @@ export default function Home() {
                   <PopUp
                     key={0}
                     clickable={
-                      <img
+                      <img loading="lazy"
                         className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
                         src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
                       />
@@ -66,7 +66,7 @@ export default function Home() {
                       </>
                     }
                   >
-                    <img
+                    <img loading="lazy"
                       className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
                       src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
                     />
@@ -74,7 +74,7 @@ export default function Home() {
                   <PopUp
                     key={1}
                     clickable={
-                      <img
+                      <img loading="lazy"
                         className="rounded-full size-75 object-cover object-left border-2 border-green-700 dark:border-green-300"
                         src={"/selfies/me-playing-the-flute.jpg"} alt="Me playing the flute"
                       />
@@ -86,7 +86,7 @@ export default function Home() {
                       </>
                     }
                   >
-                    <img
+                    <img loading="lazy"
                       className="object-scale-down min-h-0 rounded-t-2xl"
                       src={"/selfies/me-playing-the-flute.jpg"} alt="Me playing the flute"
                     />
@@ -94,7 +94,7 @@ export default function Home() {
                   <PopUp
                     key={2}
                     clickable={
-                      <img
+                      <img loading="lazy"
                         className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
                         src={"/selfies/me-ziplining.jpg"} alt="Me ziplining over a river"
                       />
@@ -105,7 +105,7 @@ export default function Home() {
                       </>
                     }
                   >
-                    <img
+                    <img loading="lazy"
                       className="object-scale-down min-h-0 rounded-t-2xl"
                       src={"/selfies/me-ziplining.jpg"} alt="Me ziplining over a river"
                     />
@@ -113,7 +113,7 @@ export default function Home() {
                   <PopUp
                     key={3}
                     clickable={
-                      <img
+                      <img loading="lazy"
                         className="rounded-full size-75 object-cover object-[60%_0%] border-2 border-green-700 dark:border-green-300"
                         src={"/selfies/me-with-a-bear.png"} alt="Me posing with a bear statue"
                       />
@@ -124,7 +124,7 @@ export default function Home() {
                       </>
                     }
                   >
-                    <img
+                    <img loading="lazy"
                       className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
                       src={"/selfies/me-with-a-bear.png"} alt="Me posing with a bear statue"
                     />
@@ -202,7 +202,7 @@ export default function Home() {
           <div className="grid grid-rows-2 grid-cols-2 md:grid-rows-none md:grid-cols-4 mt-3 -mb-4 gap-8 place-items-center">
             <a href="sms:4168228844" target="_blank">
               <button className="flex flex-col place-items-center p-2 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-900">
-                <img src="./telephone-icon.webp" className="m-4 size-[50%] dark:invert" />
+                <img loading="lazy" src="./telephone-icon.webp" className="m-4 size-[50%] dark:invert" />
                 <div className="m-4 text-lg text-center">
                   (416) 822-8844
                 </div>
@@ -210,7 +210,7 @@ export default function Home() {
             </a>
             <a href="mailto:franklinzhu0905@gmail.com" target="_blank">
               <button className="flex flex-col place-items-center p-2 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-900">
-                <img src="./email-icon.png" className="m-4 size-[30%] place-self-center dark:invert" />
+                <img loading="lazy" src="./email-icon.png" className="m-4 size-[30%] place-self-center dark:invert" />
                 <div className="m-4 text-lg text-center">
                   franklinzhu0905@gmail.com
                 </div>
@@ -218,7 +218,7 @@ export default function Home() {
             </a>
             <a href="https://github.com/f47zhu" target="_blank">
               <button className="flex flex-col place-items-center p-2 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-900">
-                <img src="./github-logo.svg" className="m-4 size-[50%] dark:invert" />
+                <img loading="lazy" src="./github-logo.svg" className="m-4 size-[50%] dark:invert" />
                 <div className="m-4 text-lg text-center">
                   GitHub
                 </div>
@@ -226,7 +226,7 @@ export default function Home() {
             </a>
             <a href="https://www.linkedin.com/in/f47zhu" target="_blank">
               <button className="flex flex-col place-items-center p-2 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-900">
-                <img src="./linkedin-logo.webp" className="m-4 size-[50%]" />
+                <img loading="lazy" src="./linkedin-logo.webp" className="m-4 size-[50%]" />
                 <div className="m-4 text-lg text-center">
                   LinkedIn
                 </div>

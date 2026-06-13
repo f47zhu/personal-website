@@ -15,27 +15,27 @@ export function AboutDetails() {
           <div className="my-6 grid grid-rows-4 grid-cols-2 gap-6 place-items-center">
             <PopUp
               clickable={
-                <img className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/fuji-flower.jpg" alt="Flower with Mt. Fuji in the background" />
+                <img loading="lazy" className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/fuji-flower.jpg" alt="Flower with Mt. Fuji in the background" />
               }
               caption={
                 <>Flower with Mt. Fuji in the background. Very satisfying shot all around. 2024/09/04</>
               }
             >
-              <img className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/fuji-flower.jpg" alt="Flower with Mt. Fuji in the background" />
+              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/fuji-flower.jpg" alt="Flower with Mt. Fuji in the background" />
             </PopUp>
             <PopUp
               clickable={
-                <img className="rounded-2xl border-2 border-green-500" src="/gallery/shanghai.jpg" alt="Shanghai cityline" />
+                <img loading="lazy" className="rounded-2xl border-2 border-green-500" src="/gallery/shanghai.jpg" alt="Shanghai cityline" />
               }
               caption={
                 <>Shanghai cityline. I swam through a crowd to get this shot and I'm pretty happy with how clean it turned out! 2024/08/25</>
               }
             >
-              <img className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/shanghai.jpg" alt="Shanghai cityline" />
+              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/shanghai.jpg" alt="Shanghai cityline" />
             </PopUp>
             <PopUp
               clickable={
-                <img className="rounded-2xl border-2 border-green-500" src="/gallery/sunset-house.jpg" alt="Sunset over a house" />
+                <img loading="lazy" className="rounded-2xl border-2 border-green-500" src="/gallery/sunset-house.jpg" alt="Sunset over a house" />
               }
               caption={
                 <>
@@ -44,57 +44,57 @@ export function AboutDetails() {
                 </>
               }
             >
-              <img className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/sunset-house.jpg" alt="Sunset over a house" />
+              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/sunset-house.jpg" alt="Sunset over a house" />
             </PopUp>
             <PopUp
               clickable={
-                <img className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/golden-hour.jpg" alt="Golden hour in downtown Toronto" />
+                <img loading="lazy" className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/golden-hour.jpg" alt="Golden hour in downtown Toronto" />
               }
               caption={
                 <>Golden hour in downtown Toronto. The photo turned out much better than I thought. 2024/10/12</>
               }
             >
-              <img className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/golden-hour.jpg" alt="Golden hour in downtown Toronto" />
+              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/golden-hour.jpg" alt="Golden hour in downtown Toronto" />
             </PopUp>
             <PopUp
               clickable={
-                <img className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/flame-dancer.jpg" alt="Performer dancing with fire" />
+                <img loading="lazy" className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/flame-dancer.jpg" alt="Performer dancing with fire" />
               }
               caption={
                 <>Performer dancing with fire at Canada's Wonderland. Very, very happy with the timing of this shot. 2024/11/01</>
               }
             >
-              <img className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/flame-dancer.jpg" alt="Performer dancing with fire" />
+              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/flame-dancer.jpg" alt="Performer dancing with fire" />
             </PopUp>
             <PopUp
               clickable={
-                <img className="rounded-2xl border-2 border-green-500" src="/gallery/bike.jpg" alt="Bike on trail" />
+                <img loading="lazy" className="rounded-2xl border-2 border-green-500" src="/gallery/bike.jpg" alt="Bike on trail" />
               }
               caption={
                 <>My bike on the Lower Don Trail. Taken during a bike ride with a friend. 2025/07/02</>
               }
             >
-              <img className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/bike.jpg" alt="Bike on trail" />
+              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/bike.jpg" alt="Bike on trail" />
             </PopUp>
             <PopUp
               clickable={
-                <img className="rounded-2xl border-2 border-green-500" src="/gallery/eerie.jpg" alt="Dark night with approaching car in distance" />
+                <img loading="lazy" className="rounded-2xl border-2 border-green-500" src="/gallery/eerie.jpg" alt="Dark night with approaching car in distance" />
               }
               caption={
                 <>Dark night with a car approaching in the distance. This photo gives me an eerie feeling that I absolutely dig. 2024/05/12</>
               }
             >
-              <img className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/eerie.jpg" alt="Dark night with approaching car in distance" />
+              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/eerie.jpg" alt="Dark night with approaching car in distance" />
             </PopUp>
             <PopUp
               clickable={
-                <img className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/experimental.jpg" alt="Experimental photo with light streaks" />
+                <img loading="lazy" className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/experimental.jpg" alt="Experimental photo with light streaks" />
               }
               caption={
                 <>Experimental long-exposure photo. Shot near the base of the CN Tower. 2024/06/30</>
               }
             >
-              <img className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/experimental.jpg" alt="Experimental photo with light streaks" />
+              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/experimental.jpg" alt="Experimental photo with light streaks" />
             </PopUp>            
           </div>
           You can find more of my photos on Instagram if you know me personally and follow me there :)

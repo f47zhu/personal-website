@@ -54,7 +54,7 @@ export function RandomFunFact() {
 
     return () => {
       clearInterval(cycleInterval);
-    }
+    };
   }, [factsSeen, entry]);
 
   return (

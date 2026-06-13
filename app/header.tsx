@@ -39,7 +39,7 @@ export function PageHeader() {
               <a href="./resume" target="_blank">Open in new tab</a>
             }
           >
-            <iframe src="./Franklin_Zhu_Resume.pdf" className="h-[75vh] w-[50vw]" title="My resume" />
+            <iframe loading="lazy" src="./Franklin_Zhu_Resume.pdf" className="h-[75vh] w-[50vw]" title="My resume" />
           </PopUp>
           <HeaderElement link="#about" title="About Me" color="green" />
           <HeaderElement link="#projects" title="Projects" color="red" />
