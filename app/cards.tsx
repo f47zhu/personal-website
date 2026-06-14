@@ -52,7 +52,7 @@ export function InnerCard({ title, link = "", tools = "", date = "", funFact = "
         {link !== "" ? (
           <>
             <a href={link} target="_blank">{title}</a>
-            <img loading="lazy" className="inline size-4 align-top ml-1" src="/link-icon.png" />
+            <img loading="lazy" className="inline size-4 align-top ml-1" src="/link-icon.webp" />
           </>
         ) : (title)}
       </span>

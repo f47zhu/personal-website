@@ -30,7 +30,7 @@ export default function Home() {
         <div className="max-w-350 h-[2] bg-linear-to-r from-[#CBD5E000] via-gray-600 to-[#CBD5E000] dark:from-[#71809600] dark:via-gray-400 dark:to-[#71809600]" />
         <BlogCard
           title={"On getting into UW Software Engineering"}
-          link={"/blog/articles/seAdmission"}
+          link={"/blog/seAdmission"}
           desc={<>My personal advice for UW SE applicants.</>}
           date={"2026-06-10"}
         />

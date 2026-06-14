@@ -56,7 +56,7 @@ export default function Home() {
                     clickable={
                       <img loading="lazy"
                         className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
-                        src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
+                        src={"/selfies/me-conducting.webp"} alt="Me conducting a band"
                       />
                     }
                     caption={
@@ -68,7 +68,7 @@ export default function Home() {
                   >
                     <img loading="lazy"
                       className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
-                      src={"/selfies/me-conducting.jpg"} alt="Me conducting a band"
+                      src={"/selfies/me-conducting.webp"} alt="Me conducting a band"
                     />
                   </PopUp>,
                   <PopUp
@@ -76,7 +76,7 @@ export default function Home() {
                     clickable={
                       <img loading="lazy"
                         className="rounded-full size-75 object-cover object-left border-2 border-green-700 dark:border-green-300"
-                        src={"/selfies/me-playing-the-flute.jpg"} alt="Me playing the flute"
+                        src={"/selfies/me-playing-the-flute.webp"} alt="Me playing the flute"
                       />
                     }
                     caption={
@@ -88,7 +88,7 @@ export default function Home() {
                   >
                     <img loading="lazy"
                       className="object-scale-down min-h-0 rounded-t-2xl"
-                      src={"/selfies/me-playing-the-flute.jpg"} alt="Me playing the flute"
+                      src={"/selfies/me-playing-the-flute.webp"} alt="Me playing the flute"
                     />
                   </PopUp>,
                   <PopUp
@@ -96,7 +96,7 @@ export default function Home() {
                     clickable={
                       <img loading="lazy"
                         className="rounded-full size-75 object-cover object-[60%] border-2 border-green-700 dark:border-green-300"
-                        src={"/selfies/me-ziplining.jpg"} alt="Me ziplining over a river"
+                        src={"/selfies/me-ziplining.webp"} alt="Me ziplining over a river"
                       />
                     }
                     caption={
@@ -107,7 +107,7 @@ export default function Home() {
                   >
                     <img loading="lazy"
                       className="object-scale-down min-h-0 rounded-t-2xl"
-                      src={"/selfies/me-ziplining.jpg"} alt="Me ziplining over a river"
+                      src={"/selfies/me-ziplining.webp"} alt="Me ziplining over a river"
                     />
                   </PopUp>,
                   <PopUp
@@ -115,7 +115,7 @@ export default function Home() {
                     clickable={
                       <img loading="lazy"
                         className="rounded-full size-75 object-cover object-[60%_0%] border-2 border-green-700 dark:border-green-300"
-                        src={"/selfies/me-with-a-bear.png"} alt="Me posing with a bear statue"
+                        src={"/selfies/me-with-a-bear.webp"} alt="Me posing with a bear statue"
                       />
                     }
                     caption={
@@ -126,7 +126,7 @@ export default function Home() {
                   >
                     <img loading="lazy"
                       className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
-                      src={"/selfies/me-with-a-bear.png"} alt="Me posing with a bear statue"
+                      src={"/selfies/me-with-a-bear.webp"} alt="Me posing with a bear statue"
                     />
                   </PopUp>
                 ]}
@@ -210,7 +210,7 @@ export default function Home() {
             </a>
             <a href="mailto:franklinzhu0905@gmail.com" target="_blank">
               <button className="flex flex-col place-items-center p-2 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-900">
-                <img loading="lazy" src="./email-icon.png" className="m-4 size-[30%] place-self-center dark:invert" />
+                <img loading="lazy" src="./email-icon.webp" className="m-4 size-[30%] place-self-center dark:invert" />
                 <div className="m-4 text-lg text-center">
                   franklinzhu0905@gmail.com
                 </div>
