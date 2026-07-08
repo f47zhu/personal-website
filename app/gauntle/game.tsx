@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { createPortal } from "react-dom";
 
-import { FunHighlight } from "../waveEffect";
+import { FunHighlight } from "../effects/waveEffect";
 
 export function Game() {
   const [gameState, setGameState] = useState<string>("intro");
@@ -165,7 +165,9 @@ export function Game() {
             <b>Word must be at least {levels[currentLevel]["length"]} letters long.</b>
           </p>
           <ul className="list-disc list-inside">
-            {levels[currentLevel]["desc"].map((text: React.ReactNode, idx: number) => <li key={idx}>{text}</li>)}
+            {levels[currentLevel]["desc"].map(
+              (text: React.ReactNode, idx: number) => <li key={idx}>{text}</li>
+            )}
           </ul>
         </div>
         <label className="flex flex-row justify-between gap-2">

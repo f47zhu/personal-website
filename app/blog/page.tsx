@@ -1,4 +1,4 @@
-import { FunHighlight } from "../waveEffect";
+import { FunHighlight } from "../effects/waveEffect";
 import { BlogCard } from "./blogCard";
 
 export default function Home() {
@@ -22,7 +22,7 @@ export default function Home() {
             <h3 className="text-2xl text-gray-700 dark:text-gray-300 align-top">Franklin Zhu's</h3>
             <h1 className="animate-stretch-r text-7xl">Blog</h1>
           </div>
-          <div className="font-serif text-3xl text-end grow-0">
+          <div className="hidden sm:block font-serif text-3xl text-end grow-0">
             <p className="text-gray-600 dark:text-gray-400 italic">"Having a blog is performative"</p>
             <p className="text-gray-500">- Anonymous friend</p>
           </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { FunHighlight } from "@/app/waveEffect";
+import { FunHighlight } from "@/app/effects/waveEffect";
 
 import { useState, useEffect } from "react";
 
@@ -37,15 +37,25 @@ export default function Home() {
       </div>
       <div className="animate-fade-in-length0.25s my-20 mx-[15%] max-w-250 flex flex-col gap-5">
         <div className="flex flex-col gap-5">
-          <h1 className="font-serif text-5xl">On getting into UW Software Engineering</h1>
-          <h3 className="font-serif text-gray-700 dark:text-gray-300 text-3xl">My personal advice for UW SE applicants</h3>
-          <p className="-mt-2.5 mb-2.5 font-serif text-gray-600 dark:text-gray-400 text-2xl">June 10, 2026</p>
+          <h1 className="font-serif text-5xl">
+            On getting into UW Software Engineering
+          </h1>
+          <h3 className="font-serif text-gray-700 dark:text-gray-300 text-3xl">
+            My personal advice for UW SE applicants
+          </h3>
+          <p className="-mt-2.5 mb-2.5 font-serif text-gray-600 dark:text-gray-400 text-2xl">
+            June 10, 2026
+          </p>
         </div>
         <hr />
         <div className="flex flex-col gap-2.5 text-lg">
           <div className="flex flex-col gap-2.5 my-2.5 font-serif text-2xl place-self-center">
-            <p className="text-gray-800 dark:text-gray-200 italic">"You're either a smart fella, or a fart smella"</p>
-            <p className="text-gray-700 dark:text-gray-300 text-end">- Unknown</p>
+            <p className="text-gray-800 dark:text-gray-200 italic">
+              "You're either a smart fella, or a fart smella"
+            </p>
+            <p className="text-gray-700 dark:text-gray-300 text-end">
+              - Unknown
+            </p>
           </div>
           <p>
             I applied to Software Engineering as a Hail Mary. I genuinely did not think I was going to get accepted,

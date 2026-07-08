@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 
-import { FunHighlight } from "./waveEffect";
+import { FunHighlight } from "./effects/waveEffect";
 
 const funFacts: React.ReactNode[] = [
   <>I used to <a href="https://osu.ppy.sh/users/10975777" target="_blank">play osu! tournaments.</a></>,
@@ -59,7 +59,11 @@ export function RandomFunFact() {
 
   return (
     <>
-      <div ref={ref} className="text-base text-center text-gray-600 dark:text-gray-400 hover:cursor-pointer" onClick={setRandIndexFancy}>
+      <div
+        ref={ref}
+        className="text-base text-center text-gray-600 dark:text-gray-400 hover:cursor-pointer"
+        onClick={setRandIndexFancy}
+      >
         {funFacts[randIndex]}
       </div>
       {(factsSeen.size === funFacts.length) && (

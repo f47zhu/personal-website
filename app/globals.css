@@ -16,6 +16,7 @@
 @theme {
   --animate-fade-in-length0.125s: fade-in 0.125s ease-out both;
   --animate-fade-in-length0.25s: fade-in 0.25s ease-out both;
+  --animate-fade-in-length0.375s: fade-in 0.375s ease-out both;
   --animate-fade-in-length0.375s-delay0.75s: fade-in 0.375s ease-out 0.75s both;
   --animate-fade-in-length0.75s: fade-in 0.75s ease-out both;
   --animate-fade-in-length0.75s-delay0.375s: fade-in 0.75s ease-out 0.375s both;
@@ -25,74 +26,132 @@
   --animate-pop-in-length0.125s: pop-in 0.125s ease-out both;
   --animate-stretch-r: stretch-r 2.5s ease-in-out both;
 
-  --animate-wave-length3s: wave 3s ease-in-out infinite;
-  --animate-wave-length3s-delay0.1s: wave 3s ease-in-out -2.9s infinite; /* have not found an */
-  --animate-wave-length3s-delay0.2s: wave 3s ease-in-out -2.8s infinite; /* easier way to do  */
-  --animate-wave-length3s-delay0.3s: wave 3s ease-in-out -2.7s infinite; /* this so far       */
-  --animate-wave-length3s-delay0.4s: wave 3s ease-in-out -2.6s infinite;
-  --animate-wave-length3s-delay0.5s: wave 3s ease-in-out -2.5s infinite;
-  --animate-wave-length3s-delay0.6s: wave 3s ease-in-out -2.4s infinite;
-  --animate-wave-length3s-delay0.7s: wave 3s ease-in-out -2.3s infinite;
-  --animate-wave-length3s-delay0.8s: wave 3s ease-in-out -2.2s infinite;
-  --animate-wave-length3s-delay0.9s: wave 3s ease-in-out -2.1s infinite;
-  --animate-wave-length3s-delay1.0s: wave 3s ease-in-out -2.0s infinite;
-  --animate-wave-length3s-delay1.1s: wave 3s ease-in-out -1.9s infinite;
-  --animate-wave-length3s-delay1.2s: wave 3s ease-in-out -1.8s infinite;
-  --animate-wave-length3s-delay1.3s: wave 3s ease-in-out -1.7s infinite;
-  --animate-wave-length3s-delay1.4s: wave 3s ease-in-out -1.6s infinite;
-  --animate-wave-length3s-delay1.5s: wave 3s ease-in-out -1.5s infinite;
-  --animate-wave-length3s-delay1.6s: wave 3s ease-in-out -1.4s infinite;
-  --animate-wave-length3s-delay1.7s: wave 3s ease-in-out -1.3s infinite;
-  --animate-wave-length3s-delay1.8s: wave 3s ease-in-out -1.2s infinite;
-  --animate-wave-length3s-delay1.9s: wave 3s ease-in-out -1.1s infinite;
-  --animate-wave-length3s-delay2.0s: wave 3s ease-in-out -1.0s infinite;
-  --animate-wave-length3s-delay2.1s: wave 3s ease-in-out -0.9s infinite;
-  --animate-wave-length3s-delay2.2s: wave 3s ease-in-out -0.8s infinite;
-  --animate-wave-length3s-delay2.3s: wave 3s ease-in-out -0.7s infinite;
-  --animate-wave-length3s-delay2.4s: wave 3s ease-in-out -0.6s infinite;
-  --animate-wave-length3s-delay2.5s: wave 3s ease-in-out -0.5s infinite;
-  --animate-wave-length3s-delay2.6s: wave 3s ease-in-out -0.4s infinite;
-  --animate-wave-length3s-delay2.7s: wave 3s ease-in-out -0.3s infinite;
-  --animate-wave-length3s-delay2.8s: wave 3s ease-in-out -0.2s infinite;
-  --animate-wave-length3s-delay2.9s: wave 3s ease-in-out -0.1s infinite;
+  --animate-wave: wave 3s ease-in-out infinite;
+  --animate-wave-delay0.1s: wave 3s ease-in-out -2.9s infinite; /* have not found an */
+  --animate-wave-delay0.2s: wave 3s ease-in-out -2.8s infinite; /* easier way to do  */
+  --animate-wave-delay0.3s: wave 3s ease-in-out -2.7s infinite; /* this so far       */
+  --animate-wave-delay0.4s: wave 3s ease-in-out -2.6s infinite;
+  --animate-wave-delay0.5s: wave 3s ease-in-out -2.5s infinite;
+  --animate-wave-delay0.6s: wave 3s ease-in-out -2.4s infinite;
+  --animate-wave-delay0.7s: wave 3s ease-in-out -2.3s infinite;
+  --animate-wave-delay0.8s: wave 3s ease-in-out -2.2s infinite;
+  --animate-wave-delay0.9s: wave 3s ease-in-out -2.1s infinite;
+  --animate-wave-delay1.0s: wave 3s ease-in-out -2.0s infinite;
+  --animate-wave-delay1.1s: wave 3s ease-in-out -1.9s infinite;
+  --animate-wave-delay1.2s: wave 3s ease-in-out -1.8s infinite;
+  --animate-wave-delay1.3s: wave 3s ease-in-out -1.7s infinite;
+  --animate-wave-delay1.4s: wave 3s ease-in-out -1.6s infinite;
+  --animate-wave-delay1.5s: wave 3s ease-in-out -1.5s infinite;
+  --animate-wave-delay1.6s: wave 3s ease-in-out -1.4s infinite;
+  --animate-wave-delay1.7s: wave 3s ease-in-out -1.3s infinite;
+  --animate-wave-delay1.8s: wave 3s ease-in-out -1.2s infinite;
+  --animate-wave-delay1.9s: wave 3s ease-in-out -1.1s infinite;
+  --animate-wave-delay2.0s: wave 3s ease-in-out -1.0s infinite;
+  --animate-wave-delay2.1s: wave 3s ease-in-out -0.9s infinite;
+  --animate-wave-delay2.2s: wave 3s ease-in-out -0.8s infinite;
+  --animate-wave-delay2.3s: wave 3s ease-in-out -0.7s infinite;
+  --animate-wave-delay2.4s: wave 3s ease-in-out -0.6s infinite;
+  --animate-wave-delay2.5s: wave 3s ease-in-out -0.5s infinite;
+  --animate-wave-delay2.6s: wave 3s ease-in-out -0.4s infinite;
+  --animate-wave-delay2.7s: wave 3s ease-in-out -0.3s infinite;
+  --animate-wave-delay2.8s: wave 3s ease-in-out -0.2s infinite;
+  --animate-wave-delay2.9s: wave 3s ease-in-out -0.1s infinite;
 
-  --animate-bg-pulse: bg-pulse 30s ease-out infinite backwards;
-  --animate-bg-pulse-delay1s: bg-pulse 30s ease-out 1s infinite backwards;
-  --animate-bg-pulse-delay2s: bg-pulse 30s ease-out 2s infinite backwards;
-  --animate-bg-pulse-delay3s: bg-pulse 30s ease-out 3s infinite backwards;
-  --animate-bg-pulse-delay4s: bg-pulse 30s ease-out 4s infinite backwards;
-  --animate-bg-pulse-delay5s: bg-pulse 30s ease-out 5s infinite backwards;
-  --animate-bg-pulse-delay6s: bg-pulse 30s ease-out 6s infinite backwards;
-  --animate-bg-pulse-delay7s: bg-pulse 30s ease-out 7s infinite backwards;
-  --animate-bg-pulse-delay8s: bg-pulse 30s ease-out 8s infinite backwards;
-  --animate-bg-pulse-delay9s: bg-pulse 30s ease-out 9s infinite backwards;
-  --animate-bg-pulse-delay10s: bg-pulse 30s ease-out 10s infinite backwards;
-  --animate-bg-pulse-delay11s: bg-pulse 30s ease-out 11s infinite backwards;
-  --animate-bg-pulse-delay12s: bg-pulse 30s ease-out 12s infinite backwards;
-  --animate-bg-pulse-delay13s: bg-pulse 30s ease-out 13s infinite backwards;
-  --animate-bg-pulse-delay14s: bg-pulse 30s ease-out 14s infinite backwards;
-  --animate-bg-pulse-delay15s: bg-pulse 30s ease-out 15s infinite backwards;
-  --animate-bg-pulse-delay16s: bg-pulse 30s ease-out 16s infinite backwards;
-  --animate-bg-pulse-delay17s: bg-pulse 30s ease-out 17s infinite backwards;
-  --animate-bg-pulse-delay18s: bg-pulse 30s ease-out 18s infinite backwards;
-  --animate-bg-pulse-delay19s: bg-pulse 30s ease-out 19s infinite backwards;
-  --animate-bg-pulse-delay20s: bg-pulse 30s ease-out 20s infinite backwards;
-  --animate-bg-pulse-delay21s: bg-pulse 30s ease-out 21s infinite backwards;
-  --animate-bg-pulse-delay22s: bg-pulse 30s ease-out 22s infinite backwards;
-  --animate-bg-pulse-delay23s: bg-pulse 30s ease-out 23s infinite backwards;
-  --animate-bg-pulse-delay24s: bg-pulse 30s ease-out 24s infinite backwards;
-  --animate-bg-pulse-delay25s: bg-pulse 30s ease-out 25s infinite backwards;
-  --animate-bg-pulse-delay26s: bg-pulse 30s ease-out 26s infinite backwards;
-  --animate-bg-pulse-delay27s: bg-pulse 30s ease-out 27s infinite backwards;
-  --animate-bg-pulse-delay28s: bg-pulse 30s ease-out 28s infinite backwards;
-  --animate-bg-pulse-delay29s: bg-pulse 30s ease-out 29s infinite backwards;
+  --animate-homepage-bg-shrink: homepage-bg-shrink 30s ease-out infinite;
+  --animate-homepage-bg-shrink-delay1s: homepage-bg-shrink 30s ease-out -29s infinite;
+  --animate-homepage-bg-shrink-delay2s: homepage-bg-shrink 30s ease-out -28s infinite;
+  --animate-homepage-bg-shrink-delay3s: homepage-bg-shrink 30s ease-out -27s infinite;
+  --animate-homepage-bg-shrink-delay4s: homepage-bg-shrink 30s ease-out -26s infinite;
+  --animate-homepage-bg-shrink-delay5s: homepage-bg-shrink 30s ease-out -25s infinite;
+  --animate-homepage-bg-shrink-delay6s: homepage-bg-shrink 30s ease-out -24s infinite;
+  --animate-homepage-bg-shrink-delay7s: homepage-bg-shrink 30s ease-out -23s infinite;
+  --animate-homepage-bg-shrink-delay8s: homepage-bg-shrink 30s ease-out -22s infinite;
+  --animate-homepage-bg-shrink-delay9s: homepage-bg-shrink 30s ease-out -21s infinite;
+  --animate-homepage-bg-shrink-delay10s: homepage-bg-shrink 30s ease-out -20s infinite;
+  --animate-homepage-bg-shrink-delay11s: homepage-bg-shrink 30s ease-out -19s infinite;
+  --animate-homepage-bg-shrink-delay12s: homepage-bg-shrink 30s ease-out -18s infinite;
+  --animate-homepage-bg-shrink-delay13s: homepage-bg-shrink 30s ease-out -17s infinite;
+  --animate-homepage-bg-shrink-delay14s: homepage-bg-shrink 30s ease-out -16s infinite;
+  --animate-homepage-bg-shrink-delay15s: homepage-bg-shrink 30s ease-out -15s infinite;
+  --animate-homepage-bg-shrink-delay16s: homepage-bg-shrink 30s ease-out -14s infinite;
+  --animate-homepage-bg-shrink-delay17s: homepage-bg-shrink 30s ease-out -13s infinite;
+  --animate-homepage-bg-shrink-delay18s: homepage-bg-shrink 30s ease-out -12s infinite;
+  --animate-homepage-bg-shrink-delay19s: homepage-bg-shrink 30s ease-out -11s infinite;
+  --animate-homepage-bg-shrink-delay20s: homepage-bg-shrink 30s ease-out -10s infinite;
+  --animate-homepage-bg-shrink-delay21s: homepage-bg-shrink 30s ease-out -9s infinite;
+  --animate-homepage-bg-shrink-delay22s: homepage-bg-shrink 30s ease-out -8s infinite;
+  --animate-homepage-bg-shrink-delay23s: homepage-bg-shrink 30s ease-out -7s infinite;
+  --animate-homepage-bg-shrink-delay24s: homepage-bg-shrink 30s ease-out -6s infinite;
+  --animate-homepage-bg-shrink-delay25s: homepage-bg-shrink 30s ease-out -5s infinite;
+  --animate-homepage-bg-shrink-delay26s: homepage-bg-shrink 30s ease-out -4s infinite;
+  --animate-homepage-bg-shrink-delay27s: homepage-bg-shrink 30s ease-out -3s infinite;
+  --animate-homepage-bg-shrink-delay28s: homepage-bg-shrink 30s ease-out -2s infinite;
+  --animate-homepage-bg-shrink-delay29s: homepage-bg-shrink 30s ease-out -1s infinite;
+
+  --animate-gauntle-bg-pulse: gauntle-bg-pulse 60s ease-in-out infinite;
+  --animate-gauntle-bg-pulse-delay1s: gauntle-bg-pulse 60s ease-in-out -59s infinite;
+  --animate-gauntle-bg-pulse-delay2s: gauntle-bg-pulse 60s ease-in-out -58s infinite;
+  --animate-gauntle-bg-pulse-delay3s: gauntle-bg-pulse 60s ease-in-out -57s infinite;
+  --animate-gauntle-bg-pulse-delay4s: gauntle-bg-pulse 60s ease-in-out -56s infinite;
+  --animate-gauntle-bg-pulse-delay5s: gauntle-bg-pulse 60s ease-in-out -55s infinite;
+  --animate-gauntle-bg-pulse-delay6s: gauntle-bg-pulse 60s ease-in-out -54s infinite;
+  --animate-gauntle-bg-pulse-delay7s: gauntle-bg-pulse 60s ease-in-out -53s infinite;
+  --animate-gauntle-bg-pulse-delay8s: gauntle-bg-pulse 60s ease-in-out -52s infinite;
+  --animate-gauntle-bg-pulse-delay9s: gauntle-bg-pulse 60s ease-in-out -51s infinite;
+  --animate-gauntle-bg-pulse-delay10s: gauntle-bg-pulse 60s ease-in-out -50s infinite;
+  --animate-gauntle-bg-pulse-delay11s: gauntle-bg-pulse 60s ease-in-out -49s infinite;
+  --animate-gauntle-bg-pulse-delay12s: gauntle-bg-pulse 60s ease-in-out -48s infinite;
+  --animate-gauntle-bg-pulse-delay13s: gauntle-bg-pulse 60s ease-in-out -47s infinite;
+  --animate-gauntle-bg-pulse-delay14s: gauntle-bg-pulse 60s ease-in-out -46s infinite;
+  --animate-gauntle-bg-pulse-delay15s: gauntle-bg-pulse 60s ease-in-out -45s infinite;
+  --animate-gauntle-bg-pulse-delay16s: gauntle-bg-pulse 60s ease-in-out -44s infinite;
+  --animate-gauntle-bg-pulse-delay17s: gauntle-bg-pulse 60s ease-in-out -43s infinite;
+  --animate-gauntle-bg-pulse-delay18s: gauntle-bg-pulse 60s ease-in-out -42s infinite;
+  --animate-gauntle-bg-pulse-delay19s: gauntle-bg-pulse 60s ease-in-out -41s infinite;
+  --animate-gauntle-bg-pulse-delay20s: gauntle-bg-pulse 60s ease-in-out -40s infinite;
+  --animate-gauntle-bg-pulse-delay21s: gauntle-bg-pulse 60s ease-in-out -39s infinite;
+  --animate-gauntle-bg-pulse-delay22s: gauntle-bg-pulse 60s ease-in-out -38s infinite;
+  --animate-gauntle-bg-pulse-delay23s: gauntle-bg-pulse 60s ease-in-out -37s infinite;
+  --animate-gauntle-bg-pulse-delay24s: gauntle-bg-pulse 60s ease-in-out -36s infinite;
+  --animate-gauntle-bg-pulse-delay25s: gauntle-bg-pulse 60s ease-in-out -35s infinite;
+  --animate-gauntle-bg-pulse-delay26s: gauntle-bg-pulse 60s ease-in-out -34s infinite;
+  --animate-gauntle-bg-pulse-delay27s: gauntle-bg-pulse 60s ease-in-out -33s infinite;
+  --animate-gauntle-bg-pulse-delay28s: gauntle-bg-pulse 60s ease-in-out -32s infinite;
+  --animate-gauntle-bg-pulse-delay29s: gauntle-bg-pulse 60s ease-in-out -31s infinite;
+  --animate-gauntle-bg-pulse-delay30s: gauntle-bg-pulse 60s ease-in-out -30s infinite;
+  --animate-gauntle-bg-pulse-delay31s: gauntle-bg-pulse 60s ease-in-out -29s infinite;
+  --animate-gauntle-bg-pulse-delay32s: gauntle-bg-pulse 60s ease-in-out -28s infinite;
+  --animate-gauntle-bg-pulse-delay33s: gauntle-bg-pulse 60s ease-in-out -27s infinite;
+  --animate-gauntle-bg-pulse-delay34s: gauntle-bg-pulse 60s ease-in-out -26s infinite;
+  --animate-gauntle-bg-pulse-delay35s: gauntle-bg-pulse 60s ease-in-out -25s infinite;
+  --animate-gauntle-bg-pulse-delay36s: gauntle-bg-pulse 60s ease-in-out -24s infinite;
+  --animate-gauntle-bg-pulse-delay37s: gauntle-bg-pulse 60s ease-in-out -23s infinite;
+  --animate-gauntle-bg-pulse-delay38s: gauntle-bg-pulse 60s ease-in-out -22s infinite;
+  --animate-gauntle-bg-pulse-delay39s: gauntle-bg-pulse 60s ease-in-out -21s infinite;
+  --animate-gauntle-bg-pulse-delay40s: gauntle-bg-pulse 60s ease-in-out -20s infinite;
+  --animate-gauntle-bg-pulse-delay41s: gauntle-bg-pulse 60s ease-in-out -19s infinite;
+  --animate-gauntle-bg-pulse-delay42s: gauntle-bg-pulse 60s ease-in-out -18s infinite;
+  --animate-gauntle-bg-pulse-delay43s: gauntle-bg-pulse 60s ease-in-out -17s infinite;
+  --animate-gauntle-bg-pulse-delay44s: gauntle-bg-pulse 60s ease-in-out -16s infinite;
+  --animate-gauntle-bg-pulse-delay45s: gauntle-bg-pulse 60s ease-in-out -15s infinite;
+  --animate-gauntle-bg-pulse-delay46s: gauntle-bg-pulse 60s ease-in-out -14s infinite;
+  --animate-gauntle-bg-pulse-delay47s: gauntle-bg-pulse 60s ease-in-out -13s infinite;
+  --animate-gauntle-bg-pulse-delay48s: gauntle-bg-pulse 60s ease-in-out -12s infinite;
+  --animate-gauntle-bg-pulse-delay49s: gauntle-bg-pulse 60s ease-in-out -11s infinite;
+  --animate-gauntle-bg-pulse-delay50s: gauntle-bg-pulse 60s ease-in-out -10s infinite;
+  --animate-gauntle-bg-pulse-delay51s: gauntle-bg-pulse 60s ease-in-out -9s infinite;
+  --animate-gauntle-bg-pulse-delay52s: gauntle-bg-pulse 60s ease-in-out -8s infinite;
+  --animate-gauntle-bg-pulse-delay53s: gauntle-bg-pulse 60s ease-in-out -7s infinite;
+  --animate-gauntle-bg-pulse-delay54s: gauntle-bg-pulse 60s ease-in-out -6s infinite;
+  --animate-gauntle-bg-pulse-delay55s: gauntle-bg-pulse 60s ease-in-out -5s infinite;
+  --animate-gauntle-bg-pulse-delay56s: gauntle-bg-pulse 60s ease-in-out -4s infinite;
+  --animate-gauntle-bg-pulse-delay57s: gauntle-bg-pulse 60s ease-in-out -3s infinite;
+  --animate-gauntle-bg-pulse-delay58s: gauntle-bg-pulse 60s ease-in-out -2s infinite;
+  --animate-gauntle-bg-pulse-delay59s: gauntle-bg-pulse 60s ease-in-out -1s infinite;
 
   @keyframes fade-in {
     from {
       opacity: 0;
-    }
-    to {
-      opacity: 1;
     }
   }
   @keyframes pop-in {
@@ -100,52 +159,36 @@
       opacity: 0;
       transform: scale(0.95);
     }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
   }
   @keyframes fade-in-from-bottom {
     from {
       opacity: 0;
       transform: translate(0, 2.5%);
-    } to {
-      opacity: 1;
-      transform: translate(0, 0);
     }
   }
   @keyframes fade-in-from-left {
     from {
       opacity: 0;
       transform: translate(-2.5%, 0);
-    } to {
-      opacity: 1;
-      transform: translate(0, 0);
     }
   }
   @keyframes fade-in-from-right {
     from {
       opacity: 0;
       transform: translate(2.5%, 0);
-    } to {
-      opacity: 1;
-      transform: translate(0, 0);
     }
   }
   @keyframes wave {
-    from {
-      filter: hue-rotate(0deg);
-    }
     to {
       filter: hue-rotate(360deg);
     }
   }
-  @keyframes bg-pulse {
+  @keyframes homepage-bg-shrink {
     from {
       opacity: 0;
     }
     5% {
-      transform: scale(1);
+      transform: none;
       opacity: 0.2;
     }
     to {

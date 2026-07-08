@@ -18,7 +18,7 @@ export default function Home() {
         </a>
       </div>
       <div className="flex h-screen">
-        <div className="m-auto animate-fade-in-length0.25s">
+        <div className="m-auto animate-fade-in-length0.375s">
           <Game />
         </div>
       </div>

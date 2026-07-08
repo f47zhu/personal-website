@@ -1,11 +1,15 @@
 import { PopUp } from "./popUp";
 import { InnerCard } from "./cards";
-import { FunHighlight } from "./waveEffect";
+import { FunHighlight } from "./effects/waveEffect";
 
 export function AboutDetails() {
   return (
     <PopUp
-      clickable={<button className="relative -top-2 -mb-2 py-2 px-4 text-lg rounded-full border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">see more</button>}
+      clickable={
+        <button className="relative -top-2 -mb-2 py-2 px-4 text-lg rounded-full border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
+          see more
+        </button>
+      }
       color={"green"}
     >
       <div className="p-8 overflow-y-scroll overscroll-contain place-self-center flex flex-col gap-6">
@@ -15,91 +19,173 @@ export function AboutDetails() {
           <div className="my-6 grid grid-rows-4 grid-cols-2 gap-6 place-items-center">
             <PopUp
               clickable={
-                <img loading="lazy" className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/fuji-flower.webp" alt="Flower with Mt. Fuji in the background" />
+                <img
+                  loading="lazy"
+                  className="rounded-2xl border-2 border-green-700 dark:border-green-300"
+                  src="/gallery/fuji-flower.webp"
+                  alt="Flower with Mt. Fuji in the background"
+                />
               }
               caption={
                 <>Flower with Mt. Fuji in the background. Very satisfying shot all around. 2024/09/04</>
               }
             >
-              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/fuji-flower.webp" alt="Flower with Mt. Fuji in the background" />
+              <img
+                loading="lazy"
+                className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
+                src="/gallery/fuji-flower.webp"
+                alt="Flower with Mt. Fuji in the background"
+              />
             </PopUp>
             <PopUp
               clickable={
-                <img loading="lazy" className="rounded-2xl border-2 border-green-500" src="/gallery/shanghai.webp" alt="Shanghai cityline" />
+                <img
+                  loading="lazy"
+                  className="rounded-2xl border-2 border-green-500"
+                  src="/gallery/shanghai.webp" 
+                  alt="Shanghai cityline"
+                />
               }
               caption={
                 <>Shanghai cityline. I swam through a crowd to get this shot and I'm pretty happy with how clean it turned out! 2024/08/25</>
               }
             >
-              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/shanghai.webp" alt="Shanghai cityline" />
+              <img
+                loading="lazy"
+                className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
+                src="/gallery/shanghai.webp" 
+                alt="Shanghai cityline"
+              />
             </PopUp>
             <PopUp
               clickable={
-                <img loading="lazy" className="rounded-2xl border-2 border-green-500" src="/gallery/sunset-house.webp" alt="Sunset over a house" />
+                <img
+                  loading="lazy"
+                  className="rounded-2xl border-2 border-green-500"
+                  src="/gallery/sunset-house.webp"
+                  alt="Sunset over a house"
+                />
               }
               caption={
                 <>
-                  Sunset over a house. It took me a couple crops to arrive at this one. I love the way that the trees' figures contrast against the sky;
-                  it's an aesthetic that I return to in many of my shots. 2025/05/02
+                  Sunset over a house. It took me a couple crops to arrive at this one.
+                  I love the way that the trees' figures contrast against the sky; it's an aesthetic that I return to in many of my shots. 2025/05/02
                 </>
               }
             >
-              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/sunset-house.webp" alt="Sunset over a house" />
+              <img
+                loading="lazy"
+                className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
+                src="/gallery/sunset-house.webp"
+                alt="Sunset over a house"
+              />
             </PopUp>
             <PopUp
               clickable={
-                <img loading="lazy" className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/golden-hour.webp" alt="Golden hour in downtown Toronto" />
+                <img
+                  loading="lazy"
+                  className="rounded-2xl border-2 border-green-700 dark:border-green-300"
+                  src="/gallery/golden-hour.webp"
+                  alt="Golden hour in downtown Toronto"
+                />
               }
               caption={
                 <>Golden hour in downtown Toronto. The photo turned out much better than I thought. 2024/10/12</>
               }
             >
-              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/golden-hour.webp" alt="Golden hour in downtown Toronto" />
+              <img
+                loading="lazy"
+                className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
+                src="/gallery/golden-hour.webp"
+                alt="Golden hour in downtown Toronto"
+              />
             </PopUp>
             <PopUp
               clickable={
-                <img loading="lazy" className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/flame-dancer.webp" alt="Performer dancing with fire" />
+                <img
+                  loading="lazy"
+                  className="rounded-2xl border-2 border-green-700 dark:border-green-300"
+                  src="/gallery/flame-dancer.webp"
+                  alt="Performer dancing with fire"
+                />
               }
               caption={
                 <>Performer dancing with fire at Canada's Wonderland. Very, very happy with the timing of this shot. 2024/11/01</>
               }
             >
-              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/flame-dancer.webp" alt="Performer dancing with fire" />
+              <img
+                loading="lazy"
+                className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
+                src="/gallery/flame-dancer.webp"
+                alt="Performer dancing with fire"
+              />
             </PopUp>
             <PopUp
               clickable={
-                <img loading="lazy" className="rounded-2xl border-2 border-green-500" src="/gallery/bike.webp" alt="Bike on trail" />
+                <img
+                  loading="lazy"
+                  className="rounded-2xl border-2 border-green-500"
+                  src="/gallery/bike.webp" 
+                  alt="Bike on trail"
+                />
               }
               caption={
                 <>My bike on the Lower Don Trail. Taken during a bike ride with a friend. 2025/07/02</>
               }
             >
-              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/bike.webp" alt="Bike on trail" />
+              <img
+                loading="lazy"
+                className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
+                src="/gallery/bike.webp" 
+                alt="Bike on trail"
+              />
             </PopUp>
             <PopUp
               clickable={
-                <img loading="lazy" className="rounded-2xl border-2 border-green-500" src="/gallery/eerie.webp" alt="Dark night with approaching car in distance" />
+                <img
+                  loading="lazy"
+                  className="rounded-2xl border-2 border-green-500"
+                  src="/gallery/eerie.webp" 
+                  alt="Dark night with approaching car in distance"
+                />
               }
               caption={
                 <>Dark night with a car approaching in the distance. This photo gives me an eerie feeling that I absolutely dig. 2024/05/12</>
               }
             >
-              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/eerie.webp" alt="Dark night with approaching car in distance" />
+              <img
+                loading="lazy"
+                className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
+                src="/gallery/eerie.webp" 
+                alt="Dark night with approaching car in distance"
+              />
             </PopUp>
             <PopUp
               clickable={
-                <img loading="lazy" className="rounded-2xl border-2 border-green-700 dark:border-green-300" src="/gallery/experimental.webp" alt="Experimental photo with light streaks" />
+                <img
+                  loading="lazy"
+                  className="rounded-2xl border-2 border-green-700 dark:border-green-300"
+                  src="/gallery/experimental.webp" 
+                  alt="Experimental photo with light streaks"
+                />
               }
               caption={
                 <>Experimental long-exposure photo. Shot near the base of the CN Tower. 2024/06/30</>
               }
             >
-              <img loading="lazy" className="object-scale-down min-w-0 min-h-0 rounded-t-2xl" src="/gallery/experimental.webp" alt="Experimental photo with light streaks" />
+              <img
+                loading="lazy"
+                className="object-scale-down min-w-0 min-h-0 rounded-t-2xl"
+                src="/gallery/experimental.webp" 
+                alt="Experimental photo with light streaks"
+              />
             </PopUp>            
           </div>
           You can find more of my photos on Instagram if you know me personally and follow me there :)
           <br />
-          <span className="text-base">I also enjoy listening to PUP, King Gizzard and the Lizard Wizard, glass beach, and Yorushika.</span>
+          <span className="text-base">
+            I also enjoy listening to PUP, King Gizzard and the Lizard Wizard, glass beach, and Yorushika.
+          </span>
         </div>
       </div>
     </PopUp>
@@ -109,7 +195,11 @@ export function AboutDetails() {
 export function ProjectDetails() {
   return (
     <PopUp
-      clickable={<button className="relative -top-2 -mb-2 py-2 px-4 text-lg rounded-full border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">see more</button>}
+      clickable={
+        <button className="relative -top-2 -mb-2 py-2 px-4 text-lg rounded-full border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
+          see more
+        </button>
+      }
       color={"red"}
     >
       <div className="p-8 overflow-y-scroll overscroll-contain place-self-center flex flex-col gap-6">

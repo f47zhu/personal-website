@@ -30,7 +30,10 @@ export function PageCard({ className = "", color, title, subtitle = undefined, c
   };
 
   return (
-    <div ref={ref} className={`${inView ? animationVariants[animation] : "invisible"} p-8 border-2 rounded-2xl ${colorVariants["border" + color]} ${colorVariants["bg" + color]} ${className}`}>
+    <div
+      ref={ref}
+      className={`${inView ? animationVariants[animation] : "invisible"} p-8 border-2 rounded-2xl ${colorVariants["border" + color]} ${colorVariants["bg" + color]} ${className}`}
+    >
       <div className={`text-4xl font-[575] ${colorVariants["text" + color]}`}>
         {title}
         {(subtitle !== undefined) && (
@@ -51,8 +54,17 @@ export function InnerCard({ title, link = "", tools = "", date = "", funFact = "
       <span className="text-2xl font-medium">
         {link !== "" ? (
           <>
-            <a href={link} target="_blank">{title}</a>
-            <img loading="lazy" className="inline size-4 align-top ml-1" src="/link-icon.webp" />
+            <a
+              href={link}
+              target="_blank"
+            >
+              {title}
+            </a>
+            <img
+              loading="lazy"
+              className="inline size-4 align-top ml-1"
+              src="/link-icon.webp"
+            />
           </>
         ) : (title)}
       </span>
