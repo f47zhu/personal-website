@@ -8,12 +8,11 @@ export default function Home() {
   const [farter, setFarter] = useState<boolean>(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const fartInterval = setInterval(() => {
       setFarter(!farter);
     }, 2500);
-    return () => {
-      clearInterval(interval)
-    };
+
+    return () => clearInterval(fartInterval);
   }, [farter]);
 
   return (

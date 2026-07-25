@@ -23,9 +23,7 @@ export function CircleCarousel({ isPopUps = false, images }:
       }
     });
 
-    return () => {
-      clearInterval(cycleInterval);
-    };
+    return () => clearInterval(cycleInterval);
   }, [curIndex, paused]);
 
   function togglePause() {

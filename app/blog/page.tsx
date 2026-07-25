@@ -5,12 +5,18 @@ export default function Home() {
   return (
     <>
       <div className="absolute top-4 right-4 flex flex-row gap-4">
-        <a href="/">
-          <button className="py-2 px-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black text-black dark:text-white">
+        <a
+          href="/"
+          className="text-black dark:text-white"
+        >
+          <button className="py-2 px-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
             Home
           </button>
         </a>
-        <a href="/gauntle">
+        <a
+          href="/games"
+          className="text-black dark:text-white"
+        >
           <button className="py-2 px-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
             <FunHighlight text="Games" />
           </button>

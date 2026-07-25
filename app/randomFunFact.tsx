@@ -52,9 +52,7 @@ export function RandomFunFact() {
       }
     });
 
-    return () => {
-      clearInterval(cycleInterval);
-    };
+    return () => clearInterval(cycleInterval);
   }, [factsSeen, entry]);
 
   return (
