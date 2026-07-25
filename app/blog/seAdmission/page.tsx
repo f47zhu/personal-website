@@ -28,7 +28,7 @@ export default function Home() {
             Home
           </button>
         </a>
-        <a href="/gauntle">
+        <a href="/games">
           <button className="py-2 px-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
             <FunHighlight text="Games" />
           </button>

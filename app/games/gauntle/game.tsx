@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { createPortal } from "react-dom";
 
-import { FunHighlight } from "../effects/waveEffect";
+import { FunHighlight } from "../../effects/waveEffect";
 
 export function Game() {
   const [gameState, setGameState] = useState<string>("intro");
@@ -46,7 +46,7 @@ export function Game() {
     if (gameState === "gameplay") {
       setCurrentLevelIdx(0);
       startTime.current = Date.now();
-      usedWords.current = new Set<string>;
+      usedWords.current = new Set<string>();
     }
   }, [gameState]);
 
@@ -105,7 +105,7 @@ export function Game() {
         </div>
         <button
           className="w-25 place-self-center border-2 rounded-2xl py-1 px-2 border-gray-400 dark:border-gray-600"
-          name="next" onClick={() => setGameState("gameplay")}
+          onClick={() => setGameState("gameplay")}
         >
           I'm ready!
         </button>
@@ -129,7 +129,7 @@ export function Game() {
                 onClick={() => setExitConfirm(false)}
               >
                 <div
-                  className="animate-pop-in-length0.125s absolute top-0 bottom-0 left-0 right-0 m-auto w-75 h-50 p-8 flex flex-col gap-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black"
+                  className="animate-pop-in-length0.125s absolute inset-0 m-auto w-75 h-50 p-8 flex flex-col gap-4 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black"
                   onClick={e => e.stopPropagation()}
                 >
                   <h1 className="text-center text-xl">
