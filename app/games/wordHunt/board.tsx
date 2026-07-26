@@ -441,7 +441,7 @@ export function Board({ size, guessedWordsRef, scoreRef, guessedWordsDefnsRef, c
               </div>
             </button>
           )}
-          <div className={`absolute top-0 bottom-0 my-auto left-[-30vmin] w-[30vmin] h-[60vmin] flex flex-col gap-2.5 p-5 border-2 rounded-2xl rounded-r-none border-gray-400 dark:border-gray-600 bg-black text-center`}>
+          <div className={`absolute top-0 bottom-0 my-auto left-[-30vmin] w-[30vmin] h-[60vmin] flex flex-col gap-2.5 p-5 border-2 rounded-2xl rounded-r-none border-gray-400 dark:border-gray-600 bg-white dark:bg-black text-center`}>
             <h1 className="wrap-break-word text-lg flex-2 place-content-center">
               {guess === "" ? <span className="opacity-50">Guess goes here...</span>
                   : (doubleScoreActive ? <FunHighlight text={guess} /> : <b>{guess}</b>)}
@@ -480,7 +480,7 @@ export function Board({ size, guessedWordsRef, scoreRef, guessedWordsDefnsRef, c
               )}
             </h1>
           </div>
-          <div className={`absolute top-0 bottom-0 my-auto right-[-30vmin] w-[30vmin] h-[60vmin] flex flex-col gap-2.5 p-5 border-2 rounded-2xl rounded-l-none border-gray-400 dark:border-gray-600 bg-black text-center`}>
+          <div className={`absolute top-0 bottom-0 my-auto right-[-30vmin] w-[30vmin] h-[60vmin] flex flex-col gap-2.5 p-5 border-2 rounded-2xl rounded-l-none border-gray-400 dark:border-gray-600 bg-white dark:bg-black text-center`}>
             <div className="flex-2 flex flex-col gap-2 wrap-break-word place-content-center">
               <h1 className="text-lg">
                 Time left: {
@@ -488,9 +488,9 @@ export function Board({ size, guessedWordsRef, scoreRef, guessedWordsDefnsRef, c
                     <FunHighlight text={String(Math.ceil((gameTimeRef.current - timeElapsed) / 1000))} />
                   ) : (
                     <span className={
-                        `${(gameTimeRef.current - timeElapsed <= gameTimeRef.current / 6) ? "text-red-300" :
-                          ((gameTimeRef.current - timeElapsed <= gameTimeRef.current / 2) ? "text-yellow-300" :
-                          "text-green-300")}`}>
+                        `${(gameTimeRef.current - timeElapsed <= gameTimeRef.current / 6) ? "text-red-700 dark:text-red-300" :
+                          ((gameTimeRef.current - timeElapsed <= gameTimeRef.current / 2) ? "text-yellow-700 dark:text-yellow-300" :
+                          "text-green-700 dark:text-green-300")}`}>
                       <b>{Math.ceil((gameTimeRef.current - timeElapsed) / 1000)}</b>
                     </span>
                   )
