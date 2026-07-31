@@ -1,3 +1,4 @@
+import { CustomHr } from "./customHr";
 import { PopUp } from "./popUp";
 
 function HeaderElement( {link, title, color}: {link?: string, title: string, color: string} ) {
@@ -31,7 +32,7 @@ export function PageHeader() {
     <>
       <span id={"about"} />
       <div className="z-20 sticky top-0 animate-fade-in-length0.375s-delay0.75s">
-        <div className="max-w-350 h-[2] left-0 right-0 mx-auto bg-linear-to-r from-[#CBD5E000] via-gray-600 to-[#CBD5E000] dark:from-[#71809600] dark:via-gray-400 dark:to-[#71809600]" />
+        <CustomHr className="left-0 right-0 mx-auto" />
         <div className="max-w-350 h-15 grid grid-cols-5 md:grid-cols-7 place-self-center place-items-center overflow-hidden text-xl tracking-[2] font-extrabold bg-linear-to-r from-[#00000000] via-[#FFFFFF80] dark:via-[#00000080] to-[#00000000]">
           <div className="hidden md:block" />
           <PopUp
@@ -66,7 +67,7 @@ export function PageHeader() {
           />
           <div className="hidden md:block" />
         </div>
-        <div className="max-w-350 h-[2] left-0 right-0 mx-auto bg-linear-to-r from-[#CBD5E000] via-gray-600 to-[#CBD5E000] dark:from-[#71809600] dark:via-gray-400 dark:to-[#71809600]" />
+        <CustomHr className="left-0 right-0 mx-auto" />
       </div>
     </>
   );
