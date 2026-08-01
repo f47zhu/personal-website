@@ -3,16 +3,16 @@
 import { FunHighlight } from "@/app/effects/waveEffect";
 import { useState, useEffect, useRef, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
+import { validateWord } from "./wordValidator";
 
 function randint(max: number) {
   return Math.floor(Math.random() * max);
 }
 
 export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusScoreRef,
-      guessedWordsDefnsRef, statsRef, calcScore, setScreen, resetGame }:
+      statsRef, calcScore, setScreen, resetGame }:
     { size: number, initialGameTime: number, guessedWordsRef: React.RefObject<string[]>,
       scoreRef: React.RefObject<number>, bonusScoreRef: React.RefObject<number>,
-      guessedWordsDefnsRef: React.RefObject<Map<string, Object>>,
       statsRef: React.RefObject<Record<string, any>>, calcScore: Function, setScreen: Function,
       resetGame: Function }) {
   interface Line {
@@ -141,17 +141,8 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     return "";
   }
 
-  function verifyWord(word: string): boolean { // DOES NOT VERIFY IF IT'S A REAL WORD
-    return (word.length >= 3) && !guessedWordsRef.current.includes(word);
-  }
-
   function calcCoins(word: string): number {
     return (word.length >= 4) ? word.length - 3 : 0;
-  }
-
-  function pushToGuessedWordsDefns(word: string, responseJson: string): void {
-    const primaryDefn = JSON.parse(responseJson)[0];
-    guessedWordsDefnsRef.current.set(word, primaryDefn);
   }
 
   function pushToGuessedWords(word: string): boolean {
@@ -164,7 +155,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
         hi = mid;
       }
     }
-    if (!guessedWordsRef.current.includes(word)) {
+    if (!guessedWordsRef.current.includes(word)) { // avoid race condition
       guessedWordsRef.current.splice(lo, 0, word);
       setGuessedWords(guessedWordsRef.current);
       return true;
@@ -173,25 +164,21 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   }
 
   async function submitGuess(word: string, bonus: boolean): Promise<void> {
-    if (!guessedStrings.current.has(word)) {
+    if ((word.length >= 3) && !guessedStrings.current.has(word)) {
       guessedStrings.current.add(word);
 
       loadingWordsRef.current.push(word);
 
-      if (verifyWord(word)) {
-        const wordResponse = await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + word);
-        if (wordResponse.ok && pushToGuessedWords(word)) {
-          scoreRef.current += calcScore(word);
-          setScore(scoreRef.current);
-          if (bonus) {
-            bonusScoreRef.current += calcScore(word);
-            setBonusScore(bonusScoreRef.current);
-          }
-          coinsRef.current += calcCoins(word);
-          setCoins(coinsRef.current);
-          statsRef.current["coinsEarned"] += calcCoins(word);
-          pushToGuessedWordsDefns(word, await wordResponse.text());
+      if ((await validateWord(word)) && pushToGuessedWords(word)) {
+        scoreRef.current += calcScore(word);
+        setScore(scoreRef.current);
+        if (bonus) {
+          bonusScoreRef.current += calcScore(word);
+          setBonusScore(bonusScoreRef.current);
         }
+        coinsRef.current += calcCoins(word);
+        setCoins(coinsRef.current);
+        statsRef.current["coinsEarned"] += calcCoins(word);
       }
 
       loadingWordsRef.current.splice(loadingWordsRef.current.findIndex((elt) => (elt === word)), 1);
@@ -420,7 +407,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
         onMouseLeave={handleMouseUp}
       >
         <div
-          className="-z-10 select-none absolute inset-0 m-auto rounded-2xl bg-green-500"
+          className="-z-10 select-none absolute inset-0 m-auto rounded-2xl bg-green-700 dark:bg-green-300"
           ref={timerDivRef}
           style={{
             filter: `hue-rotate(-${(timeElapsed / gameTimeRef.current) * 180}deg)`,
@@ -507,14 +494,6 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
               </h2>
               <hr />
               <div className="flex flex-col gap-0 overflow-y-auto">
-                {loadingWordsRef.current.map((word, idx) =>
-                  <div
-                    key={idx}
-                    className="animate-pulse brightness-75 text-center"
-                  >
-                    Verifying <b>{word}</b>...
-                  </div>
-                )}
                 {guessedWords.map((word, idx) => (
                   <div
                     key={idx}
