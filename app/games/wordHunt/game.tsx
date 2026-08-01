@@ -63,7 +63,7 @@ export function Game() {
     "coinsUsed": 0
   });
 
-  const INITIAL_GAME_TIME: number = 6;
+  const INITIAL_GAME_TIME: number = 60;
 
 
   function DefinitionCard({ word }: { word: string }) {

@@ -1,8 +1,9 @@
 "use client"
 
-import { FunHighlight } from "@/app/effects/waveEffect";
 import { useState, useEffect, useRef, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
+
+import { FunHighlight } from "@/app/effects/waveEffect";
 import { validateWord } from "./wordValidator";
 
 function randint(max: number) {
@@ -32,7 +33,9 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   const [lines, setLines] = useState<Line[]>([]);
 
   const [guess, setGuess] = useState<string>("");
-  const guessedStrings = useRef<Set<string>>(new Set<string>());
+  const guessedStringsRef = useRef<Map<string, Promise<boolean>>>(new Map<string, Promise<boolean>>());
+  const [guessColor, setGuessColor] = useState<string>("");
+
   const [guessedWords, setGuessedWords] = useState<string[]>([]);
   const [score, setScore] = useState<number>(0);
 
@@ -42,13 +45,12 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const promisesRef = useRef<Promise<any>[]>([]);
-  const loadingWordsRef = useRef<string[]>([]);
   
   const gameTimeRef = useRef<number>(initialGameTime * 1000);
   const timerDivRef = useRef<HTMLDivElement>(null);
   
   const coinsRef = useRef<number>(0);
-  const [coins, setCoins] = useState<number>(0);
+  const [coins, setCoins] = useState<number>(coinsRef.current);
 
   const [shuffleBoardPrice, setShuffleBoardPrice] = useState<number>(2);
   const [animateShuffleBoard, setAnimateShuffleBoard] = useState<number>(-1);
@@ -71,14 +73,14 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     "E", "T", "A", "O", "I", "N", "S", "R", "H", "D", "L", "U", "C", "M", "F", "Y", "W", "G", "P", "B", "V", "K", "X", "Q", "J", "Z"
   ];
 
-  function updateLines(letterElements: HTMLElement[]): void {
+  function updateLines(): void {
     const LINE_WEIGHT = 10;
 
     let newLines: Line[] = [];
-    for (let idx = 1; idx < letterElements.length; ++idx) {
+    for (let idx = 1; idx < letterElementsRef.current.length; ++idx) {
       const [startRect, endRect]: DOMRect[] = [
-        letterElements[idx - 1].getBoundingClientRect(),
-        letterElements[idx].getBoundingClientRect()
+        letterElementsRef.current[idx - 1].getBoundingClientRect(),
+        letterElementsRef.current[idx].getBoundingClientRect()
       ];
       
       const [startCenterX, startCenterY]: number[] = [
@@ -104,8 +106,8 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     };
 
     // manually calculate last letter to mouse pos
-    if (letterElements.length > 0) {
-      const startRect = letterElements[letterElements.length - 1].getBoundingClientRect();
+    if (letterElementsRef.current.length > 0) {
+      const startRect = letterElementsRef.current[letterElementsRef.current.length - 1].getBoundingClientRect();
       const [startCenterX, startCenterY]: number[] = [
         startRect["left"] + (startRect["width"] / 2) - (LINE_WEIGHT / 2),
         startRect["top"] + (startRect["height"] / 2) - (LINE_WEIGHT / 2)
@@ -126,6 +128,24 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     }
 
     setLines(newLines);
+  }
+
+  async function updateGuessColor(guess: string): Promise<void> {
+    const colorVariants: Record<string, string> = {
+      "invalid": "bg-gray-100 dark:bg-gray-900",
+      "guessed": "bg-yellow-50 dark:bg-yellow-950",
+      "valid": "bg-green-100 dark:bg-green-900"
+    };
+
+    if (guess.length >= 3) {
+      let verdict = "invalid";
+      if (await guessedStringsRef.current.get(guess)) {
+        verdict = guessedWordsRef.current.includes(guess) ? "guessed" : "valid";
+      }
+      setGuessColor(colorVariants[verdict]);
+    } else {
+      setGuessColor(colorVariants["invalid"]);
+    }
   }
 
   function calcTimerDivClipPath(): string {
@@ -164,12 +184,9 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   }
 
   async function submitGuess(word: string, bonus: boolean): Promise<void> {
-    if ((word.length >= 3) && !guessedStrings.current.has(word)) {
-      guessedStrings.current.add(word);
-
-      loadingWordsRef.current.push(word);
-
-      if ((await validateWord(word)) && pushToGuessedWords(word)) {
+    if (word.length >= 3) {
+      const valid = await guessedStringsRef.current.get(word);
+      if (valid && !guessedWordsRef.current.includes(word) && pushToGuessedWords(word)) {
         scoreRef.current += calcScore(word);
         setScore(scoreRef.current);
         if (bonus) {
@@ -180,8 +197,12 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
         setCoins(coinsRef.current);
         statsRef.current["coinsEarned"] += calcCoins(word);
       }
+    }
+  }
 
-      loadingWordsRef.current.splice(loadingWordsRef.current.findIndex((elt) => (elt === word)), 1);
+  async function checkGuess(word: string): Promise<void> {
+    if (word.length >= 3 && !guessedStringsRef.current.has(word)) {
+      guessedStringsRef.current.set(word, validateWord(word));
     }
   }
 
@@ -247,17 +268,20 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
       !(!click && letterIdxs.length === 0) && // prevent dragging onto first letter
       (mouseDown || click) && verifyIdx(idx) // detect mouse input, prevent weird jumps
     ) {
+      let newGuess = guess;
       if (!letterIdxs.includes(idx)) { // new letter, not backtracking
         letterElementsRef.current.push(e.currentTarget);
         setLetterIdxs(letterIdxs.concat(idx));
-        setGuess(guess + letter);
-        updateLines(letterElementsRef.current);
-      } else if (idx === letterIdxs[letterIdxs.length - 2]) {
+        newGuess = guess + letter;
+      } else if (idx === letterIdxs[letterIdxs.length - 2]) { // backtracking
         letterElementsRef.current.pop();
         setLetterIdxs(letterIdxs.toSpliced(letterIdxs.length - 1, 1));
-        setGuess(guess.substring(0, guess.length - 1));
-        updateLines(letterElementsRef.current);
+        newGuess = guess.substring(0, guess.length - 1);
       }
+      setGuess(newGuess);
+      checkGuess(newGuess);
+      updateLines();
+      updateGuessColor(newGuess);
     }
   }
 
@@ -372,7 +396,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   }
   const handleMouseMove = (e: MouseEvent) => {
     setMousePos([e.clientX, e.clientY]);
-    updateLines(letterElementsRef.current);
+    updateLines();
   }
 
   return (
@@ -473,7 +497,8 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
           {boardLetters.map((letter, idx) =>
             <button
               key={idx}
-              className={`${tileVariants[size]} place-items-center text-center rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-gray-200 dark:bg-gray-800`}
+              className={`${tileVariants[size]} place-items-center text-center rounded-2xl border-2 border-gray-400 dark:border-gray-600
+                  ${letterIdxs.includes(idx) ? guessColor : "bg-gray-200 dark:bg-gray-800"}`}
               onMouseDown={(e) => handleInput(e, idx, letter, true)}
             >
               <div
