@@ -50,7 +50,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   const gameTimerDivRef = useRef<HTMLDivElement>(null);
   const doubleScoreTimerDivRef = useRef<HTMLDivElement>(null);
   
-  const coinsRef = useRef<number>(1000);
+  const coinsRef = useRef<number>(0);
   const [coins, setCoins] = useState<number>(coinsRef.current);
 
   const [shuffleBoardPrice, setShuffleBoardPrice] = useState<number>(2);
