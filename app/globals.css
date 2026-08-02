@@ -27,6 +27,7 @@
   --animate-stretch-r: stretch-r 2.5s ease-in-out both;
   --animate-spin-length2s: spin 2s linear infinite;
   --animate-flash: flash 0.25s linear both;
+  --animate-copy-text: copy-text 1s linear both;
 
   --animate-wave: wave 3s linear infinite;
   --animate-wave-delay0.1s: wave 3s linear -2.9s infinite; /* have not found an */
@@ -283,6 +284,14 @@
     }
   }
   @keyframes flash {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes copy-text {
+    0%, 75% {
+      opacity: 1;
+    }
     to {
       opacity: 0;
     }

@@ -7,6 +7,7 @@ import { CustomHr } from "../../customHr";
 import { Board } from "./board";
 import { PopUp } from "@/app/popUp";
 
+
 const probabilityMap: Record<string, number> = {
   "E": 0.1202,
   "T": 0.0910,
@@ -46,62 +47,6 @@ function calcScore(word: string): number {
   return Math.round(total);
 }
 
-function DefinitionCard({ word, wordInfo }: { word: string, wordInfo: any }) {
-  return (
-    <PopUp
-      clickable={
-        <button className="p-4 rounded-2xl bg-gray-200 dark:bg-gray-800">
-          {word}
-          <div className="text-[10px]">{calcScore(word)} pts.</div>
-        </button>
-      }
-    >
-      <div className="flex flex-col gap-6 w-[75vmin] h-[50vmin] p-8">
-        <div className="flex flex-row text-3xl">
-          <span className="ml-1 grow">
-            <b>{word}</b>
-          </span>
-          <span className="text-gray-500">
-            {wordInfo.phonetic}
-          </span>
-        </div>
-        <div className="flex flex-col gap-4 overflow-y-auto">
-          {wordInfo.meanings.map((meaning: any, idx: number) =>
-            <div
-              key={idx}
-              className="flex flex-col gap-3 p-4.5 border-2 rounded-2xl border-gray-300 dark:border-gray-700"
-            >
-              <div className="text-lg">
-                As a{/^[aeiou]/i.test(meaning.partOfSpeech) && "n"} <i>{meaning.partOfSpeech}:</i>
-              </div>
-              <div className="flex flex-col gap-2">
-                {meaning.definitions.map((defn: any, idx: number) =>
-                  <div
-                    key={idx}
-                    className="flex flex-col gap-1"
-                  >
-                    <div className="text-sm">
-                      {idx + 1}: {defn.definition}
-                    </div>
-                    {defn.example && (
-                      <div className="flex flex-row gap-2">
-                        <div className="w-0.5 h-auto bg-gray-500" />
-                        <div className="mt-1 text-[10px] text-gray-700 dark:text-gray-300">
-                          {defn.example}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </PopUp>
-  );
-}
-
 export function Game() {
   const [screen, setScreen] = useState<string>("intro");
   const [gridSize, setGridSize] = useState<number>(0);
@@ -118,7 +63,141 @@ export function Game() {
     "coinsUsed": 0
   });
 
-  const INITIAL_GAME_TIME = 60;
+  const [animateCopyText, setAnimateCopyText] = useState<number>(-1);
+
+  const INITIAL_GAME_TIME: number = 60;
+
+
+  function copyShareableText(): void {
+    const text = `franklinzhu.me's Word Hunt ${gridSize}x${gridSize}\n`
+        + `🎯 Score: ${scoreRef.current}\n`
+        + `⚡ Powerups used: ${
+            statsRef.current["shuffleBoardCount"]
+            + statsRef.current["doubleScoreCount"]
+            + statsRef.current["addTimeCount"]
+          }\n`
+        + `⭐ Best word: ${
+            (guessedWordsRef.current.length > 0) ? (
+              `${guessedWordsRef.current[0]} (${calcScore(guessedWordsRef.current[0])} pts.)`
+            ) : (
+              "Couldn't find any :("
+            )
+          }\n`
+        + `➡️ https://franklinzhu.me/games/wordHunt`
+
+    navigator.clipboard.writeText(text);
+    setAnimateCopyText((animateCopyText + 1) % 2);
+  }
+
+  function DefinitionCard({ word }: { word: string }) {
+    const [wordInfo, setWordInfo] = useState<any>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    const WORD_NOT_FOUND: number = -1;
+
+
+    async function fetchWordInfo(): Promise<void> {
+      setLoading(true);
+      
+      if (!guessedWordsDefnsRef.current.has(word)) {
+        const response: Response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+        if (response.ok) {
+          const primaryDefn: any = JSON.parse(await response.text())[0];
+          guessedWordsDefnsRef.current.set(word, primaryDefn);
+        } else {
+          guessedWordsDefnsRef.current.set(word, WORD_NOT_FOUND);
+        }
+      }
+      setWordInfo(guessedWordsDefnsRef.current.get(word));
+
+      setLoading(false);
+    }
+
+    return (
+      <div onClick={fetchWordInfo}>
+        <PopUp
+          clickable={
+            <button className="p-4 rounded-2xl bg-gray-200 dark:bg-gray-800">
+              {word}
+              <div className="text-[10px]">{calcScore(word)} pts.</div>
+            </button>
+          }
+        >
+          <div className="relative flex flex-col gap-6 w-[75vmin] h-max-[50vmin] p-8 overflow-y-auto">
+            {loading ? (
+              <>
+                <div className="place-self-center animate-spin-length2s relative size-[15vmin] rounded-full bg-conic from-[#00000000] to-black dark:to-white" />
+                <div className="text-center text-xl">
+                  Loading definition...
+                </div>
+              </>
+            ) : (wordInfo === WORD_NOT_FOUND) ? (
+              <div className="flex flex-col gap-4 text-center">
+                <div className="text-3xl">
+                  Definition not found!
+                </div>
+                <div className="flex flex-col gap-3">
+                  <div>
+                    The <a href="https://dictionaryapi.dev/" target="_blank">
+                      free dictionary API
+                    </a> that I'm using seems to disagree with the <a href="https://github.com/dwyl/english-words" target="_blank">
+                      free word bank
+                    </a> that I'm using over the existence of the word <b>{word}.</b>
+                  </div>
+                  <div className="text-xs">
+                    Perhaps you can find a definition for this niche word in some corner of the internet!
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex flex-row text-3xl">
+                  <span className="ml-1 grow">
+                    <b>{word}</b>
+                  </span>
+                  <span className="text-gray-500">
+                    {wordInfo.phonetic}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-4">
+                  {wordInfo.meanings.map((meaning: any, idx: number) =>
+                    <div
+                      key={idx}
+                      className="flex flex-col gap-3 p-4.5 border-2 rounded-2xl border-gray-300 dark:border-gray-700"
+                    >
+                      <div className="text-lg">
+                        As a{/^[aeiou]/i.test(meaning.partOfSpeech) && "n"} <i>{meaning.partOfSpeech}:</i>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        {meaning.definitions.map((defn: any, idx: number) =>
+                          <div
+                            key={idx}
+                            className="flex flex-col gap-1"
+                          >
+                            <div className="text-sm">
+                              {idx + 1}: {defn.definition}
+                            </div>
+                            {defn.example && (
+                              <div className="flex flex-row gap-2">
+                                <div className="w-0.5 h-auto bg-gray-500" />
+                                <div className="mt-1 text-[10px] text-gray-700 dark:text-gray-300">
+                                  {defn.example}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </PopUp>
+      </div>
+    );
+  }
 
   function MoreStats() {
     return (
@@ -278,7 +357,6 @@ export function Game() {
         guessedWordsRef={guessedWordsRef}
         scoreRef={scoreRef}
         bonusScoreRef={bonusScoreRef}
-        guessedWordsDefnsRef={guessedWordsDefnsRef}
         statsRef={statsRef}
         calcScore={calcScore}
         setScreen={setScreen}
@@ -297,7 +375,7 @@ export function Game() {
           </h1>
           <span className="text-sm">(Grid size: {gridSize}x{gridSize})</span>
         </div>
-        <hr />
+        <CustomHr />
         <div className="flex flex-col gap-0.5 text-center">
           {scoreRef.current > 0 ? (
             <>
@@ -319,16 +397,27 @@ export function Game() {
             <DefinitionCard
               key={idx}
               word={word}
-              wordInfo={guessedWordsDefnsRef.current.get(word)}
             />
           )}
         </div>
         <div className="mt-2 flex flex-row gap-6 place-content-center">
           <button
+            className="relative p-4 border-2 rounded-2xl border-gray-400 dark:border-gray-600"
+            onClick={copyShareableText}
+          >
+            Share results
+            <div
+              key={animateCopyText}
+              className={`${(animateCopyText !== -1) ? "animate-copy-text" : "hidden"} absolute inset-0 m-auto h-full place-content-center rounded-2xl opacity-50 bg-green-300 dark:bg-green-700`}
+            >
+              Copied!
+            </div>
+          </button>
+          <button
             className="p-4 border-2 rounded-2xl border-gray-400 dark:border-gray-600"
             onClick={resetGame}
           >
-            {scoreRef.current > 0 ? "Play again!" : "Oops...play again!"}
+            <b>{scoreRef.current > 0 ? "Play again!" : "Oops...play again!"}</b>
           </button>
           <MoreStats />
         </div>

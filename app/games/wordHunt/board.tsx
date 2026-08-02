@@ -1,18 +1,19 @@
 "use client"
 
-import { FunHighlight } from "@/app/effects/waveEffect";
 import { useState, useEffect, useRef, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
+
+import { FunHighlight } from "@/app/effects/waveEffect";
+import { validateWord } from "./wordValidator";
 
 function randint(max: number) {
   return Math.floor(Math.random() * max);
 }
 
 export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusScoreRef,
-      guessedWordsDefnsRef, statsRef, calcScore, setScreen, resetGame }:
+      statsRef, calcScore, setScreen, resetGame }:
     { size: number, initialGameTime: number, guessedWordsRef: React.RefObject<string[]>,
       scoreRef: React.RefObject<number>, bonusScoreRef: React.RefObject<number>,
-      guessedWordsDefnsRef: React.RefObject<Map<string, Object>>,
       statsRef: React.RefObject<Record<string, any>>, calcScore: Function, setScreen: Function,
       resetGame: Function }) {
   interface Line {
@@ -32,7 +33,9 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   const [lines, setLines] = useState<Line[]>([]);
 
   const [guess, setGuess] = useState<string>("");
-  const guessedStrings = useRef<Set<string>>(new Set<string>());
+  const guessedStringsRef = useRef<Map<string, Promise<boolean>>>(new Map<string, Promise<boolean>>());
+  const [guessColor, setGuessColor] = useState<string>("");
+
   const [guessedWords, setGuessedWords] = useState<string[]>([]);
   const [score, setScore] = useState<number>(0);
 
@@ -42,13 +45,13 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const promisesRef = useRef<Promise<any>[]>([]);
-  const loadingWordsRef = useRef<string[]>([]);
   
   const gameTimeRef = useRef<number>(initialGameTime * 1000);
-  const timerDivRef = useRef<HTMLDivElement>(null);
+  const gameTimerDivRef = useRef<HTMLDivElement>(null);
+  const doubleScoreTimerDivRef = useRef<HTMLDivElement>(null);
   
   const coinsRef = useRef<number>(0);
-  const [coins, setCoins] = useState<number>(0);
+  const [coins, setCoins] = useState<number>(coinsRef.current);
 
   const [shuffleBoardPrice, setShuffleBoardPrice] = useState<number>(2);
   const [animateShuffleBoard, setAnimateShuffleBoard] = useState<number>(-1);
@@ -56,6 +59,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   
   const [doubleScorePrice, setDoubleScorePrice] = useState<number>(3);
   const [animateDoubleScoreFail, setAnimateDoubleScoreFail] = useState<number>(-1);
+  const [doubleScoreStartTime, setDoubleScoreStartTime] = useState<number>(0);
   const [doubleScoreEndTime, setDoubleScoreEndTime] = useState<number>(0);
   const [doubleScoreActive, setDoubleScoreActive] = useState<boolean>(false);
   const [bonusScore, setBonusScore] = useState<number>(0);
@@ -71,14 +75,14 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     "E", "T", "A", "O", "I", "N", "S", "R", "H", "D", "L", "U", "C", "M", "F", "Y", "W", "G", "P", "B", "V", "K", "X", "Q", "J", "Z"
   ];
 
-  function updateLines(letterElements: HTMLElement[]): void {
+  function updateLines(): void {
     const LINE_WEIGHT = 10;
 
     let newLines: Line[] = [];
-    for (let idx = 1; idx < letterElements.length; ++idx) {
+    for (let idx = 1; idx < letterElementsRef.current.length; ++idx) {
       const [startRect, endRect]: DOMRect[] = [
-        letterElements[idx - 1].getBoundingClientRect(),
-        letterElements[idx].getBoundingClientRect()
+        letterElementsRef.current[idx - 1].getBoundingClientRect(),
+        letterElementsRef.current[idx].getBoundingClientRect()
       ];
       
       const [startCenterX, startCenterY]: number[] = [
@@ -104,8 +108,8 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     };
 
     // manually calculate last letter to mouse pos
-    if (letterElements.length > 0) {
-      const startRect = letterElements[letterElements.length - 1].getBoundingClientRect();
+    if (letterElementsRef.current.length > 0) {
+      const startRect = letterElementsRef.current[letterElementsRef.current.length - 1].getBoundingClientRect();
       const [startCenterX, startCenterY]: number[] = [
         startRect["left"] + (startRect["width"] / 2) - (LINE_WEIGHT / 2),
         startRect["top"] + (startRect["height"] / 2) - (LINE_WEIGHT / 2)
@@ -128,12 +132,30 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     setLines(newLines);
   }
 
-  function calcTimerDivClipPath(): string {
-    if (timerDivRef.current) {
-      const rect = timerDivRef.current.getBoundingClientRect();
+  async function updateGuessColor(guess: string): Promise<void> {
+    const colorVariants: Record<string, string> = {
+      "invalid": "bg-gray-300 dark:bg-gray-700",
+      "guessed": "bg-yellow-100 dark:bg-yellow-950",
+      "valid": "bg-green-200 dark:bg-green-900"
+    };
+
+    if (guess.length >= 3) {
+      let verdict = "invalid";
+      if (await guessedStringsRef.current.get(guess)) {
+        verdict = guessedWordsRef.current.includes(guess) ? "guessed" : "valid";
+      }
+      setGuessColor(colorVariants[verdict]);
+    } else {
+      setGuessColor(colorVariants["invalid"]);
+    }
+  }
+
+  function calcTimerDivClipPath(divRef: React.RefObject<HTMLDivElement | null>, progressRatio: number): string {
+    if (divRef.current) {
+      const rect = divRef.current.getBoundingClientRect();
       const [centerX, centerY] = [(rect.width / 2), (rect.height / 2)];
       const radius = Math.sqrt((rect.width / 2) ** 2 + (rect.height / 2) ** 2);
-      const endAngle = Math.min(1, timeElapsed / gameTimeRef.current) * 2 * Math.PI;
+      const endAngle = Math.min(1, progressRatio) * 2 * Math.PI;
       const [endX, endY] = [centerX + radius * Math.sin(endAngle), centerY - radius * Math.cos(endAngle)];
       const largeArcFlag = (endAngle < Math.PI) ? 1 : 0;
       return `path("M ${centerX},${centerY} v -${radius} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${endX},${endY} Z")`;
@@ -141,17 +163,8 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     return "";
   }
 
-  function verifyWord(word: string): boolean { // DOES NOT VERIFY IF IT'S A REAL WORD
-    return (word.length >= 3) && !guessedWordsRef.current.includes(word);
-  }
-
   function calcCoins(word: string): number {
     return (word.length >= 4) ? word.length - 3 : 0;
-  }
-
-  function pushToGuessedWordsDefns(word: string, responseJson: string): void {
-    const primaryDefn = JSON.parse(responseJson)[0];
-    guessedWordsDefnsRef.current.set(word, primaryDefn);
   }
 
   function pushToGuessedWords(word: string): boolean {
@@ -164,7 +177,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
         hi = mid;
       }
     }
-    if (!guessedWordsRef.current.includes(word)) {
+    if (!guessedWordsRef.current.includes(word)) { // avoid race condition
       guessedWordsRef.current.splice(lo, 0, word);
       setGuessedWords(guessedWordsRef.current);
       return true;
@@ -173,28 +186,25 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   }
 
   async function submitGuess(word: string, bonus: boolean): Promise<void> {
-    if (!guessedStrings.current.has(word)) {
-      guessedStrings.current.add(word);
-
-      loadingWordsRef.current.push(word);
-
-      if (verifyWord(word)) {
-        const wordResponse = await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + word);
-        if (wordResponse.ok && pushToGuessedWords(word)) {
-          scoreRef.current += calcScore(word);
-          setScore(scoreRef.current);
-          if (bonus) {
-            bonusScoreRef.current += calcScore(word);
-            setBonusScore(bonusScoreRef.current);
-          }
-          coinsRef.current += calcCoins(word);
-          setCoins(coinsRef.current);
-          statsRef.current["coinsEarned"] += calcCoins(word);
-          pushToGuessedWordsDefns(word, await wordResponse.text());
+    if (word.length >= 3) {
+      const valid = await guessedStringsRef.current.get(word);
+      if (valid && !guessedWordsRef.current.includes(word) && pushToGuessedWords(word)) {
+        scoreRef.current += calcScore(word);
+        setScore(scoreRef.current);
+        if (bonus) {
+          bonusScoreRef.current += calcScore(word);
+          setBonusScore(bonusScoreRef.current);
         }
+        coinsRef.current += calcCoins(word);
+        setCoins(coinsRef.current);
+        statsRef.current["coinsEarned"] += calcCoins(word);
       }
+    }
+  }
 
-      loadingWordsRef.current.splice(loadingWordsRef.current.findIndex((elt) => (elt === word)), 1);
+  async function checkGuess(word: string): Promise<void> {
+    if (word.length >= 3 && !guessedStringsRef.current.has(word)) {
+      guessedStringsRef.current.set(word, validateWord(word));
     }
   }
 
@@ -260,17 +270,20 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
       !(!click && letterIdxs.length === 0) && // prevent dragging onto first letter
       (mouseDown || click) && verifyIdx(idx) // detect mouse input, prevent weird jumps
     ) {
+      let newGuess = guess;
       if (!letterIdxs.includes(idx)) { // new letter, not backtracking
         letterElementsRef.current.push(e.currentTarget);
         setLetterIdxs(letterIdxs.concat(idx));
-        setGuess(guess + letter);
-        updateLines(letterElementsRef.current);
-      } else if (idx === letterIdxs[letterIdxs.length - 2]) {
+        newGuess = guess + letter;
+      } else if (idx === letterIdxs[letterIdxs.length - 2]) { // backtracking
         letterElementsRef.current.pop();
         setLetterIdxs(letterIdxs.toSpliced(letterIdxs.length - 1, 1));
-        setGuess(guess.substring(0, guess.length - 1));
-        updateLines(letterElementsRef.current);
+        newGuess = guess.substring(0, guess.length - 1);
       }
+      setGuess(newGuess);
+      checkGuess(newGuess);
+      updateLines();
+      updateGuessColor(newGuess);
     }
   }
 
@@ -326,6 +339,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
 
   const setDoubleScore = (time: number, cost: number) => {
     if (coinsRef.current >= cost) {
+      setDoubleScoreStartTime(timeElapsed);
       setDoubleScoreEndTime(timeElapsed + time);
       setDoubleScoreActive(true);
       
@@ -385,7 +399,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   }
   const handleMouseMove = (e: MouseEvent) => {
     setMousePos([e.clientX, e.clientY]);
-    updateLines(letterElementsRef.current);
+    updateLines();
   }
 
   return (
@@ -420,13 +434,22 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
         onMouseLeave={handleMouseUp}
       >
         <div
-          className="-z-10 select-none absolute inset-0 m-auto rounded-2xl bg-green-500"
-          ref={timerDivRef}
+          className="-z-10 select-none absolute inset-0 m-auto rounded-2xl bg-green-700 dark:bg-green-300"
+          ref={gameTimerDivRef}
           style={{
             filter: `hue-rotate(-${(timeElapsed / gameTimeRef.current) * 180}deg)`,
-            clipPath: calcTimerDivClipPath()
+            clipPath: calcTimerDivClipPath(gameTimerDivRef, timeElapsed / gameTimeRef.current)
           }}
         />
+        {doubleScoreActive && (
+          <div
+            className="-z-9 select-none absolute inset-1 m-auto rounded-xl bg-black dark:bg-white"
+            ref={doubleScoreTimerDivRef}
+            style={{
+              clipPath: calcTimerDivClipPath(doubleScoreTimerDivRef, (timeElapsed - doubleScoreStartTime) / (doubleScoreEndTime - doubleScoreStartTime))
+            }}
+          />
+        )}
         {loading && (
           <div className="z-100 absolute inset-0 m-auto flex flex-col gap-6 place-content-center place-items-center rounded-2xl bg-[#00000080]">
             <div className="relative">
@@ -486,12 +509,14 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
           {boardLetters.map((letter, idx) =>
             <button
               key={idx}
-              className={`${tileVariants[size]} place-items-center text-center rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-gray-200 dark:bg-gray-800`}
+              className={`${tileVariants[size]} place-items-center text-center rounded-2xl border-2 border-gray-400 dark:border-gray-600
+                  ${letterIdxs.includes(idx) ? guessColor : "bg-gray-200 dark:bg-gray-800"}`}
               onMouseDown={(e) => handleInput(e, idx, letter, true)}
             >
               <div
-                className={`${hitboxVariants[size]} place-content-center rounded-2xl`}
-                onMouseEnter={(e) => handleInput(e, idx, letter)}>
+                className={`${hitboxVariants[size]} ${doubleScoreActive ? "animate-wave" : ""} place-content-center rounded-2xl`}
+                onMouseEnter={(e) => handleInput(e, idx, letter)}
+              >
                 <b>{letter}</b>
               </div>
             </button>
@@ -507,14 +532,6 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
               </h2>
               <hr />
               <div className="flex flex-col gap-0 overflow-y-auto">
-                {loadingWordsRef.current.map((word, idx) =>
-                  <div
-                    key={idx}
-                    className="animate-pulse brightness-75 text-center"
-                  >
-                    Verifying <b>{word}</b>...
-                  </div>
-                )}
                 {guessedWords.map((word, idx) => (
                   <div
                     key={idx}
@@ -541,20 +558,14 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
             )}
             <div className="flex-2 flex flex-col gap-2 wrap-break-word place-content-center">
               <h1 className="text-lg">
-                Time left: {
-                  doubleScoreActive ? (
-                    <FunHighlight text={String(Math.ceil((gameTimeRef.current - timeElapsed) / 1000))} />
-                  ) : (
-                    <span
-                      className="text-green-700 dark:text-green-300"
-                      style={{
-                        filter: `hue-rotate(-${(timeElapsed / gameTimeRef.current) * 180}deg)`
-                      }}
-                    >
-                      <b>{Math.ceil((gameTimeRef.current - timeElapsed) / 1000)}</b>
-                    </span>
-                  )
-                }<br />
+                Time left: <span
+                  className="text-green-700 dark:text-green-300"
+                  style={{
+                    filter: `hue-rotate(-${(timeElapsed / gameTimeRef.current) * 180}deg)`
+                  }}
+                >
+                  <b>{Math.ceil((gameTimeRef.current - timeElapsed) / 1000)}</b>
+                </span>
               </h1>
               <h3>
                 Total coins: <b>{coins}</b>
