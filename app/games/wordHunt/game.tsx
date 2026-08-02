@@ -63,8 +63,31 @@ export function Game() {
     "coinsUsed": 0
   });
 
+  const [animateCopyText, setAnimateCopyText] = useState<number>(-1);
+
   const INITIAL_GAME_TIME: number = 60;
 
+
+  function copyShareableText(): void {
+    const text = `franklinzhu.me's Word Hunt ${gridSize}x${gridSize}\n`
+        + `🎯 Score: ${scoreRef.current}\n`
+        + `⚡ Powerups used: ${
+            statsRef.current["shuffleBoardCount"]
+            + statsRef.current["doubleScoreCount"]
+            + statsRef.current["addTimeCount"]
+          }\n`
+        + `⭐ Best word: ${
+            (guessedWordsRef.current.length > 0) ? (
+              `${guessedWordsRef.current[0]} (${calcScore(guessedWordsRef.current[0])} pts.)`
+            ) : (
+              "Couldn't find any :("
+            )
+          }\n`
+        + `➡️ https://franklinzhu.me/games/wordHunt`
+
+    navigator.clipboard.writeText(text);
+    setAnimateCopyText((animateCopyText + 1) % 2);
+  }
 
   function DefinitionCard({ word }: { word: string }) {
     const [wordInfo, setWordInfo] = useState<any>(null);
@@ -104,7 +127,7 @@ export function Game() {
             {loading ? (
               <>
                 <div className="place-self-center animate-spin-length2s relative size-[15vmin] rounded-full bg-conic from-[#00000000] to-black dark:to-white" />
-                <div className="text-center text-2xl">
+                <div className="text-center text-xl">
                   Loading definition...
                 </div>
               </>
@@ -352,7 +375,7 @@ export function Game() {
           </h1>
           <span className="text-sm">(Grid size: {gridSize}x{gridSize})</span>
         </div>
-        <hr />
+        <CustomHr />
         <div className="flex flex-col gap-0.5 text-center">
           {scoreRef.current > 0 ? (
             <>
@@ -379,10 +402,22 @@ export function Game() {
         </div>
         <div className="mt-2 flex flex-row gap-6 place-content-center">
           <button
+            className="relative p-4 border-2 rounded-2xl border-gray-400 dark:border-gray-600"
+            onClick={copyShareableText}
+          >
+            Share results
+            <div
+              key={animateCopyText}
+              className={`${(animateCopyText !== -1) ? "animate-copy-text" : "hidden"} absolute inset-0 m-auto h-full place-content-center rounded-2xl opacity-50 bg-green-300 dark:bg-green-700`}
+            >
+              Copied!
+            </div>
+          </button>
+          <button
             className="p-4 border-2 rounded-2xl border-gray-400 dark:border-gray-600"
             onClick={resetGame}
           >
-            {scoreRef.current > 0 ? "Play again!" : "Oops...play again!"}
+            <b>{scoreRef.current > 0 ? "Play again!" : "Oops...play again!"}</b>
           </button>
           <MoreStats />
         </div>

@@ -47,9 +47,10 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   const promisesRef = useRef<Promise<any>[]>([]);
   
   const gameTimeRef = useRef<number>(initialGameTime * 1000);
-  const timerDivRef = useRef<HTMLDivElement>(null);
+  const gameTimerDivRef = useRef<HTMLDivElement>(null);
+  const doubleScoreTimerDivRef = useRef<HTMLDivElement>(null);
   
-  const coinsRef = useRef<number>(0);
+  const coinsRef = useRef<number>(1000);
   const [coins, setCoins] = useState<number>(coinsRef.current);
 
   const [shuffleBoardPrice, setShuffleBoardPrice] = useState<number>(2);
@@ -58,6 +59,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   
   const [doubleScorePrice, setDoubleScorePrice] = useState<number>(3);
   const [animateDoubleScoreFail, setAnimateDoubleScoreFail] = useState<number>(-1);
+  const [doubleScoreStartTime, setDoubleScoreStartTime] = useState<number>(0);
   const [doubleScoreEndTime, setDoubleScoreEndTime] = useState<number>(0);
   const [doubleScoreActive, setDoubleScoreActive] = useState<boolean>(false);
   const [bonusScore, setBonusScore] = useState<number>(0);
@@ -132,9 +134,9 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
 
   async function updateGuessColor(guess: string): Promise<void> {
     const colorVariants: Record<string, string> = {
-      "invalid": "bg-gray-100 dark:bg-gray-900",
-      "guessed": "bg-yellow-50 dark:bg-yellow-950",
-      "valid": "bg-green-100 dark:bg-green-900"
+      "invalid": "bg-gray-300 dark:bg-gray-700",
+      "guessed": "bg-yellow-100 dark:bg-yellow-950",
+      "valid": "bg-green-200 dark:bg-green-900"
     };
 
     if (guess.length >= 3) {
@@ -148,12 +150,12 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     }
   }
 
-  function calcTimerDivClipPath(): string {
-    if (timerDivRef.current) {
-      const rect = timerDivRef.current.getBoundingClientRect();
+  function calcTimerDivClipPath(divRef: React.RefObject<HTMLDivElement | null>, progressRatio: number): string {
+    if (divRef.current) {
+      const rect = divRef.current.getBoundingClientRect();
       const [centerX, centerY] = [(rect.width / 2), (rect.height / 2)];
       const radius = Math.sqrt((rect.width / 2) ** 2 + (rect.height / 2) ** 2);
-      const endAngle = Math.min(1, timeElapsed / gameTimeRef.current) * 2 * Math.PI;
+      const endAngle = Math.min(1, progressRatio) * 2 * Math.PI;
       const [endX, endY] = [centerX + radius * Math.sin(endAngle), centerY - radius * Math.cos(endAngle)];
       const largeArcFlag = (endAngle < Math.PI) ? 1 : 0;
       return `path("M ${centerX},${centerY} v -${radius} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${endX},${endY} Z")`;
@@ -337,6 +339,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
 
   const setDoubleScore = (time: number, cost: number) => {
     if (coinsRef.current >= cost) {
+      setDoubleScoreStartTime(timeElapsed);
       setDoubleScoreEndTime(timeElapsed + time);
       setDoubleScoreActive(true);
       
@@ -432,12 +435,21 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
       >
         <div
           className="-z-10 select-none absolute inset-0 m-auto rounded-2xl bg-green-700 dark:bg-green-300"
-          ref={timerDivRef}
+          ref={gameTimerDivRef}
           style={{
             filter: `hue-rotate(-${(timeElapsed / gameTimeRef.current) * 180}deg)`,
-            clipPath: calcTimerDivClipPath()
+            clipPath: calcTimerDivClipPath(gameTimerDivRef, timeElapsed / gameTimeRef.current)
           }}
         />
+        {doubleScoreActive && (
+          <div
+            className="-z-9 select-none absolute inset-1 m-auto rounded-xl bg-black dark:bg-white"
+            ref={doubleScoreTimerDivRef}
+            style={{
+              clipPath: calcTimerDivClipPath(doubleScoreTimerDivRef, (timeElapsed - doubleScoreStartTime) / (doubleScoreEndTime - doubleScoreStartTime))
+            }}
+          />
+        )}
         {loading && (
           <div className="z-100 absolute inset-0 m-auto flex flex-col gap-6 place-content-center place-items-center rounded-2xl bg-[#00000080]">
             <div className="relative">
@@ -502,8 +514,9 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
               onMouseDown={(e) => handleInput(e, idx, letter, true)}
             >
               <div
-                className={`${hitboxVariants[size]} place-content-center rounded-2xl`}
-                onMouseEnter={(e) => handleInput(e, idx, letter)}>
+                className={`${hitboxVariants[size]} ${doubleScoreActive ? "animate-wave" : ""} place-content-center rounded-2xl`}
+                onMouseEnter={(e) => handleInput(e, idx, letter)}
+              >
                 <b>{letter}</b>
               </div>
             </button>
@@ -545,20 +558,14 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
             )}
             <div className="flex-2 flex flex-col gap-2 wrap-break-word place-content-center">
               <h1 className="text-lg">
-                Time left: {
-                  doubleScoreActive ? (
-                    <FunHighlight text={String(Math.ceil((gameTimeRef.current - timeElapsed) / 1000))} />
-                  ) : (
-                    <span
-                      className="text-green-700 dark:text-green-300"
-                      style={{
-                        filter: `hue-rotate(-${(timeElapsed / gameTimeRef.current) * 180}deg)`
-                      }}
-                    >
-                      <b>{Math.ceil((gameTimeRef.current - timeElapsed) / 1000)}</b>
-                    </span>
-                  )
-                }<br />
+                Time left: <span
+                  className="text-green-700 dark:text-green-300"
+                  style={{
+                    filter: `hue-rotate(-${(timeElapsed / gameTimeRef.current) * 180}deg)`
+                  }}
+                >
+                  <b>{Math.ceil((gameTimeRef.current - timeElapsed) / 1000)}</b>
+                </span>
               </h1>
               <h3>
                 Total coins: <b>{coins}</b>
