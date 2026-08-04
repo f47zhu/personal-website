@@ -5,16 +5,27 @@ import { createPortal } from "react-dom";
 
 import { FunHighlight } from "@/app/effects/waveEffect";
 import { validateWord } from "./wordValidator";
+import { solve } from "./gameSolver";
 
 function randint(max: number) {
   return Math.floor(Math.random() * max);
 }
 
-export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusScoreRef,
+type Stats = {
+  "lettersUsed": string[][],
+  "solutions": string[][],
+  "shuffleBoardCount": number,
+  "doubleScoreCount": number,
+  "addTimeCount": number,
+  "coinsEarned": number,
+  "coinsUsed": number
+}
+
+export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, bonusScoreRef,
       statsRef, calcScore, setScreen, resetGame }:
-    { size: number, initialGameTime: number, guessedWordsRef: React.RefObject<string[]>,
+    { gridLength: number, initialGameTime: number, guessedWordsRef: React.RefObject<string[]>,
       scoreRef: React.RefObject<number>, bonusScoreRef: React.RefObject<number>,
-      statsRef: React.RefObject<Record<string, any>>, calcScore: Function, setScreen: Function,
+      statsRef: React.RefObject<Stats>, calcScore: Function, setScreen: Function,
       resetGame: Function }) {
   interface Line {
     x: number,
@@ -169,9 +180,9 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
 
   function pushToGuessedWords(word: string): boolean {
     let lo = 0, hi = guessedWordsRef.current.length, mid;
-    while (lo < hi) { // upper_bound()
+    while (lo < hi) { // assuming reverse sorted list, returns first idx where elt > list[idx]
       mid = Math.floor((lo + hi) / 2);
-      if (calcScore(word) <= calcScore(guessedWordsRef.current[mid])) {
+      if (calcScore(guessedWordsRef.current[mid]) >= calcScore(word)) {
         lo = mid + 1;
       } else {
         hi = mid;
@@ -228,9 +239,9 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
 
     let newLetters: string[] = [];
     let letterFrequency: Record<string, number> = {};
-    for (let i = 0; i < size * size; ++i) {
+    for (let i = 0; i < gridLength * gridLength; ++i) {
       let letter = randomLetter();
-      while ((letter in letterFrequency) && (letterFrequency[letter] >= size)) {
+      while ((letter in letterFrequency) && (letterFrequency[letter] >= gridLength)) {
         letter = randomLetter();
       }
       if (letter in letterFrequency) {
@@ -240,14 +251,16 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
       }
 
       newLetters.push(letter);
-      statsRef.current["lettersUsed"].push(letter);
     }
 
     setBoardLetters(newLetters);
+    
+    statsRef.current["lettersUsed"].push(newLetters);
+    statsRef.current["solutions"].push(solve(gridLength, newLetters, calcScore)); // will break on strict mode
   }, []);
 
   function idxToCoords(idx: number): number[] {
-    return [Math.floor(idx / size), idx % size];
+    return [Math.floor(idx / gridLength), idx % gridLength];
   }
 
   function verifyIdx(idx: number): boolean {
@@ -316,12 +329,15 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
 
   const shuffleBoard = (cost: number) => { // fisher-yates shuffle
     if (coinsRef.current >= cost) {
-      let newLetters: string[] = boardLetters;
+      let newLetters: string[] = [...boardLetters];
       for (let idx = newLetters.length - 1; idx > 0; --idx) {
         const randomIdx = randint(idx + 1);
         [newLetters[idx], newLetters[randomIdx]] = [newLetters[randomIdx], newLetters[idx]];
       }
       setBoardLetters(newLetters);
+
+      statsRef.current["lettersUsed"].push(newLetters);
+      statsRef.current["solutions"].push(solve(gridLength, newLetters, calcScore));
 
       coinsRef.current -= cost;
       setCoins(coinsRef.current);
@@ -505,16 +521,16 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
             )}
           </>
         )}
-        <div className={`${parentVariants[size]} p-6 rounded-lg grid place-self-center bg-white dark:bg-black`}>
+        <div className={`${parentVariants[gridLength]} p-6 rounded-lg grid place-self-center bg-white dark:bg-black`}>
           {boardLetters.map((letter, idx) =>
             <button
               key={idx}
-              className={`${tileVariants[size]} place-items-center text-center rounded-2xl border-2 border-gray-400 dark:border-gray-600
+              className={`${tileVariants[gridLength]} place-items-center text-center rounded-2xl border-2 border-gray-400 dark:border-gray-600
                   ${letterIdxs.includes(idx) ? guessColor : "bg-gray-200 dark:bg-gray-800"}`}
               onMouseDown={(e) => handleInput(e, idx, letter, true)}
             >
               <div
-                className={`${hitboxVariants[size]} ${doubleScoreActive ? "animate-wave" : ""} place-content-center rounded-2xl`}
+                className={`${hitboxVariants[gridLength]} ${doubleScoreActive ? "animate-wave" : ""} place-content-center rounded-2xl`}
                 onMouseEnter={(e) => handleInput(e, idx, letter)}
               >
                 <b>{letter}</b>
