@@ -47,7 +47,7 @@ export function solve(gridLength: number, letters: string[], calcScore: Function
     }
     if ((wordList[lo] === word) && (word.length >= 3)) {
       return "valid";
-    } else if (wordList[lo].substring(0, word.length) === word) {
+    } else if (wordList[lo].startsWith(word)) {
       return "prefix";
     }
     return "invalid";
@@ -66,18 +66,13 @@ export function solve(gridLength: number, letters: string[], calcScore: Function
         && (0 <= col) && (col < gridLength);
   }
 
-  let grid: string[][] = [];
-  for (let idx = 0; idx < letters.length; idx += gridLength) {
-    grid.concat(letters.slice(idx, idx + gridLength));
-  }
-
   interface Query {
     "idx": number,
     "word": string,
     "visited": Set<number>
   }
   let queue: Query[] = [];
-  for (let idx = 0; idx < gridLength * gridLength; ++idx) {
+  for (let idx = 0; idx < letters.length; ++idx) {
     queue.push({
       "idx": idx,
       "word": letters[idx],
@@ -88,12 +83,12 @@ export function solve(gridLength: number, letters: string[], calcScore: Function
   const rowVariants: number[] = [-1, -1, -1, 0, 1, 1, 1, 0];
   const colVariants: number[] = [-1, 0, 1, 1, 1, 0, -1, -1];
 
-  while (queue.length) {
+  while (queue.length > 0) {
     const query = queue.shift()!;
     const word = query.word;
     const visited = query.visited;
     const wordValidity: string = checkWord(word);
-    if (wordValidity != "invalid") {
+    if (wordValidity !== "invalid") {
       if (wordValidity === "valid" && !solutionSet.has(word)) {
         pushToSolution(word, visited);
       }
