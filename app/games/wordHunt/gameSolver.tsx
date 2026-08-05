@@ -2,24 +2,32 @@
 
 import words from "@/public/words.json"
 
-export function solve(gridLength: number, letters: string[], calcScore: Function): string[] {
+interface Solution {
+  "word": string,
+  "visited": Set<number>
+}
+
+export function solve(gridLength: number, letters: string[], calcScore: Function): Solution[] {
   // returns a list of all achievable words, reverse sorted by calcScore
-  let answer: string[] = [];
-  let answerSet: Set<string> = new Set<string>();
+  let solution: Solution[] = [];
+  let solutionSet: Set<string> = new Set<string>();
 
-  function pushToAnswer(word: string) {
-    answerSet.add(word);
+  function pushToSolution(word: string, visited: Set<number>) {
+    solutionSet.add(word);
 
-    let lo = 0, hi = answer.length, mid;
+    let lo = 0, hi = solution.length, mid;
     while (lo < hi) { // assuming reverse sorted list, returns first idx where elt > list[idx]
       mid = Math.floor((lo + hi) / 2);
-      if (calcScore(answer[mid]) >= calcScore(word)) {
+      if (calcScore(solution[mid].word) >= calcScore(word)) {
         lo = mid + 1;
       } else {
         hi = mid;
       }
     }
-    answer.splice(lo, 0, word);
+    solution.splice(lo, 0, {
+      "word": word,
+      "visited": visited
+    });
   }
 
   function checkWord(rawWord: string): string {
@@ -63,11 +71,11 @@ export function solve(gridLength: number, letters: string[], calcScore: Function
     grid.concat(letters.slice(idx, idx + gridLength));
   }
 
-  type Query = {
+  interface Query {
     "idx": number,
     "word": string,
     "visited": Set<number>
-  };
+  }
   let queue: Query[] = [];
   for (let idx = 0; idx < gridLength * gridLength; ++idx) {
     queue.push({
@@ -83,13 +91,13 @@ export function solve(gridLength: number, letters: string[], calcScore: Function
   while (queue.length) {
     const query = queue.shift()!;
     const word = query.word;
+    const visited = query.visited;
     const wordValidity: string = checkWord(word);
     if (wordValidity != "invalid") {
-      if (wordValidity === "valid" && !answerSet.has(word)) {
-        pushToAnswer(word);
+      if (wordValidity === "valid" && !solutionSet.has(word)) {
+        pushToSolution(word, visited);
       }
       const [queryRow, queryCol] = idxToCoords(query.idx);
-      const visited = query.visited;
       for (let idx = 0; idx < rowVariants.length; ++idx) {
         const [row, col] = [queryRow + rowVariants[idx], queryCol + colVariants[idx]];
         if (checkCoords(row, col) && !visited.has(coordsToIdx(row, col))) {
@@ -106,5 +114,5 @@ export function solve(gridLength: number, letters: string[], calcScore: Function
     }
   }
 
-  return answer;
+  return solution;
 }

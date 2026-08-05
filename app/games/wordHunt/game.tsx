@@ -1,15 +1,21 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react";
+// import { useState, useRef, useEffect } from "react";
 
 import { FunHighlight } from "../../effects/waveEffect";
 import { CustomHr } from "../../customHr";
 import { Board } from "./board";
 import { PopUp } from "@/app/popUp";
 
-type Stats = {
+interface Solution {
+  "word": string,
+  "visited": Set<number>
+}
+
+interface Stats {
   "lettersUsed": string[][],
-  "solutions": string[][],
+  "solutions": Solution[][],
   "shuffleBoardCount": number,
   "doubleScoreCount": number,
   "addTimeCount": number,
@@ -17,7 +23,6 @@ type Stats = {
   "coinsUsed": number
 }
 
-const INITIAL_GAME_TIME: number = 60;
 const probabilityMap: Record<string, number> = {
   "E": 0.1202,
   "T": 0.0910,
@@ -55,6 +60,10 @@ function calcScore(word: string): number {
   }
   total *= Math.exp(word.length / 5);
   return Math.round(total);
+}
+
+function calcCoins(word: string): number {
+  return (word.length >= 4) ? word.length - 3 : 0;
 }
 
 function DefinitionCard({ word, guessedWordsDefnsRef }:
@@ -168,12 +177,19 @@ function DefinitionCard({ word, guessedWordsDefnsRef }:
   );
 }
 
-function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, statsRef }:
+function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, statsRef, initialGameTime }:
       { gridLength: number, scoreRef: React.RefObject<number>, bonusScoreRef: React.RefObject<number>,
-        guessedWordsRef: React.RefObject<string[]>, statsRef: React.RefObject<Stats> }) {
+        guessedWordsRef: React.RefObject<string[]>, statsRef: React.RefObject<Stats>,
+        initialGameTime: number }) {
   const [permutationIdx, setPermutationIdx] = useState<number>(0);
-  // console.log("morestats render, permutationIdx:", permutationIdx);
-  // console.log("lettersUsed at idx" + permutationIdx, statsRef.current["lettersUsed"]?.[permutationIdx]);
+  const [currentWordIdx, setCurrentWordIdx] = useState<number>(-1);
+  const [currentWordVisited, setCurrentWordVisited] = useState<Set<number>>(new Set<number>([-1]));
+  
+  // const lettersUsedDivRef = useRef<HTMLDivElement>(null);
+  // const lettersUsedDivHeightRef = useRef<number>(0);
+  // const aboveSolutionListDivRef = useRef<HTMLDivElement>(null);
+  // const aboveSolutionListDivHeightRef = useRef<number>(0);
+  // const [solutionListDivHeight, setSolutionListDivHeight] = useState<number>(10);
 
   const gridVariants: Record<number, string> = {
     4: "grid-cols-4",
@@ -181,17 +197,68 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
     6: "grid-cols-6"
   };
   const maxHeightVariants: Record<number, string> = {
-    4: "max-h-47",
-    5: "max-h-61",
-    6: "max-h-67"
+    4: "max-h-40",
+    5: "max-h-50",
+    6: "max-h-60"
   };
   const shuffled: boolean = (statsRef.current["lettersUsed"].length > 1);
 
 
-  function movePermutationIdx(idxChange: number) {
+  // useEffect(() => {
+  //   if (!lettersUsedDivRef.current || !aboveSolutionListDivRef.current) {
+  //     return;
+  //   }
+
+  //   const lettersUsedObserver = new ResizeObserver(([lettersUsedEntry]) => {
+  //     lettersUsedDivHeightRef.current = lettersUsedEntry.contentRect.height;
+  //     setSolutionListDivHeight(lettersUsedDivHeightRef.current - aboveSolutionListDivHeightRef.current);
+  //   });
+  //   const aboveSolutionListObserver = new ResizeObserver(([aboveSolutionListEntry]) => {
+  //     aboveSolutionListDivHeightRef.current = aboveSolutionListEntry.contentRect.height;
+  //     setSolutionListDivHeight(lettersUsedDivHeightRef.current - aboveSolutionListDivHeightRef.current);
+  //   });
+
+  //   lettersUsedObserver.observe(lettersUsedDivRef.current);
+  //   aboveSolutionListObserver.observe(aboveSolutionListDivRef.current);
+
+  //   return () => {
+  //     lettersUsedObserver.disconnect();
+  //     aboveSolutionListObserver.disconnect();
+  //   };
+  // }, [lettersUsedDivRef.current, aboveSolutionListDivRef.current]);
+
+  function calcMaxStats(): Record<string, number> {
+    let allUniqueWords = new Set<string>();
+    let totals: Record<string, number> = {
+      "rawScore": 0,
+      "coins": 0
+    };
+    for (const solutionList of statsRef.current["solutions"]) {
+      for (const solution of solutionList) {
+        if (!allUniqueWords.has(solution.word)) {
+          allUniqueWords.add(solution.word);
+          totals["rawScore"] += calcScore(solution.word);
+          totals["coins"] += calcCoins(solution.word);
+        }
+      }
+    }
+    return totals;
+  }
+
+  const movePermutationIdx = (idxChange: number): void => {
     const length = statsRef.current["lettersUsed"].length;
     idxChange = (idxChange % length) + length;
     setPermutationIdx((permutationIdx + idxChange) % length);
+  }
+
+  const setCurrentWord = (idx: number, visited: Set<number>): void => {
+    setCurrentWordIdx(idx);
+    setCurrentWordVisited(visited);
+  }
+
+  const deselectCurrentWord = (): void => {
+    setCurrentWordIdx(-1);
+    setCurrentWordVisited(new Set<number>([-1]));
   }
 
   return (
@@ -202,7 +269,10 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
         </button>
       }
     >
-      <div className="flex flex-col gap-6 w-[50vw] h-max-[50vh] p-8 text-center overflow-y-auto">
+      <div
+        className="flex flex-col gap-6 w-[50vw] h-max-[50vh] p-8 text-center overflow-y-auto"
+        onClick={deselectCurrentWord}
+      >
         <h1 className="text-3xl">
           <b>More stats</b>
         </h1>
@@ -235,42 +305,68 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
               )}
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <div>
+              <div> {/* <div ref={lettersUsedDivRef}> */}
                 <div className="mb-1">Letters used</div>
                 <CustomHr className="mb-2" />
                 <div className={`${gridVariants[gridLength]} grid place-self-center place-items-center`}>
-                  {statsRef.current["lettersUsed"][permutationIdx].map((letter: string, idx: number) =>
-                    <span
-                      key={idx}
-                      className="inline-flex m-1 p-2 bg-gray-100 dark:bg-gray-900"
-                    >
-                      {letter}
-                    </span>
-                  )}
+                  {statsRef.current["lettersUsed"][permutationIdx].map((letter: string, idx: number) => {
+                    const deselect: boolean = !currentWordVisited.has(-1) && !currentWordVisited.has(idx);
+                    return (
+                      <span
+                        key={idx}
+                        className={`${deselect ? "opacity-50" : "bg-gray-100 dark:bg-gray-900"} m-1 p-2`}
+                      >
+                        {letter}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
               <div>
-                <div className="mb-1">All {statsRef.current["solutions"][permutationIdx].length} possible words</div>
-                <CustomHr className="mb-4" />
-                <div className={`${maxHeightVariants[gridLength]} overflow-y-auto`}>
-                  {statsRef.current["solutions"][permutationIdx].map((word: string, idx: number) =>
-                    <div
-                      key={idx}
-                      className="flex flex-row text-sm"
-                    >
-                      {guessedWordsRef.current.includes(word) ? (
-                        <>
-                          <span className="grow text-base"><b>{word}</b></span>
-                          <span className="text-base"><b>{calcScore(word)}</b></span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="grow">{word}</span>
-                          <span>{calcScore(word)}</span>
-                        </>
-                      )}
-                    </div>
-                  )}
+                <div> {/* <div ref={aboveSolutionListDivRef}> */}
+                  <div className="mb-1 flex flex-col gap-0.5">
+                    <h1>
+                      All {statsRef.current["solutions"][permutationIdx].length} possible words
+                    </h1>
+                    <p className="text-xs text-gray-700 dark:text-gray-300">
+                      (click a word to view its tiles!)
+                    </p>
+                  </div>
+                  <CustomHr className="mb-4" />
+                </div>
+                <div
+                  className={`${maxHeightVariants[gridLength]} flex flex-col overflow-y-auto`}
+                  // className="max-h-50 flex flex-col overflow-y-auto"
+                  // style={{maxHeight: `${solutionListDivHeight}px`}}
+                >
+                  {statsRef.current["solutions"][permutationIdx].map((soln: Solution, idx: number) => {
+                    const deselect: boolean = (currentWordIdx !== -1) && (currentWordIdx !== idx);
+                    return (
+                      <button
+                        key={idx}
+                        className={deselect ? "opacity-50" : 
+                            ((currentWordIdx !== -1) ? "bg-gray-100 dark:bg-gray-900" : "")}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentWord(idx, soln.visited);
+                        }}
+                      >
+                        <div className="flex flex-row text-sm">
+                          {guessedWordsRef.current.includes(soln.word) ? (
+                            <>
+                              <span className="grow text-base"><b>{soln.word}</b></span>
+                              <span className="text-base"><b>{calcScore(soln.word)}</b></span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="grow">{soln.word}</span>
+                              <span>{calcScore(soln.word)}</span>
+                            </>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -283,9 +379,15 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
           <CustomHr className="mb-2" />
           <CustomHr className="mb-2" />
           <CustomHr className="mb-2" />
-          <div className="text-lg">{scoreRef.current}</div>
-          <div className="text-lg">{bonusScoreRef.current}</div>
-          <div className="text-lg"><FunHighlight text={String(scoreRef.current + bonusScoreRef.current)} /></div>
+          <div className="text-lg self-start">
+            {scoreRef.current}
+            <div className="pt-1 text-[10px]">
+              {((scoreRef.current / calcMaxStats()["rawScore"]) * 100).toPrecision(4)}% of
+              the max raw score ({calcMaxStats()["rawScore"]})
+            </div>
+          </div>
+          <div className="text-lg self-start">{bonusScoreRef.current}</div>
+          <div className="text-lg self-start"><FunHighlight text={String(scoreRef.current + bonusScoreRef.current)} /></div>
         </div>
         <div className="grid grid-cols-3 items-end">
           <div className="text-lg mb-1">Coins used</div>
@@ -297,9 +399,15 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
           <CustomHr className="mb-2" />
           <CustomHr className="mb-2" />
           <CustomHr className="mb-2" />
-          <div className="text-lg">{statsRef.current["coinsUsed"]}</div>
-          <div className="text-lg">{statsRef.current["coinsEarned"] - statsRef.current["coinsUsed"]}</div>
-          <div className="text-lg"><FunHighlight text={String(statsRef.current["coinsEarned"])} /></div>
+          <div className="text-lg self-start">{statsRef.current["coinsUsed"]}</div>
+          <div className="text-lg self-start">{statsRef.current["coinsEarned"] - statsRef.current["coinsUsed"]}</div>
+          <div className="text-lg self-start">
+            <FunHighlight text={String(statsRef.current["coinsEarned"])} />
+            <div className="pt-1 text-[10px]">
+              {((statsRef.current["coinsEarned"] / calcMaxStats()["coins"]) * 100).toPrecision(4)}% of
+              the max coins ({calcMaxStats()["coins"]})
+            </div>
+          </div>
         </div>
         <div className="grid grid-cols-4 items-end">
           <div className="mb-1">Board shuffles</div>
@@ -315,8 +423,8 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
           <div className="text-lg self-start">
             {statsRef.current["addTimeCount"]}
             {(statsRef.current["addTimeCount"] > 0) && (
-              <div className="pt-1 text-[10px]">
-                (Total game time: {INITIAL_GAME_TIME + 10 * statsRef.current["addTimeCount"]}s)
+              <div className="mt-1 text-[10px]">
+                (Total game time: {initialGameTime + 10 * statsRef.current["addTimeCount"]}s)
               </div>
             )}
           </div>
@@ -337,6 +445,7 @@ export function Game() {
   const guessedWordsRef = useRef<string[]>([]); // to let state "collect" all async func calls
   const scoreRef = useRef<number>(0);
   const bonusScoreRef = useRef<number>(0);
+  const coinsRef = useRef<number>(0);
   const guessedWordsDefnsRef = useRef<Map<string, any>>(new Map<string, Object>());
   const statsRef = useRef<Stats>({
     "lettersUsed": [],
@@ -348,6 +457,8 @@ export function Game() {
     "coinsUsed": 0
   });
   const [animateCopyText, setAnimateCopyText] = useState<number>(-1);
+
+  const INITIAL_GAME_TIME: number = 60;
 
 
   function copyShareableText(): void {
@@ -375,8 +486,8 @@ export function Game() {
   function getBestWord(): string {
     let ans = "";
     for (const solution of statsRef.current["solutions"]) {
-      if ((solution.length > 0) && (calcScore(solution[0]) > calcScore(ans))) {
-        ans = solution[0];
+      if ((solution.length > 0) && (calcScore(solution[0].word) > calcScore(ans))) {
+        ans = solution[0].word;
       }
     }
     return ans;
@@ -386,6 +497,7 @@ export function Game() {
     guessedWordsRef.current = [];
     scoreRef.current = 0;
     bonusScoreRef.current = 0;
+    coinsRef.current = 0;
     guessedWordsDefnsRef.current.clear();
     statsRef.current = {
       "lettersUsed": [],
@@ -460,8 +572,10 @@ export function Game() {
         guessedWordsRef={guessedWordsRef}
         scoreRef={scoreRef}
         bonusScoreRef={bonusScoreRef}
+        coinsRef={coinsRef}
         statsRef={statsRef}
         calcScore={calcScore}
+        calcCoins={calcCoins}
         setScreen={setScreen}
         resetGame={resetGame}
       />,
@@ -543,6 +657,7 @@ export function Game() {
             bonusScoreRef={bonusScoreRef}
             guessedWordsRef={guessedWordsRef}
             statsRef={statsRef}
+            initialGameTime={INITIAL_GAME_TIME}
           />
         </div>
       </div>
