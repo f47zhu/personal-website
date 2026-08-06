@@ -101,7 +101,7 @@ function DefinitionCard({ word, guessedWordsDefnsRef }:
           </button>
         }
       >
-        <div className="relative flex flex-col gap-6 w-[50vw] h-max-[50vh] p-8 overflow-y-auto">
+        <div className={`${!loading ? "w-[50vw]" : ""} relative flex flex-col gap-6 h-max-[50vh] p-8 overflow-y-auto`}>
           {loading ? (
             <>
               <div className="place-self-center animate-spin-length2s relative size-[15vmin] rounded-full bg-conic from-[#00000000] to-black dark:to-white" />
@@ -477,7 +477,7 @@ export function Game() {
               "Couldn't find any :("
             )
           }\n`
-        + `➡️ https://franklinzhu.me/games/wordHunt`
+        + `https://franklinzhu.me/games/wordHunt`
 
     navigator.clipboard.writeText(text);
     setAnimateCopyText((animateCopyText + 1) % 2);
@@ -580,7 +580,7 @@ export function Game() {
         resetGame={resetGame}
       />,
     "results":
-      <div className="max-w-[75vw] max-h-[75vh] overflow-y-auto flex flex-col gap-4 p-8 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
+      <div className="max-w-[50vw] max-h-[75vh] overflow-y-auto flex flex-col gap-4 p-8 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
         <h1 className="text-center text-4xl">
           <FunHighlight text="Results" />
         </h1>
@@ -596,33 +596,35 @@ export function Game() {
           <span className="text-sm">(Grid size: {gridLength}x{gridLength})</span>
         </div>
         <CustomHr />
-        <div className="flex flex-col gap-0.5 text-center text-lg">
-          {(guessedWordsRef.current.length > 0) ? (
-            <>
-              <h3>
-                {guessedWordsRef.current.length} words achieved:
-              </h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                (click a word to view its definition!)
-              </p>
-            </>
-          ) : (
-            <>
-              No words achieved?? You can do better!
-            </>
-          )}
-        </div>
-        {(guessedWordsRef.current.length > 0) && (
-          <div className="max-h-[inherit] grid grid-cols-4 gap-4 place-items-center overflow-y-auto">
-            {guessedWordsRef.current.map((word, idx) =>
-              <DefinitionCard
-                key={idx}
-                word={word}
-                guessedWordsDefnsRef={guessedWordsDefnsRef}
-              />
+        <div className="flex flex-row gap-6 justify-center">
+          <div className="flex flex-col gap-0.5 justify-center text-right text-lg">
+            {(guessedWordsRef.current.length > 0) ? (
+              <>
+                <h3>
+                  {guessedWordsRef.current.length} words achieved:
+                </h3>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  (click a word to view its definition!)
+                </p>
+              </>
+            ) : (
+              <div className="text-center">
+                No words achieved?? You can do better!
+              </div>
             )}
           </div>
-        )}
+          {(guessedWordsRef.current.length > 0) && (
+            <div className="max-h-30 flex flex-row flex-wrap gap-4 justify-center place-items-center overflow-y-auto">
+              {guessedWordsRef.current.map((word, idx) =>
+                <DefinitionCard
+                  key={idx}
+                  word={word}
+                  guessedWordsDefnsRef={guessedWordsDefnsRef}
+                />
+              )}
+            </div>
+          )}
+        </div>
         <div className="text-lg text-center">
           Best possible word: {statsRef.current["solutions"].length ? (
             <>
