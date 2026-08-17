@@ -5,25 +5,43 @@ import { createPortal } from "react-dom";
 
 import { FunHighlight } from "@/app/effects/waveEffect";
 import { validateWord } from "./wordValidator";
+import { solve } from "./gameSolver";
 
 function randint(max: number) {
   return Math.floor(Math.random() * max);
 }
 
-export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusScoreRef,
-      statsRef, calcScore, setScreen, resetGame }:
-    { size: number, initialGameTime: number, guessedWordsRef: React.RefObject<string[]>,
-      scoreRef: React.RefObject<number>, bonusScoreRef: React.RefObject<number>,
-      statsRef: React.RefObject<Record<string, any>>, calcScore: Function, setScreen: Function,
-      resetGame: Function }) {
-  interface Line {
-    x: number,
-    y: number,
-    length: number,
-    angle: number,
-    weight: number
-  }
-  
+interface Solution {
+  "word": string,
+  "visited": Set<number>
+}
+
+interface Stats {
+  "score": number,
+  "bonusScore": number,
+  "wordsGuessed": string[],
+  "lettersUsed": string[][],
+  "solutions": Solution[][],
+  "shuffleBoardCount": number,
+  "doubleScoreCount": number,
+  "addTimeCount": number,
+  "coinsEarned": number,
+  "coinsUsed": number
+}
+
+interface Line {
+  x: number,
+  y: number,
+  length: number,
+  angle: number,
+  weight: number
+}
+
+export function Board({ gridLength, initialGameTime, statsRef, calcScore, calcCoins, setScreen,
+    resetGame, opponentStatsRef }:
+    { gridLength: number, initialGameTime: number, statsRef: React.RefObject<Stats>,
+      calcScore: Function, calcCoins: Function, setScreen: Function, resetGame: Function,
+      opponentStatsRef: React.RefObject<Stats | null> }) {
   const [boardLetters, setBoardLetters] = useState<string[]>([]);
 
   const letterElementsRef = useRef<HTMLElement[]>([]);
@@ -36,8 +54,15 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   const guessedStringsRef = useRef<Map<string, Promise<boolean>>>(new Map<string, Promise<boolean>>());
   const [guessColor, setGuessColor] = useState<string>("");
 
-  const [guessedWords, setGuessedWords] = useState<string[]>([]);
+  const wordsGuessedRef = useRef<string[]>([]);
+  const [wordsGuessed, setGuessedWords] = useState<string[]>([]);
+  const scoreRef = useRef<number>(0);
   const [score, setScore] = useState<number>(0);
+  const bonusScoreRef = useRef<number>(0);
+  const [bonusScore, setBonusScore] = useState<number>(0);
+
+  const coinsRef = useRef<number>(0);
+  const [coins, setCoins] = useState<number>(0);
 
   const [exitConfirm, setExitConfirm] = useState<boolean>(false);
 
@@ -49,9 +74,6 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   const gameTimeRef = useRef<number>(initialGameTime * 1000);
   const gameTimerDivRef = useRef<HTMLDivElement>(null);
   const doubleScoreTimerDivRef = useRef<HTMLDivElement>(null);
-  
-  const coinsRef = useRef<number>(0);
-  const [coins, setCoins] = useState<number>(coinsRef.current);
 
   const [shuffleBoardPrice, setShuffleBoardPrice] = useState<number>(2);
   const [animateShuffleBoard, setAnimateShuffleBoard] = useState<number>(-1);
@@ -62,11 +84,14 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   const [doubleScoreStartTime, setDoubleScoreStartTime] = useState<number>(0);
   const [doubleScoreEndTime, setDoubleScoreEndTime] = useState<number>(0);
   const [doubleScoreActive, setDoubleScoreActive] = useState<boolean>(false);
-  const [bonusScore, setBonusScore] = useState<number>(0);
 
   const [addTimePrice, setAddTimePrice] = useState<number>(5);
   const [animateAddTime, setAnimateAddTime] = useState<number>(-1);
   const [addTimeSuccess, setAddTimeSuccess] = useState<boolean>(false);
+
+  const hasOpponent: boolean = !!opponentStatsRef.current;
+
+  const COIN_VALUE = 200;
 
   const probabilities: number[] = [
     0, 1202, 2112, 2924, 3692, 4423, 5118, 5746, 6348, 6940, 7372, 7770, 8058, 8329, 8590, 8820, 9031, 9240, 9443, 9625, 9774, 9885, 9954, 9971, 9982, 9989
@@ -74,6 +99,77 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   const probabilityLetters: string[] = [
     "E", "T", "A", "O", "I", "N", "S", "R", "H", "D", "L", "U", "C", "M", "F", "Y", "W", "G", "P", "B", "V", "K", "X", "Q", "J", "Z"
   ];
+
+  useEffect(() => { // letter distribution
+    // statsRef.current["lettersUsed"] = []; // to account for strict mode
+
+    let newLetters: string[] = [];
+
+    if (!hasOpponent) {
+      let letterFrequency: Record<string, number> = {};
+      for (let i = 0; i < gridLength * gridLength; ++i) {
+        let letter = randomLetter();
+        while ((letter in letterFrequency) && (letterFrequency[letter] >= gridLength)) {
+          letter = randomLetter();
+        }
+        if (letter in letterFrequency) {
+          ++letterFrequency[letter];
+        } else {
+          letterFrequency[letter] = 1;
+        }
+
+        newLetters.push(letter);
+      }
+    } else {
+      newLetters = opponentStatsRef.current!["lettersUsed"][0];
+    }
+
+    setBoardLetters(newLetters);
+    
+    statsRef.current["lettersUsed"].push(newLetters);
+    statsRef.current["solutions"].push(solve(gridLength, newLetters, calcScore)); // will break on strict mode
+  }, []);
+
+  useEffect(() => {
+    startTime.current = Date.now();
+  }, []);
+
+  useEffect(() => { // game timer
+    const gameTimer = setTimeout(async () => {
+      if (timeElapsed > doubleScoreEndTime) {
+        setDoubleScoreActive(false);
+      }
+      if (timeElapsed > gameTimeRef.current) {
+        setLoading(true);
+        handleMouseUp();
+        await Promise.all(promisesRef.current); // wait for words to process
+        promisesRef.current = [];
+        bonusScoreRef.current += coinsRef.current * COIN_VALUE; // convert unused coins
+        statsRef.current["bonusScore"] = bonusScoreRef.current;
+        setLoading(false);
+        
+        setScreen("results");
+      }
+      setTimeElapsed(Date.now() - startTime.current);
+    }, 100);
+
+    return () => clearInterval(gameTimer);
+  }, [timeElapsed, doubleScoreEndTime]);
+
+  function randomLetter(): string {
+    const target = 10000 * Math.random();
+    let lo = 0, hi = probabilities.length - 1, mid;
+    while (lo < hi) { // upper_bound()
+      mid = Math.ceil((lo + hi) / 2);
+      if (probabilities[mid] > target) {
+        hi = mid - 1;
+      } else {
+        lo = mid;
+      }
+    }
+
+    return probabilityLetters[lo];
+  }
 
   function updateLines(): void {
     const LINE_WEIGHT = 10;
@@ -142,7 +238,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     if (guess.length >= 3) {
       let verdict = "invalid";
       if (await guessedStringsRef.current.get(guess)) {
-        verdict = guessedWordsRef.current.includes(guess) ? "guessed" : "valid";
+        verdict = wordsGuessedRef.current.includes(guess) ? "guessed" : "valid";
       }
       setGuessColor(colorVariants[verdict]);
     } else {
@@ -163,23 +259,20 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     return "";
   }
 
-  function calcCoins(word: string): number {
-    return (word.length >= 4) ? word.length - 3 : 0;
-  }
-
   function pushToGuessedWords(word: string): boolean {
-    let lo = 0, hi = guessedWordsRef.current.length, mid;
-    while (lo < hi) { // upper_bound()
+    let lo = 0, hi = wordsGuessedRef.current.length, mid;
+    while (lo < hi) { // assuming reverse sorted list, returns first idx where elt > list[idx]
       mid = Math.floor((lo + hi) / 2);
-      if (calcScore(word) <= calcScore(guessedWordsRef.current[mid])) {
+      if (calcScore(wordsGuessedRef.current[mid]) >= calcScore(word)) {
         lo = mid + 1;
       } else {
         hi = mid;
       }
     }
-    if (!guessedWordsRef.current.includes(word)) { // avoid race condition
-      guessedWordsRef.current.splice(lo, 0, word);
-      setGuessedWords(guessedWordsRef.current);
+    if (!wordsGuessedRef.current.includes(word)) { // avoid race condition
+      wordsGuessedRef.current.splice(lo, 0, word);
+      setGuessedWords(wordsGuessedRef.current);
+      statsRef.current["wordsGuessed"] = wordsGuessedRef.current;
       return true;
     }
     return false;
@@ -188,12 +281,14 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
   async function submitGuess(word: string, bonus: boolean): Promise<void> {
     if (word.length >= 3) {
       const valid = await guessedStringsRef.current.get(word);
-      if (valid && !guessedWordsRef.current.includes(word) && pushToGuessedWords(word)) {
+      if (valid && !wordsGuessedRef.current.includes(word) && pushToGuessedWords(word)) {
         scoreRef.current += calcScore(word);
         setScore(scoreRef.current);
+        statsRef.current["score"] = scoreRef.current;
         if (bonus) {
           bonusScoreRef.current += calcScore(word);
           setBonusScore(bonusScoreRef.current);
+          statsRef.current["bonusScore"] = bonusScoreRef.current;
         }
         coinsRef.current += calcCoins(word);
         setCoins(coinsRef.current);
@@ -208,46 +303,8 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     }
   }
 
-  function randomLetter(): string {
-    const target = 10000 * Math.random();
-    let lo = 0, hi = probabilities.length - 1, mid;
-    while (lo < hi) { // upper_bound()
-      mid = Math.ceil((lo + hi) / 2);
-      if (probabilities[mid] > target) {
-        hi = mid - 1;
-      } else {
-        lo = mid;
-      }
-    }
-
-    return probabilityLetters[lo];
-  }
-  
-  useEffect(() => { // letter distribution
-    statsRef.current["lettersUsed"] = [];
-
-    let newLetters: string[] = [];
-    let letterFrequency: Record<string, number> = {};
-    for (let i = 0; i < size * size; ++i) {
-      let letter = randomLetter();
-      while ((letter in letterFrequency) && (letterFrequency[letter] >= size)) {
-        letter = randomLetter();
-      }
-      if (letter in letterFrequency) {
-        ++letterFrequency[letter];
-      } else {
-        letterFrequency[letter] = 1;
-      }
-
-      newLetters.push(letter);
-      statsRef.current["lettersUsed"].push(letter);
-    }
-
-    setBoardLetters(newLetters);
-  }, []);
-
   function idxToCoords(idx: number): number[] {
-    return [Math.floor(idx / size), idx % size];
+    return [Math.floor(idx / gridLength), idx % gridLength];
   }
 
   function verifyIdx(idx: number): boolean {
@@ -287,49 +344,30 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
     }
   }
 
-  useEffect(() => {
-    startTime.current = Date.now();
-  }, []);
-
-  useEffect(() => { // game timer
-    const COIN_VALUE = 200;
-
-    const gameTimer = setTimeout(async () => {
-      if (timeElapsed > doubleScoreEndTime) {
-        setDoubleScoreActive(false);
-      }
-      if (timeElapsed > gameTimeRef.current) {
-        setLoading(true);
-        handleMouseUp();
-        await Promise.all(promisesRef.current); // wait for words to process
-        promisesRef.current = [];
-        bonusScoreRef.current += coinsRef.current * COIN_VALUE; // convert unused coins
-        setLoading(false);
-        
-        setScreen("results");
-      }
-      setTimeElapsed(Date.now() - startTime.current);
-    }, 100);
-
-    return () => clearInterval(gameTimer);
-  }, [timeElapsed, doubleScoreEndTime]);
-
   const shuffleBoard = (cost: number) => { // fisher-yates shuffle
     if (coinsRef.current >= cost) {
-      let newLetters: string[] = boardLetters;
-      for (let idx = newLetters.length - 1; idx > 0; --idx) {
-        const randomIdx = randint(idx + 1);
-        [newLetters[idx], newLetters[randomIdx]] = [newLetters[randomIdx], newLetters[idx]];
+      let newLetters: string[] = [...boardLetters];
+      if (!hasOpponent || (hasOpponent &&
+            (statsRef.current["shuffleBoardCount"] >= opponentStatsRef.current!["shuffleBoardCount"]))) {
+        for (let idx = newLetters.length - 1; idx > 0; --idx) {
+          const randomIdx = randint(idx + 1);
+          [newLetters[idx], newLetters[randomIdx]] = [newLetters[randomIdx], newLetters[idx]];
+        }
+      } else {
+        newLetters = opponentStatsRef.current!["lettersUsed"][statsRef.current["shuffleBoardCount"] + 1];
       }
       setBoardLetters(newLetters);
 
+      statsRef.current["lettersUsed"].push(newLetters);
+      statsRef.current["solutions"].push(solve(gridLength, newLetters, calcScore));
+
       coinsRef.current -= cost;
       setCoins(coinsRef.current);
+      statsRef.current["coinsUsed"] += cost;
 
       setShuffleBoardSuccess(true);
       setShuffleBoardPrice(shuffleBoardPrice + 1);
       statsRef.current["shuffleBoardCount"] += 1;
-      statsRef.current["coinsUsed"] += cost;
     } else {
       setShuffleBoardSuccess(false);
     }
@@ -345,10 +383,10 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
       
       coinsRef.current -= cost;
       setCoins(coinsRef.current);
+      statsRef.current["coinsUsed"] += cost;
 
       setDoubleScorePrice(doubleScorePrice + 1);
       statsRef.current["doubleScoreCount"] += 1;
-      statsRef.current["coinsUsed"] += cost;
     } else {
       setAnimateDoubleScoreFail((animateDoubleScoreFail + 1) % 2);
     }
@@ -360,11 +398,11 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
 
       coinsRef.current -= cost;
       setCoins(coinsRef.current);
+      statsRef.current["coinsUsed"] += cost;
 
       setAddTimeSuccess(true);
       setAddTimePrice(addTimePrice + 1);
       statsRef.current["addTimeCount"] += 1;
-      statsRef.current["coinsUsed"] += cost;
     } else {
       setAddTimeSuccess(false);
     }
@@ -505,16 +543,16 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
             )}
           </>
         )}
-        <div className={`${parentVariants[size]} p-6 rounded-lg grid place-self-center bg-white dark:bg-black`}>
+        <div className={`${parentVariants[gridLength]} p-6 rounded-lg grid place-self-center bg-white dark:bg-black`}>
           {boardLetters.map((letter, idx) =>
             <button
               key={idx}
-              className={`${tileVariants[size]} place-items-center text-center rounded-2xl border-2 border-gray-400 dark:border-gray-600
+              className={`${tileVariants[gridLength]} place-items-center text-center rounded-2xl border-2 border-gray-400 dark:border-gray-600
                   ${letterIdxs.includes(idx) ? guessColor : "bg-gray-200 dark:bg-gray-800"}`}
               onMouseDown={(e) => handleInput(e, idx, letter, true)}
             >
               <div
-                className={`${hitboxVariants[size]} ${doubleScoreActive ? "animate-wave" : ""} place-content-center rounded-2xl`}
+                className={`${hitboxVariants[gridLength]} ${doubleScoreActive ? "animate-wave" : ""} place-content-center rounded-2xl`}
                 onMouseEnter={(e) => handleInput(e, idx, letter)}
               >
                 <b>{letter}</b>
@@ -532,7 +570,7 @@ export function Board({ size, initialGameTime, guessedWordsRef, scoreRef, bonusS
               </h2>
               <hr />
               <div className="flex flex-col gap-0 overflow-y-auto">
-                {guessedWords.map((word, idx) => (
+                {wordsGuessed.map((word, idx) => (
                   <div
                     key={idx}
                     className="flex flex-row"

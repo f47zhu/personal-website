@@ -49,7 +49,7 @@ export function CircleCarousel({ isPopUps = false, images }:
           className="py-2 pl-6 pr-4 font-extrabold whitespace-nowrap bg-linear-to-r from-[#00000000] to-[#FFFFFF80] dark:to-[#00000080] to-25%"
           onClick={() => changeCurIndex(-1)}
         >
-          ←
+          <div className="rotate-y-180">➔</div>
         </button>
         <p className="p-2 place-content-center text-sm tracking-[4] bg-[#FFFFFF80] dark:bg-[#00000080]">
           {"○".repeat(curIndex)}●{"○".repeat(images.length - 1 - curIndex)}
@@ -58,7 +58,7 @@ export function CircleCarousel({ isPopUps = false, images }:
           className="py-2 pl-4 pr-6 font-extrabold whitespace-nowrap bg-linear-to-l from-[#00000000] to-[#FFFFFF80] dark:to-[#00000080] to-25%"
           onClick={() => changeCurIndex(1)}
         >
-          →
+          ➔
         </button>
       </div>
       {images[curIndex]}
