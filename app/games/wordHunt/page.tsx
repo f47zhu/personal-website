@@ -1,6 +1,7 @@
 import { LinesBgEffect } from "../../effects/bgEffects";
 import { FunHighlight } from "@/app/effects/waveEffect";
 import { Game } from "./game";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -30,7 +31,9 @@ export default function Home() {
       </div>
       <div className="flex h-screen">
         <div className="m-auto animate-fade-in-length0.375s">
-          <Game />
+          <Suspense>
+            <Game />
+          </Suspense>
         </div>
       </div>
     </>
