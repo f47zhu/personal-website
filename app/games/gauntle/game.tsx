@@ -82,8 +82,8 @@ export function Game() {
     const minutes = Math.floor(seconds / 60);
     seconds = Math.round((seconds % 60) * 10) / 10;
     return (hours !== 0 ? `${hours}:` : "")
-         + (hours !== 0 ? `${String(minutes).padStart(2, "0")}:` : `${minutes}:`)
-         + String(seconds).padStart(4, "0");
+         + (hours !== 0 ? `${minutes.toString().padStart(2, "0")}:` : `${minutes}:`)
+         + seconds.toString().padStart(4, "0");
   }
 
   const screens: Record<string, React.ReactNode> = {

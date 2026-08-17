@@ -1,12 +1,15 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react";
-// import { useState, useRef, useEffect } from "react";
+import { useState, useRef, ChangeEvent, useEffect } from "react";
+
+import { useSearchParams } from "next/navigation";
 
 import { FunHighlight } from "../../effects/waveEffect";
 import { CustomHr } from "../../customHr";
 import { Board } from "./board";
 import { PopUp } from "@/app/popUp";
+import { solve } from "./gameSolver";
+import { validateWord } from "./wordValidator";
 
 interface Solution {
   "word": string,
@@ -14,6 +17,9 @@ interface Solution {
 }
 
 interface Stats {
+  "score": number,
+  "bonusScore": number,
+  "wordsGuessed": string[],
   "lettersUsed": string[][],
   "solutions": Solution[][],
   "shuffleBoardCount": number,
@@ -22,6 +28,8 @@ interface Stats {
   "coinsEarned": number,
   "coinsUsed": number
 }
+
+type queryParamStats = Omit<Stats, ("solutions" | "shuffleBoardCount")>;
 
 const probabilityMap: Record<string, number> = {
   "E": 0.1202,
@@ -66,8 +74,8 @@ function calcCoins(word: string): number {
   return (word.length >= 4) ? word.length - 3 : 0;
 }
 
-function DefinitionCard({ word, guessedWordsDefnsRef }:
-      { word: string, guessedWordsDefnsRef: React.RefObject<Map<string, any>> }) {
+function DefinitionCard({ word, wordsGuessedDefnsRef }:
+      { word: string, wordsGuessedDefnsRef: React.RefObject<Map<string, any>> }) {
   const [wordInfo, setWordInfo] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -77,16 +85,16 @@ function DefinitionCard({ word, guessedWordsDefnsRef }:
   async function fetchWordInfo(): Promise<void> {
     setLoading(true);
     
-    if (!guessedWordsDefnsRef.current.has(word)) {
+    if (!wordsGuessedDefnsRef.current.has(word)) {
       const response: Response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
       if (response.ok) {
         const primaryDefn: any = JSON.parse(await response.text())[0];
-        guessedWordsDefnsRef.current.set(word, primaryDefn);
+        wordsGuessedDefnsRef.current.set(word, primaryDefn);
       } else {
-        guessedWordsDefnsRef.current.set(word, WORD_NOT_FOUND);
+        wordsGuessedDefnsRef.current.set(word, WORD_NOT_FOUND);
       }
     }
-    setWordInfo(guessedWordsDefnsRef.current.get(word));
+    setWordInfo(wordsGuessedDefnsRef.current.get(word));
 
     setLoading(false);
   }
@@ -95,7 +103,7 @@ function DefinitionCard({ word, guessedWordsDefnsRef }:
     <div onClick={fetchWordInfo}>
       <PopUp
         clickable={
-          <button className="p-4 rounded-2xl bg-gray-200 dark:bg-gray-800">
+          <button className="p-4 rounded-2xl text-sm bg-gray-200 dark:bg-gray-800">
             {word}
             <div className="text-[10px]">{calcScore(word)} pts.</div>
           </button>
@@ -177,19 +185,12 @@ function DefinitionCard({ word, guessedWordsDefnsRef }:
   );
 }
 
-function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, statsRef, initialGameTime }:
-      { gridLength: number, scoreRef: React.RefObject<number>, bonusScoreRef: React.RefObject<number>,
-        guessedWordsRef: React.RefObject<string[]>, statsRef: React.RefObject<Stats>,
-        initialGameTime: number }) {
+function MoreStats({ gridLength, statsRef, opponent, opponentStatsRef, initialGameTime }:
+      { gridLength: number, statsRef: React.RefObject<Stats>, opponent: (string | null),
+        opponentStatsRef: React.RefObject<Stats | null>, initialGameTime: number }) {
   const [permutationIdx, setPermutationIdx] = useState<number>(0);
   const [currentWordIdx, setCurrentWordIdx] = useState<number>(-1);
   const [currentWordVisited, setCurrentWordVisited] = useState<Set<number>>(new Set<number>([-1]));
-  
-  // const lettersUsedDivRef = useRef<HTMLDivElement>(null);
-  // const lettersUsedDivHeightRef = useRef<number>(0);
-  // const aboveSolutionListDivRef = useRef<HTMLDivElement>(null);
-  // const aboveSolutionListDivHeightRef = useRef<number>(0);
-  // const [solutionListDivHeight, setSolutionListDivHeight] = useState<number>(10);
 
   const gridVariants: Record<number, string> = {
     4: "grid-cols-4",
@@ -203,29 +204,6 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
   };
   const shuffled: boolean = (statsRef.current["lettersUsed"].length > 1);
 
-
-  // useEffect(() => {
-  //   if (!lettersUsedDivRef.current || !aboveSolutionListDivRef.current) {
-  //     return;
-  //   }
-
-  //   const lettersUsedObserver = new ResizeObserver(([lettersUsedEntry]) => {
-  //     lettersUsedDivHeightRef.current = lettersUsedEntry.contentRect.height;
-  //     setSolutionListDivHeight(lettersUsedDivHeightRef.current - aboveSolutionListDivHeightRef.current);
-  //   });
-  //   const aboveSolutionListObserver = new ResizeObserver(([aboveSolutionListEntry]) => {
-  //     aboveSolutionListDivHeightRef.current = aboveSolutionListEntry.contentRect.height;
-  //     setSolutionListDivHeight(lettersUsedDivHeightRef.current - aboveSolutionListDivHeightRef.current);
-  //   });
-
-  //   lettersUsedObserver.observe(lettersUsedDivRef.current);
-  //   aboveSolutionListObserver.observe(aboveSolutionListDivRef.current);
-
-  //   return () => {
-  //     lettersUsedObserver.disconnect();
-  //     aboveSolutionListObserver.disconnect();
-  //   };
-  // }, [lettersUsedDivRef.current, aboveSolutionListDivRef.current]);
 
   function calcMaxStats(): Record<string, number> {
     let allUniqueWords = new Set<string>();
@@ -305,7 +283,7 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
               )}
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <div> {/* <div ref={lettersUsedDivRef}> */}
+              <div>
                 <div className="mb-1">Letters used</div>
                 <CustomHr className="mb-2" />
                 <div className={`${gridVariants[gridLength]} grid place-self-center place-items-center`}>
@@ -323,7 +301,7 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
                 </div>
               </div>
               <div>
-                <div> {/* <div ref={aboveSolutionListDivRef}> */}
+                <div>
                   <div className="mb-1 flex flex-col gap-0.5">
                     <h1>
                       All {statsRef.current["solutions"][permutationIdx].length} possible words
@@ -334,11 +312,7 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
                   </div>
                   <CustomHr className="mb-4" />
                 </div>
-                <div
-                  className={`${maxHeightVariants[gridLength]} flex flex-col overflow-y-auto`}
-                  // className="max-h-50 flex flex-col overflow-y-auto"
-                  // style={{maxHeight: `${solutionListDivHeight}px`}}
-                >
+                <div className={`${maxHeightVariants[gridLength]} flex flex-col overflow-y-auto`}>
                   {statsRef.current["solutions"][permutationIdx].map((soln: Solution, idx: number) => {
                     const deselect: boolean = (currentWordIdx !== -1) && (currentWordIdx !== idx);
                     return (
@@ -352,10 +326,15 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
                         }}
                       >
                         <div className="flex flex-row text-sm">
-                          {guessedWordsRef.current.includes(soln.word) ? (
+                          {statsRef.current["wordsGuessed"].includes(soln.word) ? (
                             <>
                               <span className="grow text-base"><b>{soln.word}</b></span>
                               <span className="text-base"><b>{calcScore(soln.word)}</b></span>
+                            </>
+                          ) : (opponent && opponentStatsRef.current!["wordsGuessed"].includes(soln.word)) ? (
+                            <>
+                              <span className="grow"><i>{soln.word}</i></span>
+                              <span><i>{calcScore(soln.word)}</i></span>
                             </>
                           ) : (
                             <>
@@ -372,67 +351,176 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-3 items-end">
-          <div className="text-lg mb-1">Raw score</div>
-          <div className="text-lg mb-1">Bonus score</div>
-          <div className="text-lg mb-1">Total score</div>
-          <CustomHr className="mb-2" />
-          <CustomHr className="mb-2" />
-          <CustomHr className="mb-2" />
-          <div className="text-lg self-start">
-            {scoreRef.current}
-            <div className="pt-1 text-[10px]">
-              {((scoreRef.current / calcMaxStats()["rawScore"]) * 100).toPrecision(4)}% of
-              the max raw score ({calcMaxStats()["rawScore"]})
-            </div>
-          </div>
-          <div className="text-lg self-start">{bonusScoreRef.current}</div>
-          <div className="text-lg self-start"><FunHighlight text={String(scoreRef.current + bonusScoreRef.current)} /></div>
-        </div>
-        <div className="grid grid-cols-3 items-end">
-          <div className="text-lg mb-1">Coins used</div>
-          <div className="text-lg mb-1">
-            Coins left over
-            <div className="text-[10px]">(and converted to points)</div>
-          </div>
-          <div className="text-lg mb-1">Total coins earned</div>
-          <CustomHr className="mb-2" />
-          <CustomHr className="mb-2" />
-          <CustomHr className="mb-2" />
-          <div className="text-lg self-start">{statsRef.current["coinsUsed"]}</div>
-          <div className="text-lg self-start">{statsRef.current["coinsEarned"] - statsRef.current["coinsUsed"]}</div>
-          <div className="text-lg self-start">
-            <FunHighlight text={String(statsRef.current["coinsEarned"])} />
-            <div className="pt-1 text-[10px]">
-              {((statsRef.current["coinsEarned"] / calcMaxStats()["coins"]) * 100).toPrecision(4)}% of
-              the max coins ({calcMaxStats()["coins"]})
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-4 items-end">
-          <div className="mb-1">Board shuffles</div>
-          <div className="mb-1">Score doublers</div>
-          <div className="mb-1">10 sec extensions</div>
-          <div className="mb-1">Total powerups used</div>
-          <CustomHr className="mb-2" />
-          <CustomHr className="mb-2" />
-          <CustomHr className="mb-2" />
-          <CustomHr className="mb-2" />
-          <div className="text-lg self-start">{statsRef.current["shuffleBoardCount"]}</div>
-          <div className="text-lg self-start">{statsRef.current["doubleScoreCount"]}</div>
-          <div className="text-lg self-start">
-            {statsRef.current["addTimeCount"]}
-            {(statsRef.current["addTimeCount"] > 0) && (
-              <div className="mt-1 text-[10px]">
-                (Total game time: {initialGameTime + 10 * statsRef.current["addTimeCount"]}s)
+        <div className="grid grid-cols-3 place-content-center items-center text-lg">
+          <div className="flex flex-col gap-1">
+            <div>Raw score</div>
+            <CustomHr className="self-stretch mb-1" />
+            <div className="flex flex-col gap-1">
+              <div className="flex flex-row gap-2 place-content-center">
+                {statsRef.current["score"]}
+                {opponent && (
+                  <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+                    (vs. {opponentStatsRef.current!["score"]})
+                  </span>
+                )}
               </div>
-            )}
+              <div className="text-[10px]">
+                {((statsRef.current["score"] / calcMaxStats()["rawScore"]) * 100).toPrecision(4)}% of
+                the max raw score ({calcMaxStats()["rawScore"]})
+                {opponent && (
+                  <div className="text-gray-700 dark:text-gray-300">
+                    (vs. {((opponentStatsRef.current!["score"] / calcMaxStats()["rawScore"]) * 100).toPrecision(4)}%)
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="text-lg self-start"><FunHighlight text={String(
-            statsRef.current["shuffleBoardCount"]
-            + statsRef.current["doubleScoreCount"]
-            + statsRef.current["addTimeCount"]
-          )} /></div>
+          <div className="flex flex-col gap-1">
+            <div>Bonus score</div>
+            <CustomHr className="self-stretch mb-1" />
+            <div className="flex flex-row gap-2 place-content-center">
+              {statsRef.current["bonusScore"]}
+              {opponent && (
+                <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+                  (vs. {opponentStatsRef.current!["bonusScore"]})
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div>Total score</div>
+            <CustomHr className="self-stretch mb-1" />
+            <div className="flex flex-row gap-2 place-content-center">
+              <FunHighlight text={(statsRef.current["score"] + statsRef.current["bonusScore"]).toString()} />
+              {opponent && (
+                <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+                  <b>(vs. {opponentStatsRef.current!["score"] + opponentStatsRef.current!["bonusScore"]})</b>
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 place-content-center items-center text-lg">
+          <div className="flex flex-col gap-1">
+            <div>Coins used</div>
+            <CustomHr className="self-stretch mb-1" />
+            <div className="flex flex-row gap-2 place-content-center">
+              {statsRef.current["coinsUsed"]}
+              {opponent && (
+                <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+                  (vs. {opponentStatsRef.current!["coinsUsed"]})
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div>
+              Coins left over
+              <div className="text-[10px]">(and converted to points)</div>
+            </div>
+            <CustomHr className="self-stretch mb-1" />
+            <div className="flex flex-row gap-2 place-content-center">
+              {statsRef.current["coinsEarned"] - statsRef.current["coinsUsed"]}
+              {opponent && (
+                <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+                  (vs. {opponentStatsRef.current!["coinsEarned"] - opponentStatsRef.current!["coinsUsed"]})
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div>Total coins earned</div>
+            <CustomHr className="self-stretch mb-1" />
+            <div>
+              <div className="flex flex-row gap-2 place-content-center">
+                <FunHighlight text={statsRef.current["coinsEarned"].toString()} />
+                {opponent && (
+                  <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+                    <b>(vs. {opponentStatsRef.current!["coinsEarned"]})</b>
+                  </span>
+                )}
+              </div>
+              <div className="pt-1 text-[10px]">
+                {((statsRef.current["coinsEarned"] / calcMaxStats()["coins"]) * 100).toPrecision(4)}% of
+                the max coins ({calcMaxStats()["coins"]})
+                {opponent && (
+                  <div className="text-gray-700 dark:text-gray-300">
+                    (vs. {((opponentStatsRef.current!["coinsEarned"] / calcMaxStats()["coins"]) * 100).toPrecision(4)}%)
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-4 place-content-center items-center">
+          <div className="flex flex-col gap-1">
+            <div>Board shuffles</div>
+            <CustomHr className="self-stretch mb-1" />
+            <div className="flex flex-row gap-2 place-content-center">
+              {statsRef.current["shuffleBoardCount"]}
+              {opponent && (
+                <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+                  (vs. {opponentStatsRef.current!["shuffleBoardCount"]})
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div>Score doublers</div>
+            <CustomHr className="self-stretch mb-1" />
+            <div className="flex flex-row gap-2 place-content-center">
+              {statsRef.current["doubleScoreCount"]}
+              {opponent && (
+                <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+                  (vs. {opponentStatsRef.current!["doubleScoreCount"]})
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div>10 sec extensions</div>
+            <CustomHr className="self-stretch mb-1" />
+            <div>
+              <div className="flex flex-row gap-2 place-content-center">
+                {statsRef.current["addTimeCount"]}
+                {opponent && (
+                  <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+                    (vs. {opponentStatsRef.current!["addTimeCount"]})
+                  </span>
+                )}
+              </div>
+              {(statsRef.current["addTimeCount"] > 0) && (
+                <div className="mt-1 text-[10px]">
+                  (Total game time: {initialGameTime + 10 * statsRef.current["addTimeCount"]}s)
+                  {opponent && (
+                  <div className="text-gray-700 dark:text-gray-300">
+                    (vs. {initialGameTime + 10 * opponentStatsRef.current!["addTimeCount"]}s)
+                  </div>
+                )}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div>Total powerups used</div>
+            <CustomHr className="self-stretch mb-1" />
+            <div className="flex flex-row gap-2 place-content-center">
+              <FunHighlight text={(
+                statsRef.current["shuffleBoardCount"]
+                + statsRef.current["doubleScoreCount"]
+                + statsRef.current["addTimeCount"]
+              ).toString()} />
+              {opponent && (
+                <span className="self-center text-sm text-gray-700 dark:text-gray-300">
+                  <b>(vs. {
+                    opponentStatsRef.current!["shuffleBoardCount"]
+                    + opponentStatsRef.current!["doubleScoreCount"]
+                    + opponentStatsRef.current!["addTimeCount"]
+                  })</b>
+                </span>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </PopUp>
@@ -442,12 +530,11 @@ function MoreStats({ gridLength, scoreRef, bonusScoreRef, guessedWordsRef, stats
 export function Game() {
   const [screen, setScreen] = useState<string>("intro");
   const [gridLength, setGridLength] = useState<number>(0);
-  const guessedWordsRef = useRef<string[]>([]); // to let state "collect" all async func calls
-  const scoreRef = useRef<number>(0);
-  const bonusScoreRef = useRef<number>(0);
-  const coinsRef = useRef<number>(0);
-  const guessedWordsDefnsRef = useRef<Map<string, any>>(new Map<string, Object>());
+  const wordsGuessedDefnsRef = useRef<Map<string, any>>(new Map<string, Object>());
   const statsRef = useRef<Stats>({
+    "score": 0,
+    "bonusScore": 0,
+    "wordsGuessed": [],
     "lettersUsed": [],
     "solutions": [],
     "shuffleBoardCount": 0,
@@ -456,31 +543,245 @@ export function Game() {
     "coinsEarned": 0,
     "coinsUsed": 0
   });
+
+  const DEFAULT_USERNAME = "";
+  const MAX_USERNAME_LENGTH: number = 45;
+
+  const searchParams = useSearchParams();
+  const [username, setUsername] = useState<string>(DEFAULT_USERNAME); // only word chars
+  const [tryAgain, setTryAgain] = useState<string>("");
   const [animateCopyText, setAnimateCopyText] = useState<number>(-1);
 
   const INITIAL_GAME_TIME: number = 60;
+  const statsProperties: (keyof queryParamStats)[] = [
+    "score",
+    "bonusScore",
+    "wordsGuessed",
+    "lettersUsed",
+    // "solutions",
+    // "shuffleBoardCount",
+    "doubleScoreCount",
+    "addTimeCount",
+    "coinsEarned",
+    "coinsUsed"
+  ];
+  const ARRAY_STAT_DELIMITER: string = "!";
+  const QUERY_PARAMS_STATS_DELIMITER: string = "*";
 
+
+  const handleUsernameChange = (e: ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
+    const newUsername: string = e.target.value.slice(0, MAX_USERNAME_LENGTH);
+    setUsername(
+      /[^\w]/i.test(newUsername) ? newUsername.substring(0, newUsername.length - 1) : newUsername
+    );
+  }
+
+  function vigenere(word: string, key: string, offset: number): string { // encodes/decodes
+    let ans = "";
+    for (let idx = 0; idx < word.length; ++idx) {
+      const localOffset = key.charCodeAt((idx + offset) % key.length)!;
+      ans += String.fromCharCode(word.charCodeAt(idx) ^ localOffset);
+    }
+    return ans;
+  }
+
+  function statToString(stat: keyof queryParamStats): string {
+    if (stat === "lettersUsed") {
+      return statsRef.current[stat]
+          .map((letterList: string[]) => letterList.join(""))
+          .join(ARRAY_STAT_DELIMITER);
+    } else if (stat === "wordsGuessed") {
+      return statsRef.current[stat].join(ARRAY_STAT_DELIMITER);
+    }
+    return statsRef.current[stat].toString();
+  }
+
+  function verifyStats(stats: Stats): boolean {
+    return Object.keys(stats).every((key) => {
+      if (key === "lettersUsed") {
+        if (stats[key].length === 0) { // must be at least one letterList
+          return false;
+        }
+        const gridArea = stats[key][0].length;
+        if (Math.abs(Math.sqrt(gridArea) - Math.round(Math.sqrt(gridArea))) > 0.01 // gridLength must be an integer
+            || Math.round(Math.sqrt(gridArea)) < 4 || Math.round(Math.sqrt(gridArea)) > 6) { // gridLength must be 4, 5, or 6
+          // console.log("not a valid grid length", stats[key]);
+          return false;
+        }
+        for (const letterList of stats[key]) {
+          if (/[^A-Z]/.test(letterList.join("")) // must only be capital letters
+              || letterList.length !== gridArea) { // must have the same number of letters
+            // console.log("not all capitals or same grid area", letterList);
+            return false;
+          }
+        }
+        return true;
+      } else if (key === "wordsGuessed") {
+        for (const word of stats[key]) {
+          // console.log("checking word", word);
+          // console.log("verdict", (!/[^A-Z]/.test(word) && validateWord(word)));
+          if (/[^A-Z]/.test(word) // must only be capital letters
+              || !validateWord(word)) { // must be a real word
+            return false;
+          }
+        }
+        return true;
+      } else if (key === "solutions") { // generated by my code anyway, so should be fine to assume true
+        // for (const solutionList of stats[key]) {
+        //   for (const solution of solutionList) {
+        //     console.log("checking word", solution.word);
+        //     console.log("verdict", (!/[^A-Z]/.test(solution.word) && validateWord(solution.word)));
+        //     if (/[^A-Z]/.test(solution.word) // must only be capital letters
+        //         || !validateWord(solution.word)) { // must be a real word
+        //       return false;
+        //     }
+        //   }
+        // }
+        return true;
+      }
+      // console.log("checking this stat", key);
+      // console.log("verdict", Number.isInteger(stats[key as keyof queryParamStats])
+          // && (stats[key as keyof queryParamStats] as number >= 0));
+      return Number.isInteger(stats[key as keyof queryParamStats])
+          && (stats[key as keyof queryParamStats] as number >= 0);
+    });
+  }
+
+  function statsToQueryParams(): string {
+    if (/[^\w]/i.test(username)) {
+      return "";
+    }
+
+    let ans = `?u=${username}&s=`;
+
+    // ans receives lettersUsed=ABC...,XYZ...{QUERY_PARAMS_STATS_DELIMITER}doubleScoreCount=5,etc.
+    for (let idx = 0; idx < statsProperties.length; ++idx) {
+      const property: keyof queryParamStats = statsProperties[idx];
+      const unencoded = `${property}=${statToString(property)}`
+      // console.log("encoding this", unencoded);
+      ans += Buffer.from(vigenere(unencoded, username, idx), "utf-8")
+          .toString("base64").replace(/\+/g, "-").replace(/\//g, "_")
+          + ((idx !== statsProperties.length - 1) ? QUERY_PARAMS_STATS_DELIMITER : "");
+      // console.log("ans is now", ans);
+    }
+
+    return ans;
+  }
+
+  function queryParamsToStats(): (Stats | null) {
+    const [opponentUsername, rawString] = [searchParams.get("u"), searchParams.get("s")];
+    if (!opponentUsername || !rawString) {
+      return null;
+    }
+    const encodedQueries: string[] = rawString
+        .split(QUERY_PARAMS_STATS_DELIMITER)
+        .map((unicodeString: string) =>
+          Buffer.from(unicodeString.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf-8")
+        );
+    let decodedQueries: string[] = [];
+    for (let idx = 0; idx < statsProperties.length; ++idx) {
+      decodedQueries.push(vigenere(encodedQueries[idx], opponentUsername, idx));
+    }
+    
+    let ans: Stats = {
+      "score": 0,
+      "bonusScore": 0,
+      "wordsGuessed": [],
+      "lettersUsed": [],
+      "solutions": [],
+      "shuffleBoardCount": 0,
+      "doubleScoreCount": 0,
+      "addTimeCount": 0,
+      "coinsEarned": 0,
+      "coinsUsed": 0
+    };
+    for (const query of decodedQueries) {
+      const kvPoint = query.indexOf("=");
+      const [key, value] = [
+        query.substring(0, kvPoint) as keyof queryParamStats,
+        query.substring(kvPoint + 1)
+      ];
+      if (key === "lettersUsed") {
+        ans[key] = value.split(ARRAY_STAT_DELIMITER).map((letterList) => letterList.split(""));
+      } else if (key === "wordsGuessed") {
+        ans[key] = (value.split(ARRAY_STAT_DELIMITER)[0] !== "") ? value.split(ARRAY_STAT_DELIMITER) : [];
+      } else {
+        ans[key] = +value;
+      }
+    }
+
+    // handle solutions and shuffleBoardCount now
+    for (const permutation of ans["lettersUsed"]) {
+      ans["solutions"].push(solve(Math.round(Math.sqrt(permutation.length)), permutation, calcScore));
+    }
+    ans["shuffleBoardCount"] = ans["lettersUsed"].length - 1;
+
+    // console.log("decoded queries", decodedQueries);
+    // console.log("ans", ans);
+    return ans;
+  }
+
+  const opponentStatsRef = useRef<Stats | null>(queryParamsToStats());
+  const opponent: (string | null) = searchParams.get("u");
+
+  useEffect(() => {
+    if (opponentStatsRef.current && !verifyStats(opponentStatsRef.current)) {
+      setScreen("opponentError");
+    }
+  }, []);
 
   function copyShareableText(): void {
+    if (username === "") {
+      setTryAgain("Please enter a username!");
+      return;
+    }
+
     const text = `franklinzhu.me's Word Hunt ${gridLength}x${gridLength}\n`
-        + `🎯 Score: ${scoreRef.current + bonusScoreRef.current}\n`
+        + `🎯 Score: ${statsRef.current["score"] + statsRef.current["bonusScore"]}\n`
         + `⚡ Powerups used: ${
             statsRef.current["shuffleBoardCount"]
             + statsRef.current["doubleScoreCount"]
             + statsRef.current["addTimeCount"]
           }\n`
-        + `🔠 Words found: ${guessedWordsRef.current.length}\n`
+        + `🔠 Words found: ${statsRef.current["wordsGuessed"].length}\n`
         + `⭐ Best word: ${
-            (guessedWordsRef.current.length > 0) ? (
-              `${guessedWordsRef.current[0]} (${calcScore(guessedWordsRef.current[0])} pts.)`
+            (statsRef.current["wordsGuessed"].length > 0) ? (
+              `${statsRef.current["wordsGuessed"][0]} (${calcScore(statsRef.current["wordsGuessed"][0])} pts.)`
             ) : (
               "Couldn't find any :("
             )
           }\n`
-        + `https://franklinzhu.me/games/wordHunt`
+        + `Think you can beat me? `
+        + `https://franklinzhu.me/games/wordHunt${statsToQueryParams()}`
 
     navigator.clipboard.writeText(text);
     setAnimateCopyText((animateCopyText + 1) % 2);
+  }
+
+  function winVerdictMessage(): Record<string, string> {
+    if (!opponent) {
+      return {};
+    }
+    
+    let ans = {
+      "title": "",
+      "tiny": ""
+    };
+    const [totalScore, opponentTotalScore] = [
+      statsRef.current["score"] + statsRef.current["bonusScore"],
+      opponentStatsRef.current!["score"] + opponentStatsRef.current!["bonusScore"]
+    ]
+    if (totalScore > opponentTotalScore) {
+      ans["title"] = "You win!";
+      ans["tiny"] = `(You won by ${totalScore - opponentTotalScore} pts!)`;
+    } else if (totalScore === opponentTotalScore) {
+      ans["title"] = "Draw!";
+      ans["tiny"] = `(You drew, what a coincidence!)`;
+    } else {
+      ans["title"] = "Better luck next time!";
+      ans["tiny"] = `(You lost by ${opponentTotalScore - totalScore} pts.)`
+    }
+    return ans;
   }
 
   function getBestWord(): string {
@@ -494,12 +795,14 @@ export function Game() {
   }
 
   function resetGame(): void {
-    guessedWordsRef.current = [];
-    scoreRef.current = 0;
-    bonusScoreRef.current = 0;
-    coinsRef.current = 0;
-    guessedWordsDefnsRef.current.clear();
+    statsRef.current["wordsGuessed"] = [];
+    statsRef.current["score"] = 0;
+    statsRef.current["bonusScore"] = 0;
+    wordsGuessedDefnsRef.current.clear();
     statsRef.current = {
+      "score": 0,
+      "bonusScore": 0,
+      "wordsGuessed": [],
       "lettersUsed": [],
       "solutions": [],
       "shuffleBoardCount": 0,
@@ -508,7 +811,6 @@ export function Game() {
       "coinsEarned": 0,
       "coinsUsed": 0
     };
-    setAnimateCopyText(-1);
     setScreen("intro");
   }
 
@@ -519,9 +821,9 @@ export function Game() {
           <FunHighlight text="Word Hunt" />
         </h1>
         <div className="flex flex-col gap-2">
-          <h1 className="text-xl text-center">
+          <h2 className="text-xl text-center">
             Inspired by the classic GamePigeon game!
-          </h1>
+          </h2>
           <ul className="list-disc list-inside">
             <li>For the next <b>{INITIAL_GAME_TIME} seconds,</b> a grid of letters will be displayed.</li>
             <li><b>Click and drag paths through this grid</b> to spell words.</li>
@@ -533,94 +835,172 @@ export function Game() {
           </ul>
         </div>
         <h3 className="text-lg place-self-center">
-          <b>Choose your grid size:</b>
+          <b>
+            {!opponent ? (
+              "Choose your grid size:"
+            ) : (
+              <>
+                <FunHighlight text={opponent!} /> challenged you to a {
+                  Math.round(Math.sqrt(opponentStatsRef.current!.lettersUsed[0].length))
+                }x{
+                  Math.round(Math.sqrt(opponentStatsRef.current!.lettersUsed[0].length))
+                } game!
+              </>
+            )}
+          </b>
         </h3>
-        <div className="flex flex-row gap-5 place-self-center">
+        {!opponent ? (
+          <div className="flex flex-row gap-5 place-self-center">
+            <button
+              className="w-25 place-self-center border-2 rounded-2xl py-2 px-4 border-gray-400 dark:border-gray-600"
+              onClick={() => {
+                setGridLength(4);
+                setScreen("gameplay")
+              }}
+            >
+              4x4
+            </button>
+            <button
+              className="w-25 place-self-center border-2 rounded-2xl py-2 px-4 border-gray-400 dark:border-gray-600"
+              onClick={() => {
+                setGridLength(5);
+                setScreen("gameplay")
+              }}
+            >
+              5x5
+            </button>
+            <button
+              className="w-25 place-self-center border-2 rounded-2xl py-2 px-4 border-gray-400 dark:border-gray-600"
+              onClick={() => {
+                setGridLength(6);
+                setScreen("gameplay");
+              }}
+            >
+              6x6
+            </button>
+          </div>
+        ) : (
           <button
-            className="w-25 place-self-center border-2 rounded-2xl py-1 px-2 border-gray-400 dark:border-gray-600"
+            className="w-25 place-self-center border-2 rounded-2xl py-2 px-4 border-gray-400 dark:border-gray-600"
             onClick={() => {
-              setGridLength(4);
-              setScreen("gameplay")
-            }}
-          >
-            4x4
-          </button>
-          <button
-            className="w-25 place-self-center border-2 rounded-2xl py-1 px-2 border-gray-400 dark:border-gray-600"
-            onClick={() => {
-              setGridLength(5);
-              setScreen("gameplay")
-            }}
-          >
-            5x5
-          </button>
-          <button
-            className="w-25 place-self-center border-2 rounded-2xl py-1 px-2 border-gray-400 dark:border-gray-600"
-            onClick={() => {
-              setGridLength(6);
+              setGridLength(Math.round(Math.sqrt(opponentStatsRef.current!.lettersUsed[0].length)));
               setScreen("gameplay");
             }}
           >
-            6x6
+            Let's go!
           </button>
-        </div>
+        )}
       </div>,
     "gameplay":
       <Board
         gridLength={gridLength}
         initialGameTime={INITIAL_GAME_TIME}
-        guessedWordsRef={guessedWordsRef}
-        scoreRef={scoreRef}
-        bonusScoreRef={bonusScoreRef}
-        coinsRef={coinsRef}
         statsRef={statsRef}
         calcScore={calcScore}
         calcCoins={calcCoins}
         setScreen={setScreen}
         resetGame={resetGame}
+        opponentStatsRef={opponentStatsRef}
       />,
     "results":
       <div className="max-w-[50vw] max-h-[75vh] overflow-y-auto flex flex-col gap-4 p-8 rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
         <h1 className="text-center text-4xl">
-          <FunHighlight text="Results" />
+          {opponent ? (
+            <FunHighlight text={winVerdictMessage()["title"]} />
+          ) : (
+            <FunHighlight text="Results" />
+          )}
         </h1>
         <div className="flex flex-col gap-1 text-center">
-          <h1 className="text-xl">
-            <b>Total score: </b>
-            {(scoreRef.current + bonusScoreRef.current > 0) ? (
-              <FunHighlight text={String(scoreRef.current + bonusScoreRef.current)} />
-            ) : (
-              "0 :("
+          <div className="flex flex-row gap-8 place-content-center">
+            <div>
+              <h1 className="text-xl">
+                <b>Total score: </b>
+                {(statsRef.current["score"] + statsRef.current["bonusScore"] > 0) ? (
+                  <FunHighlight text={(statsRef.current["score"] + statsRef.current["bonusScore"]).toString()} />
+                ) : (
+                  "0 :("
+                )}
+              </h1>
+              <span className="text-sm">(Grid size: {gridLength}x{gridLength})</span>
+            </div>
+            {opponent && (
+              <div>
+                <h1 className="text-xl">
+                  <b>{opponent!}'s total score: </b>
+                  {(opponentStatsRef.current!["score"] + opponentStatsRef.current!["bonusScore"] > 0) ? (
+                    <FunHighlight text={(opponentStatsRef.current!["score"] + opponentStatsRef.current!["bonusScore"]).toString()} />
+                  ) : (
+                    "0 :("
+                  )}
+                </h1>
+                <span className="text-sm">{winVerdictMessage()["tiny"]}</span>
+              </div>
             )}
-          </h1>
-          <span className="text-sm">(Grid size: {gridLength}x{gridLength})</span>
+          </div>
         </div>
         <CustomHr />
         <div className="flex flex-row gap-6 justify-center">
           <div className="flex flex-col gap-0.5 justify-center text-right text-lg">
-            {(guessedWordsRef.current.length > 0) ? (
+            {(statsRef.current["wordsGuessed"].length > 0) ? (
               <>
                 <h3>
-                  {guessedWordsRef.current.length} words achieved:
+                  {statsRef.current["wordsGuessed"].length} word
+                      {statsRef.current["wordsGuessed"].length > 1 ? "s" : ""} achieved:
                 </h3>
                 <p className="text-sm text-gray-700 dark:text-gray-300">
                   (click a word to view its definition!)
                 </p>
               </>
-            ) : (
+            ) : (!opponent || (opponent && (opponentStatsRef.current!["wordsGuessed"].length > 0))) ? (
               <div className="text-center">
                 No words achieved?? You can do better!
               </div>
+            ) : (
+              <div className="text-center">
+                None of you achieved any words??
+                <div className="text-sm text-gray-700 dark:text-gray-300">
+                  No offense, but maybe you two should try a <a href="/games">different game...</a>
+                </div>
+              </div>
             )}
           </div>
-          {(guessedWordsRef.current.length > 0) && (
-            <div className="max-h-30 flex flex-row flex-wrap gap-4 justify-center place-items-center overflow-y-auto">
-              {guessedWordsRef.current.map((word, idx) =>
-                <DefinitionCard
-                  key={idx}
-                  word={word}
-                  guessedWordsDefnsRef={guessedWordsDefnsRef}
-                />
+          {(statsRef.current["wordsGuessed"].length > 0) && (
+            <div className="flex flex-row gap-4 place-items-center">
+              <div className="flex flex-col gap-2 text-center">
+                {opponent ? `Your word${statsRef.current["wordsGuessed"].length > 1 ? "s" : ""}` : ""}
+                <div className={`${opponent ? "max-h-22" : "max-h-30"} flex flex-row flex-wrap gap-x-4 gap-y-3 justify-center place-items-center overflow-y-auto`}>
+                  {statsRef.current["wordsGuessed"].map((word, idx) =>
+                    <DefinitionCard
+                      key={idx}
+                      word={word}
+                      wordsGuessedDefnsRef={wordsGuessedDefnsRef}
+                    />
+                  )}
+                </div>
+              </div>
+              {opponent && (
+                <div className="flex flex-col gap-2 text-center">
+                  {opponentStatsRef.current!["wordsGuessed"].length > 0 ? (
+                    <>
+                      {opponent!}'s {opponentStatsRef.current!["wordsGuessed"].length} word
+                          {opponentStatsRef.current!["wordsGuessed"].length > 1 ? "s" : ""}
+                      <div className="max-h-22 flex flex-row flex-wrap gap-x-4 gap-y-3 justify-center place-items-center overflow-y-auto">
+                        {opponentStatsRef.current!["wordsGuessed"].map((word, idx) =>
+                          <DefinitionCard
+                            key={idx}
+                            word={word}
+                            wordsGuessedDefnsRef={wordsGuessedDefnsRef}
+                          />
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="justify-self-center">
+                      {opponent} achieved 0 words. They could learn a thing or two from you!
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           )}
@@ -635,33 +1015,99 @@ export function Game() {
           )}
         </div>
         <div className="mt-2 flex flex-row gap-6 place-content-center">
-          <button
-            className="relative p-4 border-2 rounded-2xl border-gray-400 dark:border-gray-600"
-            onClick={copyShareableText}
+          <PopUp
+            clickable={
+              <button
+                className="relative p-4 border-2 rounded-2xl border-gray-400 dark:border-gray-600"
+                onClick={() => {
+                  setTryAgain("");
+                  setUsername(DEFAULT_USERNAME);
+                  setAnimateCopyText(-1);
+                }}
+              >
+                Share results
+              </button>
+            }
           >
-            Share results
-            <div
-              key={animateCopyText}
-              className={`${(animateCopyText !== -1) ? "animate-copy-text" : "hidden"} absolute inset-0 m-auto h-full place-content-center rounded-2xl opacity-50 bg-green-300 dark:bg-green-700`}
-            >
-              Copied!
+            <div className="flex flex-col gap-4 p-8 place-items-center text-center">
+              <div className="flex flex-col">
+                <h1 className="text-lg">Enter your username:</h1>
+                <div className="text-[10px] text-gray-700 dark:text-gray-300">
+                  (Must be composed of letters, numbers, and underscores)
+                </div>
+              </div>
+              <input 
+                className="w-full border-2 rounded-full px-4 py-2 border-gray-400 dark:border-gray-600"
+                name="answer" value={username}
+                onChange={(e) => {
+                  setTryAgain("");
+                  handleUsernameChange(e);
+                }}
+              />
+              <button
+                className="relative px-4 py-2 border-2 rounded-full border-gray-400 dark:border-gray-600"
+                onClick={copyShareableText}
+              >
+                Share!
+                <div
+                  key={animateCopyText}
+                  className={`${(animateCopyText !== -1) ? "animate-copy-text" : "hidden"} absolute inset-0 m-auto h-full place-content-center rounded-full bg-green-300 dark:bg-green-700`}
+                >
+                  Copied!
+                </div>
+              </button>
+              {(tryAgain !== "") && (
+                <span className="text-red-500">{tryAgain}</span>
+              )}
             </div>
-          </button>
-          <button
-            className="p-4 border-2 rounded-2xl border-gray-400 dark:border-gray-600"
-            onClick={resetGame}
-          >
-            <b>{scoreRef.current > 0 ? "Play again!" : "Oops...play again!"}</b>
-          </button>
+          </PopUp>
+          {opponent ? (
+            <a href="https://franklinzhu.me/games/wordHunt">
+              <button
+                className="p-4 border-2 rounded-2xl border-gray-400 dark:border-gray-600 text-black dark:text-white"
+                onClick={resetGame}
+              >
+                <b>{statsRef.current["score"] > 0 ? "Play again!" : "Oops...play again!"}</b>
+              </button>
+            </a>
+          ) : (
+            <button
+              className="p-4 border-2 rounded-2xl border-gray-400 dark:border-gray-600"
+              onClick={resetGame}
+            >
+              <b>{statsRef.current["score"] > 0 ? "Play again!" : "Oops...play again!"}</b>
+            </button>
+          )}
           <MoreStats
             gridLength={gridLength}
-            scoreRef={scoreRef}
-            bonusScoreRef={bonusScoreRef}
-            guessedWordsRef={guessedWordsRef}
             statsRef={statsRef}
+            opponent={opponent}
+            opponentStatsRef={opponentStatsRef}
             initialGameTime={INITIAL_GAME_TIME}
           />
         </div>
+      </div>,
+    "opponentError":
+      <div className="max-w-[75vw] max-h-[75vh] overflow-y-auto flex flex-col gap-4 p-8 place-items-center rounded-2xl border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-black">
+        <h1 className="text-xl text-center">
+          <b>Uh oh!</b>
+        </h1>
+        <div className="flex flex-col gap-2">
+          <p className="text-center">
+            It seems your challenge link is corrupted.
+          </p>
+          <p className="text-center">
+            Ask your opponent for a new one, or play a new game?
+          </p>
+        </div>
+        <a href="https://franklinzhu.me/games/wordHunt">
+          <button
+            className="p-4 border-2 rounded-2xl border-gray-400 dark:border-gray-600 text-black dark:text-white"
+            onClick={resetGame}
+          >
+            New game!
+          </button>
+        </a>
       </div>
   };
 

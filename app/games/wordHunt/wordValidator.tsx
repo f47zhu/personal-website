@@ -1,4 +1,4 @@
-"use client" // process word bank client-side for faster responsiveness
+"use client" // process word bank client-side for faster responsivity
 
 import words from "@/public/words.json"
 

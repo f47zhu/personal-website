@@ -17,6 +17,9 @@ interface Solution {
 }
 
 interface Stats {
+  "score": number,
+  "bonusScore": number,
+  "wordsGuessed": string[],
   "lettersUsed": string[][],
   "solutions": Solution[][],
   "shuffleBoardCount": number,
@@ -34,12 +37,11 @@ interface Line {
   weight: number
 }
 
-export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, bonusScoreRef,
-      coinsRef, statsRef, calcScore, calcCoins, setScreen, resetGame }:
-    { gridLength: number, initialGameTime: number, guessedWordsRef: React.RefObject<string[]>,
-      scoreRef: React.RefObject<number>, bonusScoreRef: React.RefObject<number>,
-      coinsRef: React.RefObject<number>, statsRef: React.RefObject<Stats>, calcScore: Function,
-      calcCoins: Function, setScreen: Function, resetGame: Function }) {
+export function Board({ gridLength, initialGameTime, statsRef, calcScore, calcCoins, setScreen,
+    resetGame, opponentStatsRef }:
+    { gridLength: number, initialGameTime: number, statsRef: React.RefObject<Stats>,
+      calcScore: Function, calcCoins: Function, setScreen: Function, resetGame: Function,
+      opponentStatsRef: React.RefObject<Stats | null> }) {
   const [boardLetters, setBoardLetters] = useState<string[]>([]);
 
   const letterElementsRef = useRef<HTMLElement[]>([]);
@@ -52,9 +54,15 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
   const guessedStringsRef = useRef<Map<string, Promise<boolean>>>(new Map<string, Promise<boolean>>());
   const [guessColor, setGuessColor] = useState<string>("");
 
-  const [guessedWords, setGuessedWords] = useState<string[]>(guessedWordsRef.current);
-  const [score, setScore] = useState<number>(scoreRef.current);
-  const [coins, setCoins] = useState<number>(coinsRef.current);
+  const wordsGuessedRef = useRef<string[]>([]);
+  const [wordsGuessed, setGuessedWords] = useState<string[]>([]);
+  const scoreRef = useRef<number>(0);
+  const [score, setScore] = useState<number>(0);
+  const bonusScoreRef = useRef<number>(0);
+  const [bonusScore, setBonusScore] = useState<number>(0);
+
+  const coinsRef = useRef<number>(0);
+  const [coins, setCoins] = useState<number>(0);
 
   const [exitConfirm, setExitConfirm] = useState<boolean>(false);
 
@@ -76,11 +84,12 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
   const [doubleScoreStartTime, setDoubleScoreStartTime] = useState<number>(0);
   const [doubleScoreEndTime, setDoubleScoreEndTime] = useState<number>(0);
   const [doubleScoreActive, setDoubleScoreActive] = useState<boolean>(false);
-  const [bonusScore, setBonusScore] = useState<number>(0);
 
   const [addTimePrice, setAddTimePrice] = useState<number>(5);
   const [animateAddTime, setAnimateAddTime] = useState<number>(-1);
   const [addTimeSuccess, setAddTimeSuccess] = useState<boolean>(false);
+
+  const hasOpponent: boolean = !!opponentStatsRef.current;
 
   const COIN_VALUE = 200;
 
@@ -92,22 +101,27 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
   ];
 
   useEffect(() => { // letter distribution
-    statsRef.current["lettersUsed"] = [];
+    // statsRef.current["lettersUsed"] = []; // to account for strict mode
 
     let newLetters: string[] = [];
-    let letterFrequency: Record<string, number> = {};
-    for (let i = 0; i < gridLength * gridLength; ++i) {
-      let letter = randomLetter();
-      while ((letter in letterFrequency) && (letterFrequency[letter] >= gridLength)) {
-        letter = randomLetter();
-      }
-      if (letter in letterFrequency) {
-        ++letterFrequency[letter];
-      } else {
-        letterFrequency[letter] = 1;
-      }
 
-      newLetters.push(letter);
+    if (!hasOpponent) {
+      let letterFrequency: Record<string, number> = {};
+      for (let i = 0; i < gridLength * gridLength; ++i) {
+        let letter = randomLetter();
+        while ((letter in letterFrequency) && (letterFrequency[letter] >= gridLength)) {
+          letter = randomLetter();
+        }
+        if (letter in letterFrequency) {
+          ++letterFrequency[letter];
+        } else {
+          letterFrequency[letter] = 1;
+        }
+
+        newLetters.push(letter);
+      }
+    } else {
+      newLetters = opponentStatsRef.current!["lettersUsed"][0];
     }
 
     setBoardLetters(newLetters);
@@ -131,6 +145,7 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
         await Promise.all(promisesRef.current); // wait for words to process
         promisesRef.current = [];
         bonusScoreRef.current += coinsRef.current * COIN_VALUE; // convert unused coins
+        statsRef.current["bonusScore"] = bonusScoreRef.current;
         setLoading(false);
         
         setScreen("results");
@@ -223,7 +238,7 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
     if (guess.length >= 3) {
       let verdict = "invalid";
       if (await guessedStringsRef.current.get(guess)) {
-        verdict = guessedWordsRef.current.includes(guess) ? "guessed" : "valid";
+        verdict = wordsGuessedRef.current.includes(guess) ? "guessed" : "valid";
       }
       setGuessColor(colorVariants[verdict]);
     } else {
@@ -245,18 +260,19 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
   }
 
   function pushToGuessedWords(word: string): boolean {
-    let lo = 0, hi = guessedWordsRef.current.length, mid;
+    let lo = 0, hi = wordsGuessedRef.current.length, mid;
     while (lo < hi) { // assuming reverse sorted list, returns first idx where elt > list[idx]
       mid = Math.floor((lo + hi) / 2);
-      if (calcScore(guessedWordsRef.current[mid]) >= calcScore(word)) {
+      if (calcScore(wordsGuessedRef.current[mid]) >= calcScore(word)) {
         lo = mid + 1;
       } else {
         hi = mid;
       }
     }
-    if (!guessedWordsRef.current.includes(word)) { // avoid race condition
-      guessedWordsRef.current.splice(lo, 0, word);
-      setGuessedWords(guessedWordsRef.current);
+    if (!wordsGuessedRef.current.includes(word)) { // avoid race condition
+      wordsGuessedRef.current.splice(lo, 0, word);
+      setGuessedWords(wordsGuessedRef.current);
+      statsRef.current["wordsGuessed"] = wordsGuessedRef.current;
       return true;
     }
     return false;
@@ -265,12 +281,14 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
   async function submitGuess(word: string, bonus: boolean): Promise<void> {
     if (word.length >= 3) {
       const valid = await guessedStringsRef.current.get(word);
-      if (valid && !guessedWordsRef.current.includes(word) && pushToGuessedWords(word)) {
+      if (valid && !wordsGuessedRef.current.includes(word) && pushToGuessedWords(word)) {
         scoreRef.current += calcScore(word);
         setScore(scoreRef.current);
+        statsRef.current["score"] = scoreRef.current;
         if (bonus) {
           bonusScoreRef.current += calcScore(word);
           setBonusScore(bonusScoreRef.current);
+          statsRef.current["bonusScore"] = bonusScoreRef.current;
         }
         coinsRef.current += calcCoins(word);
         setCoins(coinsRef.current);
@@ -329,9 +347,14 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
   const shuffleBoard = (cost: number) => { // fisher-yates shuffle
     if (coinsRef.current >= cost) {
       let newLetters: string[] = [...boardLetters];
-      for (let idx = newLetters.length - 1; idx > 0; --idx) {
-        const randomIdx = randint(idx + 1);
-        [newLetters[idx], newLetters[randomIdx]] = [newLetters[randomIdx], newLetters[idx]];
+      if (!hasOpponent || (hasOpponent &&
+            (statsRef.current["shuffleBoardCount"] >= opponentStatsRef.current!["shuffleBoardCount"]))) {
+        for (let idx = newLetters.length - 1; idx > 0; --idx) {
+          const randomIdx = randint(idx + 1);
+          [newLetters[idx], newLetters[randomIdx]] = [newLetters[randomIdx], newLetters[idx]];
+        }
+      } else {
+        newLetters = opponentStatsRef.current!["lettersUsed"][statsRef.current["shuffleBoardCount"] + 1];
       }
       setBoardLetters(newLetters);
 
@@ -340,11 +363,11 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
 
       coinsRef.current -= cost;
       setCoins(coinsRef.current);
+      statsRef.current["coinsUsed"] += cost;
 
       setShuffleBoardSuccess(true);
       setShuffleBoardPrice(shuffleBoardPrice + 1);
       statsRef.current["shuffleBoardCount"] += 1;
-      statsRef.current["coinsUsed"] += cost;
     } else {
       setShuffleBoardSuccess(false);
     }
@@ -360,10 +383,10 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
       
       coinsRef.current -= cost;
       setCoins(coinsRef.current);
+      statsRef.current["coinsUsed"] += cost;
 
       setDoubleScorePrice(doubleScorePrice + 1);
       statsRef.current["doubleScoreCount"] += 1;
-      statsRef.current["coinsUsed"] += cost;
     } else {
       setAnimateDoubleScoreFail((animateDoubleScoreFail + 1) % 2);
     }
@@ -375,11 +398,11 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
 
       coinsRef.current -= cost;
       setCoins(coinsRef.current);
+      statsRef.current["coinsUsed"] += cost;
 
       setAddTimeSuccess(true);
       setAddTimePrice(addTimePrice + 1);
       statsRef.current["addTimeCount"] += 1;
-      statsRef.current["coinsUsed"] += cost;
     } else {
       setAddTimeSuccess(false);
     }
@@ -547,7 +570,7 @@ export function Board({ gridLength, initialGameTime, guessedWordsRef, scoreRef, 
               </h2>
               <hr />
               <div className="flex flex-col gap-0 overflow-y-auto">
-                {guessedWords.map((word, idx) => (
+                {wordsGuessed.map((word, idx) => (
                   <div
                     key={idx}
                     className="flex flex-row"
