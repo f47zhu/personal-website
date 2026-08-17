@@ -4,6 +4,9 @@ import { useState, useEffect, useRef } from "react"
 import { createPortal } from "react-dom";
 
 import { FunHighlight } from "../../effects/waveEffect";
+import { validateWord } from "../wordValidator";
+
+import { getLevels } from "./levels";
 
 export function Game() {
   const [gameState, setGameState] = useState<string>("intro");
@@ -19,23 +22,7 @@ export function Game() {
   const levelLists = [
     [0, 1, 5, 2, 3, 4]
   ];
-
-  const levels = [
-    {"length": 5, "desc": [<>Must contain the substring "UAR"</>], "verifier": (word: string) => word.includes("UAR")},
-    {"length": 7, "desc": [<>Must not contain repeating letters</>], "verifier": (word: string) => (new Set(word)).size === word.length},
-    {"length": 12, "desc": [<>Must be <i>exactly</i> 12 letters long</>], "verifier": (word: string) => word.length === 12},
-    {"length": 6, "desc": [<>Must only consist of 3 unique letters</>], "verifier": (word: string) => (new Set(word)).size === 3},
-    {"length": 10, "desc": [<>Must not contain repeating letters</>], "verifier": (word: string) => (new Set(word)).size === word.length},
-    {"length": 10, "desc": [<>Must contain a letter that repeats 3 times throughout the word</>], "verifier": (word: string) => {
-      for (let c = 65; c <= 90; ++c) {
-        const pattern = new RegExp(String.fromCharCode(c), "g");
-        if ((word.match(pattern) || []).length === 3) {
-          return true;
-        }
-      }
-      return false;
-    }}
-  ];
+  const levels = getLevels();
 
   useEffect(() => {
     setUserInput("");
@@ -50,16 +37,12 @@ export function Game() {
     }
   }, [gameState]);
 
-  async function verifyWord(word: string): Promise<boolean> {
-    return fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + word).then((response) => response.ok);
-  }
-
   async function handleSubmission(): Promise<void> {
     if (userInput === "") {
       setTryAgain("Please enter a word!");
     } else if (userInput.length < levels[currentLevel]["length"]) {
       setTryAgain(`Word is shorter than ${levels[currentLevel]["length"]} letters!`);
-    } else if (!(await verifyWord(userInput))) {
+    } else if (!(await validateWord(userInput))) {
       setTryAgain("Word is not a valid English word!");
     } else if (!levels[currentLevel]["verifier"](userInput)) {
       setTryAgain("Word does not satisfy the given requirements!");

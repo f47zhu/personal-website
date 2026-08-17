@@ -9,7 +9,7 @@ import { CustomHr } from "../../customHr";
 import { Board } from "./board";
 import { PopUp } from "@/app/popUp";
 import { solve } from "./gameSolver";
-import { validateWord } from "./wordValidator";
+import { validateWord } from "../wordValidator";
 
 interface Solution {
   "word": string,

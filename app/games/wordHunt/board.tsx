@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 
 import { FunHighlight } from "@/app/effects/waveEffect";
-import { validateWord } from "./wordValidator";
+import { validateWord } from "../wordValidator";
 import { solve } from "./gameSolver";
 
 function randint(max: number) {
